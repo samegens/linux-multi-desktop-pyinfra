@@ -1,0 +1,68 @@
+# Starship configuration file
+
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# Show default prompt character with color corresponding to
+# last exit code.
+[character]
+success_symbol = '[\$](bold green)'
+error_symbol = '[\$](bold red)'
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
+# Show username
+[username]
+show_always = true
+format = '[$user]($style) '
+
+# Show hostname
+[hostname]
+ssh_only = false
+format = 'on [$hostname](bold yellow) '
+
+# Directory settings
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+style = "#4169e1"
+format = "[](bg:$style fg:black)[$path](bg:$style)[](fg:$style)[$read_only]($read_only_style) "
+
+# Show current time
+[time]
+disabled = false
+format = '[$time]($style) '
+
+# Show command duration
+[cmd_duration]
+min_time = 0
+show_milliseconds = true
+
+# Python settings - replace symbol with text
+[python]
+symbol = 'Python '
+
+# Disable Kubernetes module
+[kubernetes]
+disabled = true
+
+# Disable other cloud/infrastructure modules
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true
+
+[terraform]
+disabled = true
+
+[openstack]
+disabled = true

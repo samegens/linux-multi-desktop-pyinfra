@@ -1,0 +1,11 @@
+{
+	"python.defaultInterpreterPath": "/home/sebastiaan/python3-venv/pyinfra-latest/bin/python3",
+	"python.analysis.extraPaths": [
+		"${workspaceFolder}/pyinfra"
+	],
+	"python.analysis.stubPath": "typings",
+	"terminal.integrated.env.linux": {
+		"VIRTUAL_ENV": "/home/sebastiaan/python3-venv/pyinfra-latest",
+		"PATH": "/home/sebastiaan/python3-venv/pyinfra-latest/bin:${env:PATH}"
+	}
+}

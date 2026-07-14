@@ -1,1 +1,15 @@
 .claude
+
+# Secrets - managed via desktop-secrets + symlink (see setup-repo.sh)
+pyinfra/secrets_data.py
+
+# Python
+__pycache__
+*.pyc
+.ruff_cache
+
+# Vim swap files
+*.swp
+
+# Claude local config
+**/.claude/settings.local.json
