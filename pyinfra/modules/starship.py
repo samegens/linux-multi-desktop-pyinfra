@@ -34,6 +34,7 @@ def deploy_starship():
         src="/tmp/starship.tar.gz",
         dest="/usr/local/bin",
         remote_src=True,
+        creates="/usr/local/bin/starship",
     )
 
     files.block(
