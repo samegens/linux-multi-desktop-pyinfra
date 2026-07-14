@@ -20,7 +20,7 @@ apt_packages = [
     "vim",
     "keepassxc",
     "okular",
-    "samba-client",
+    "smbclient",
     "imagemagick",
     "htop",
     "jq",
