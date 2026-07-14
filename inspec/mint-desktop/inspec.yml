@@ -1,0 +1,11 @@
+name: mint-desktop
+title: Mint Desktop Configuration Tests
+maintainer: Sebastiaan
+summary: Verifies the mint-desktop pyinfra deploy applied correctly
+version: 1.0.0
+supports:
+  - platform: linux
+inputs:
+  - name: username
+    type: String
+    value: sebastiaan
