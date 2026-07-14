@@ -1,7 +1,7 @@
 """Starship prompt."""
 
-from pyinfra import host
-from pyinfra.api import deploy
+from pyinfra.context import host
+from pyinfra.api.deploy import deploy
 from pyinfra.facts.server import Arch
 from pyinfra.operations import apt, files
 
@@ -42,3 +42,6 @@ def deploy_starship():
         content='export STARSHIP_CONFIG=/etc/starship.toml\neval "$(starship init bash)"',
         marker="# {mark} PYINFRA MANAGED BLOCK - STARSHIP",
     )
+
+
+deploy_starship()

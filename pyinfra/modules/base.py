@@ -2,8 +2,8 @@
 
 from io import StringIO
 
-from pyinfra import host
-from pyinfra.api import deploy
+from pyinfra.context import host
+from pyinfra.api.deploy import deploy
 from pyinfra.operations import apt, files, flatpak, server
 
 
@@ -64,3 +64,6 @@ def deploy_base():
         remote="flathub",
         present=True,
     )
+
+
+deploy_base()

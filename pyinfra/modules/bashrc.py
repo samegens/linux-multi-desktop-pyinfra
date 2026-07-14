@@ -3,8 +3,8 @@ add lines back here as deferred modules (k3s, SSH host aliases, ...) get ported.
 
 from io import StringIO
 
-from pyinfra import host
-from pyinfra.api import deploy
+from pyinfra.context import host
+from pyinfra.api.deploy import deploy
 from pyinfra.operations import files
 
 
@@ -13,10 +13,17 @@ def deploy_bashrc():
     username = host.data.username
     bashrc = f"/home/{username}/.bashrc"
 
+    # escape_regex_characters=True escapes ()/{}/etc assuming POSIX extended-regex
+    # semantics (escaped = literal). The underlying grep defaults to basic-regex mode,
+    # where \(  \)  \{  \} mean the *opposite* (grouping/interval operators) - so
+    # escape_regex_characters=True is only correct when paired with extended_regex=True.
+    # Without it, the presence-check never matches and the line gets re-added every run.
     files.line(
         name="Add Cargo bin to PATH",
         path=bashrc,
         line='export PATH="$HOME/.cargo/bin:$PATH"',
+        escape_regex_characters=True,
+        extended_regex=True,
         _sudo=False,
     )
 
@@ -32,6 +39,8 @@ def deploy_bashrc():
             name=f"Add alias: {alias_name}",
             path=bashrc,
             line=line,
+            escape_regex_characters=True,
+            extended_regex=True,
             _sudo=False,
         )
 
@@ -50,3 +59,6 @@ def deploy_bashrc():
         mode="644",
         _sudo=False,
     )
+
+
+deploy_bashrc()

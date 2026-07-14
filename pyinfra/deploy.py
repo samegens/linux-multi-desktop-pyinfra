@@ -1,17 +1,13 @@
-"""Entrypoint. Calls each module's deploy() in order.
+"""Entrypoint. Runs every module in order.
 
-To run a subset, target a module file directly instead:
-    pyinfra inventory.py modules/git.py --limit localhost
+Each module calls its own deploy_*() at the bottom, so pyinfra also accepts a subset of
+module files directly as separate CLI args instead of this file - that's the native
+--tags equivalent:
+    pyinfra inventory.py modules/git.py modules/ssh.py --limit localhost
 """
 
-from modules.base import deploy_base
-from modules.bashrc import deploy_bashrc
-from modules.git import deploy_git
-from modules.ssh import deploy_ssh
-from modules.starship import deploy_starship
-
-deploy_base()
-deploy_git()
-deploy_ssh()
-deploy_bashrc()
-deploy_starship()
+import modules.base  # noqa: F401
+import modules.git  # noqa: F401
+import modules.ssh  # noqa: F401
+import modules.bashrc  # noqa: F401
+import modules.starship  # noqa: F401

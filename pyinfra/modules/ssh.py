@@ -7,8 +7,8 @@ then list <name> in ssh_key_names (group_data/all.py). Empty for now.
 
 from io import BytesIO
 
-from pyinfra import host
-from pyinfra.api import deploy
+from pyinfra.context import host
+from pyinfra.api.deploy import deploy
 from pyinfra.operations import apt, files, server
 
 import secrets_data
@@ -57,3 +57,6 @@ def deploy_ssh():
         running=True,
         enabled=True,
     )
+
+
+deploy_ssh()
