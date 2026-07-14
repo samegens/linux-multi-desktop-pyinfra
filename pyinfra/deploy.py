@@ -6,8 +6,11 @@ module files directly as separate CLI args instead of this file - that's the nat
     pyinfra inventory.py modules/git.py modules/ssh.py --limit localhost
 """
 
-import modules.base  # noqa: F401
-import modules.git  # noqa: F401
-import modules.ssh  # noqa: F401
-import modules.bashrc  # noqa: F401
-import modules.starship  # noqa: F401
+# pyright: ignore suppresses Pylance's unused-import warning - these are intentional
+# side-effect imports (each module deploys itself on import).
+import modules.base  # pyright: ignore
+import modules.git  # pyright: ignore
+import modules.ssh  # pyright: ignore
+import modules.bashrc  # pyright: ignore
+import modules.starship  # pyright: ignore
+import modules.go  # pyright: ignore
