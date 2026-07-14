@@ -4,6 +4,6 @@ Bare uppercase vars here do nothing - pyinfra's CLI discards config.py's locals 
 exec'ing it. Must mutate the live config object via the `pyinfra.config` context proxy.
 """
 
-from pyinfra import config
+from pyinfra.context import config
 
 config.SUDO = True

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    name: Checks (pyright, unit tests, inspec profile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pyinfra + privy
+        run: pip install -r requirements.txt
+
+      - name: Install cinc-auditor
+        run: |
+          curl -sSL -o /tmp/cinc-auditor.deb \
+            "https://downloads.cinc.sh/files/stable/cinc-auditor/7.1.7/ubuntu/24.04/cinc-auditor_7.1.7-1_amd64.deb"
+          sudo dpkg -i /tmp/cinc-auditor.deb
+
+      - name: Run checks
+        run: PYTHON=python3 ./check.sh
