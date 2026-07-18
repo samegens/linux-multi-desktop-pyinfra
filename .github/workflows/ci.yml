@@ -3,6 +3,12 @@ name: CI
 on:
   push:
   pull_request:
+  schedule:
+    # 03:00 UTC daily - catches breakage from unpinned/updated tooling (pyright, cinc-auditor,
+    # pyinfra's own dependencies) rather than from code changes in this repo.
+    - cron: "0 3 * * *"
+  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   checks:

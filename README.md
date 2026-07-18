@@ -1,5 +1,10 @@
 # Mint Desktop Configuration
 
+[![CI](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml)
+[![Nightly](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml)
+[![Secret Detection](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml/badge.svg?event=push)](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml)
+[![Nightly Secret Detection](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml/badge.svg?event=schedule)](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml)
+
 pyinfra deploy that automates Sebastiaan's Linux Mint desktop setup and configuration.
 Sibling of [`fedora-desktop`](../fedora-desktop) (Ansible/Fedora KDE) — same spirit, rebuilt with
 pyinfra instead of Ansible, and Mint/apt instead of Fedora/dnf.
