@@ -1,6 +1,6 @@
 """Service name resolution - systemd unit names sometimes differ by package manager
 (e.g. ssh/sshd). Add new Service members here as new services need distro-aware names;
-everything else in the codebase should call service_name(), never hardcode a unit name.
+everything else in the codebase should call get_service_name(), never hardcode a unit name.
 """
 
 from enum import Enum
@@ -18,5 +18,5 @@ SERVICE_NAMES: dict[PackageManager, dict[Service, str]] = {
 }
 
 
-def service_name(service: Service) -> str:
+def get_service_name(service: Service) -> str:
     return SERVICE_NAMES[package_manager()][service]

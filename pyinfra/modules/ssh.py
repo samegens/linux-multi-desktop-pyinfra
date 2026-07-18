@@ -14,7 +14,7 @@ from pyinfra.operations import files, server
 import pkgmgr
 import secrets_data
 import vault
-from services import Service, service_name
+from services import Service, get_service_name
 
 
 @deploy("Configure SSH")
@@ -55,7 +55,7 @@ def deploy_ssh():
 
     server.service(
         name="Enable ssh service",
-        service=service_name(Service.SSH),
+        service=get_service_name(Service.SSH),
         running=True,
         enabled=True,
     )
