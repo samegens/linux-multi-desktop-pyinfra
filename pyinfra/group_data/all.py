@@ -11,9 +11,9 @@ git_user_email = "sebastiaan@blauwe-lucht.nl"
 desktop_environment = None
 
 # Only pkgmgr.py switches on this directly - everything else (package installs, service
-# names) switches on PackageManager instead, via pkgmgr.package_manager(). Leave unset
-# (None) on any host until its distro is deliberately decided - pkgmgr.py fails loudly
-# instead of guessing.
+# names, config paths) switches on PackageManager instead, via pkgmgr.get_package_manager().
+# Leave unset (None) on any host until its distro is deliberately decided - get_distro()
+# fails loudly instead of guessing.
 distro: Distro | None = None
 
 starship_version = "v1.23.0"

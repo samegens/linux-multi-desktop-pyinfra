@@ -1,7 +1,14 @@
 """Package-manager dispatch (apt/dnf) and the Distro -> PackageManager mapping. This is the
-only file that should ever switch on Distro directly - everything else (here and in
-services.py) switches on PackageManager, so adding a new apt- or dnf-based distro is a
-one-line addition to DISTRO_PACKAGE_MANAGERS and nothing else.
+only file that should ever switch on Distro directly - everything else (here, in
+services.py, in paths.py) switches on PackageManager instead, so adding a new apt- or
+dnf-based distro is a one-line addition to DISTRO_PACKAGE_MANAGERS and nothing else.
+
+PackageManager here means "repository/packaging ecosystem" (Debian's apt archives vs
+Fedora/RHEL's dnf/rpm archives), not literally "which CLI binary runs install" - package
+names, systemd unit names, and packaged config-file paths (see services.py, paths.py) are
+all baked into the specific package as built for a given archive, so any distro pulling from
+the same archive family shares the same answer. That's why PackageManager is the right
+dispatch key for all of them, not just installs.
 
 Not named distro.py: pyinfra itself depends on the third-party `distro` PyPI package, and a
 local pyinfra/distro.py would shadow it for anything run from this directory - the same class
@@ -38,18 +45,24 @@ DISTRO_PACKAGE_MANAGERS: dict[Distro, PackageManager] = {
 # dnf-based distro calls it the same thing), not a per-distro one. Verify with
 # `dnf info <name>` / `apt-cache policy <name>` before adding an entry - don't guess.
 PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
-    PackageManager.DNF: {},
+    PackageManager.DNF: {
+        "fonts-powerline": "powerline-fonts",
+    },
 }
 
 
-def package_manager() -> PackageManager:
-    distro = host.data.distro
-    if distro is None:
+def get_distro() -> Distro:
+    configured_distro = host.data.distro
+    if configured_distro is None:
         raise ValueError(
             "host.data.distro is unset - set it in pyinfra/group_data/<host>.py "
             "before deploying to this host"
         )
-    return DISTRO_PACKAGE_MANAGERS[distro]
+    return configured_distro
+
+
+def get_package_manager() -> PackageManager:
+    return DISTRO_PACKAGE_MANAGERS[get_distro()]
 
 
 def resolve_package_names(pm: PackageManager, packages: list[str]) -> list[str]:
@@ -60,7 +73,7 @@ def resolve_package_names(pm: PackageManager, packages: list[str]) -> list[str]:
 
 
 def install(name: str, packages: list[str]):
-    pm = package_manager()
+    pm = get_package_manager()
     resolved = resolve_package_names(pm, packages)
     match pm:
         case PackageManager.APT:
@@ -77,7 +90,7 @@ def update_cache(name: str):
     dnf.packages(update=True)) is NOT the dnf analog of apt.update() - it runs a full
     `dnf update -y` system upgrade. Never wire that in here by "obvious" analogy - on
     localhost that would trigger an unintended full-system upgrade on a real machine."""
-    pm = package_manager()
+    pm = get_package_manager()
     match pm:
         case PackageManager.APT:
             apt.update(name=name, cache_time=3600)
@@ -90,7 +103,7 @@ def update_cache(name: str):
 def ensure_en_us_locale(name: str):
     """The only locale this repo manages is en_US.UTF-8 (see modules/base.py) - not
     generalized to arbitrary locales since nothing here needs that yet."""
-    pm = package_manager()
+    pm = get_package_manager()
     match pm:
         case PackageManager.DNF:
             # No locale-gen on Fedora - installing the langpack makes the locale

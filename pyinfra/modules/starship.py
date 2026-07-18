@@ -3,7 +3,10 @@
 from pyinfra.context import host
 from pyinfra.api.deploy import deploy
 from pyinfra.facts.server import Arch
-from pyinfra.operations import apt, files
+from pyinfra.operations import files
+
+import pkgmgr
+from paths import SystemPath, get_system_path
 
 ARCH_MAP = {
     "x86_64": "x86_64",
@@ -13,7 +16,7 @@ ARCH_MAP = {
 
 @deploy("Install and configure Starship")
 def deploy_starship():
-    apt.packages(name="Install powerline fonts", packages=["fonts-powerline"], present=True)
+    pkgmgr.install(name="Install powerline fonts", packages=["fonts-powerline"])
 
     files.put(
         name="Copy starship config",
@@ -39,7 +42,7 @@ def deploy_starship():
 
     files.block(
         name="Configure Starship prompt for all users",
-        path="/etc/bash.bashrc",
+        path=get_system_path(SystemPath.SYSTEM_BASHRC),
         content='export STARSHIP_CONFIG=/etc/starship.toml\neval "$(starship init bash)"',
         marker="# {mark} PYINFRA MANAGED BLOCK - STARSHIP",
     )
