@@ -9,17 +9,19 @@ from io import BytesIO
 
 from pyinfra.context import host
 from pyinfra.api.deploy import deploy
-from pyinfra.operations import apt, files, server
+from pyinfra.operations import files, server
 
+import pkgmgr
 import secrets_data
 import vault
+from services import Service, service_name
 
 
 @deploy("Configure SSH")
 def deploy_ssh():
     username = host.data.username
 
-    apt.packages(name="Install openssh-server", packages=["openssh-server"], present=True)
+    pkgmgr.install(name="Install openssh-server", packages=["openssh-server"])
 
     files.directory(
         name="Create ~/.ssh",
@@ -53,7 +55,7 @@ def deploy_ssh():
 
     server.service(
         name="Enable ssh service",
-        service="ssh",
+        service=service_name(Service.SSH),
         running=True,
         enabled=True,
     )

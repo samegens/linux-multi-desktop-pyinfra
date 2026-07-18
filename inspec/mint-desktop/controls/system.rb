@@ -2,12 +2,12 @@ username = input('username')
 
 # Services
 
-['ssh'].each do |svc|
-  control "#{svc} service is enabled and running" do
-    describe service(svc) do
-      it { should be_enabled }
-      it { should be_running }
-    end
+ssh_service_name = os.debian? ? 'ssh' : 'sshd'
+
+control "#{ssh_service_name} service is enabled and running" do
+  describe service(ssh_service_name) do
+    it { should be_enabled }
+    it { should be_running }
   end
 end
 
