@@ -5,6 +5,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 PYTHON="${PYTHON:-$HOME/python3-venv/pyinfra-latest/bin/python3}"
+# Resolve to an absolute path - pyright's --pythonpath needs a real file path, not a bare
+# command name. $PYTHON is always absolute when the default above is used, but CI overrides
+# it to the bare command "python3", which pyright can't resolve on its own.
+PYTHON="$(command -v "$PYTHON")"
 
 echo "==> pyright (pyinfra/)"
 "$PYTHON" -m pip install -q pyright
