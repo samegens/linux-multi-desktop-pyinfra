@@ -1,1 +1,5 @@
-"""Per-host overrides for raaf. Empty for now."""
+"""Per-host overrides for raaf."""
+
+from pkgmgr import Distro
+
+distro = Distro.UBUNTU

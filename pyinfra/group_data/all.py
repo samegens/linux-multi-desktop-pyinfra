@@ -1,5 +1,7 @@
 """Shared vars for every host."""
 
+from pkgmgr import Distro
+
 username = "sebastiaan"
 git_user_name = "Sebastiaan"
 git_user_email = "sebastiaan@blauwe-lucht.nl"
@@ -8,6 +10,12 @@ git_user_email = "sebastiaan@blauwe-lucht.nl"
 # desktop environment is picked.
 desktop_environment = None
 
+# Only pkgmgr.py switches on this directly - everything else (package installs, service
+# names) switches on PackageManager instead, via pkgmgr.package_manager(). Leave unset
+# (None) on any host until its distro is deliberately decided - pkgmgr.py fails loudly
+# instead of guessing.
+distro: Distro | None = None
+
 starship_version = "v1.23.0"
 go_version = "1.26.3"
 
@@ -15,7 +23,7 @@ go_version = "1.26.3"
 cinc_auditor_version = "7.1.7"
 ubuntu_release = "22.04"
 
-apt_packages = [
+packages = [
     "byobu",
     "vim",
     "keepassxc",

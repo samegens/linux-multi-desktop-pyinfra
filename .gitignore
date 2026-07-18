@@ -13,3 +13,6 @@ __pycache__
 
 # Claude local config
 **/.claude/settings.local.json
+
+# All log files
+*.log

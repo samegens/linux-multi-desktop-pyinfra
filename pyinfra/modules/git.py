@@ -2,12 +2,14 @@
 
 from pyinfra.context import host
 from pyinfra.api.deploy import deploy
-from pyinfra.operations import apt, git
+from pyinfra.operations import git
+
+import pkgmgr
 
 
 @deploy("Configure git")
 def deploy_git():
-    apt.packages(name="Install git", packages=["git"], present=True)
+    pkgmgr.install(name="Install git", packages=["git"])
 
     # git normalizes variable names to lowercase in its own storage, and the GitConfig
     # fact reads them back that way - mixed-case keys here would never match, so config
