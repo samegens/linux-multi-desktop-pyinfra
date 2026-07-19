@@ -80,11 +80,12 @@ assumed — see gotchas).
 
 README.md's **Scope** section is the source of truth for ported vs. deferred — keep it in sync.
 Done and verified (idempotent + Inspec-covered, both Mint and Fedora): `base`, `git`, `ssh`,
-`bashrc`, `starship`, `go`.
+`bashrc`, `starship`, `go`, `rust`.
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
-immediately after Mint each time, don't leave a module Mint-only: `rust`, `nodejs`, `docker`,
+immediately after Mint each time, don't leave a module Mint-only: `nodejs`, `docker`,
 `vscode`, `python_venv`, `cinc_auditor`, `desktop` placeholder. Wrapper scripts also outstanding.
+`k3s` added to the end of this queue (developer/k3s-experiment-station goal) once the above land.
 
 ## Layout
 

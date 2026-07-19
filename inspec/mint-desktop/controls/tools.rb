@@ -155,20 +155,23 @@ control "go is installed and working" do
   end
 end
 
-# TODO: uncomment once modules/rust.py is built
-# control "rustc is installed and working" do
-#   describe file("/home/#{input('username')}/.cargo/bin/rustc") do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
-#
-# control "cargo is installed and working" do
-#   describe file("/home/#{input('username')}/.cargo/bin/cargo") do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "rustc is installed and working" do
+  describe file("/home/#{input('username')}/.cargo/bin/rustc") do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command("/home/#{input('username')}/.cargo/bin/rustc --version") do
+    its('stdout') { should match /^rustc/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "cargo is installed and working" do
+  describe file("/home/#{input('username')}/.cargo/bin/cargo") do
+    it { should exist }
+    it { should be_executable }
+  end
+end
 
 # TODO: uncomment once a p4merge module is built (deferred, see README backlog)
 # control "p4merge is installed and working" do

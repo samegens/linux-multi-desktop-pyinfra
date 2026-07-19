@@ -45,13 +45,13 @@ instead of Ansible.
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
-git, SSH, bashrc/dotfiles, starship, Go — all verified idempotent on both Mint (`remote` test VM) and
-Fedora (`localhost`).
+git, SSH, bashrc/dotfiles, starship, Go, Rust — all verified idempotent on both Mint (`remote` test VM)
+and Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
 still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
 
-Still to come, same lean-core list, one module + Inspec control at a time: Rust, Node.js, Docker,
+Still to come, same lean-core list, one module + Inspec control at a time: Node.js, Docker,
 VS Code, Python venv bootstrap, Cinc Auditor, desktop-environment placeholder.
 
 Deliberately not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
