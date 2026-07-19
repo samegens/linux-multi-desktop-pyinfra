@@ -71,11 +71,8 @@ end
 # Locale
 
 control "locale is set to en_US.UTF-8" do
-  # /etc/default/locale is a symlink to ../locale.conf on this (systemd-style) layout -
-  # modules/base.py writes the real underlying file, see the comment there.
-  describe file('/etc/locale.conf') do
-    it { should exist }
-    its('content') { should match /LANG=en_US\.UTF-8/ }
+  describe command('localectl status') do
+    its('stdout') { should match /LANG=en_US\.UTF-8/ }
   end
 end
 

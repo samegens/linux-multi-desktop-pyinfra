@@ -47,6 +47,8 @@ DISTRO_PACKAGE_MANAGERS: dict[Distro, PackageManager] = {
 PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
     PackageManager.DNF: {
         "fonts-powerline": "powerline-fonts",
+        "smbclient": "samba-client",
+        "imagemagick": "ImageMagick",
     },
 }
 
@@ -100,20 +102,57 @@ def update_cache(name: str):
             assert_never(pm)
 
 
+def get_en_us_locale_content() -> str:
+    """Locale file content, matching each package manager's own native convention - Debian's
+    tooling (locale-gen) expects the full LC_* block; Fedora's own localectl/anaconda
+    convention is a single quoted LANG line. Both ultimately land in /etc/locale.conf -
+    systemd's real locale file on both distros (Mint's traditional /etc/default/locale is
+    just a symlink to it, see modules/base.py) - so only the content format needs to vary,
+    not the destination. The only locale this repo manages is en_US.UTF-8 - not generalized
+    to arbitrary locales since nothing here needs that yet."""
+    pm = get_package_manager()
+    match pm:
+        case PackageManager.APT:
+            return (
+                "LANG=en_US.UTF-8\n"
+                "LC_NUMERIC=en_US.UTF-8\n"
+                "LC_TIME=en_US.UTF-8\n"
+                "LC_MONETARY=en_US.UTF-8\n"
+                "LC_PAPER=en_US.UTF-8\n"
+                "LC_NAME=en_US.UTF-8\n"
+                "LC_ADDRESS=en_US.UTF-8\n"
+                "LC_TELEPHONE=en_US.UTF-8\n"
+                "LC_MEASUREMENT=en_US.UTF-8\n"
+                "LC_IDENTIFICATION=en_US.UTF-8\n"
+            )
+        case PackageManager.DNF:
+            return 'LANG="en_US.UTF-8"\n'
+        case _:
+            assert_never(pm)
+
+
 def ensure_en_us_locale(name: str):
     """The only locale this repo manages is en_US.UTF-8 (see modules/base.py) - not
-    generalized to arbitrary locales since nothing here needs that yet."""
+    generalized to arbitrary locales since nothing here needs that yet.
+
+    Checks the actual behavior first (locale -a) rather than a package-manager-specific
+    proxy for it. Verified on a real Fedora machine: en_US.utf8 was already listed (and
+    functional - `LANG=en_US.UTF-8 locale charmap` returned UTF-8 cleanly) with
+    glibc-langpack-en not installed, so checking for that package instead of the actual
+    locale would report a change that doesn't correspond to anything actually missing.
+    Still correctly falls through to installing it on a genuinely fresh Fedora machine
+    where the locale isn't already available.
+    """
+    existing_locales = host.get_fact(Command, command="locale -a")
+    if existing_locales and "en_US.utf8" in existing_locales:
+        host.noop("en_US.UTF-8 locale is already generated")
+        return
+
     pm = get_package_manager()
     match pm:
         case PackageManager.DNF:
-            # No locale-gen on Fedora - installing the langpack makes the locale
-            # available directly; install()'s present=True check is already idempotent.
             install(name=name, packages=["glibc-langpack-en"])
         case PackageManager.APT:
-            existing_locales = host.get_fact(Command, command="locale -a")
-            if existing_locales and "en_US.utf8" in existing_locales:
-                host.noop("en_US.UTF-8 locale is already generated")
-            else:
-                server.shell(name=name, commands=["locale-gen en_US.UTF-8"])
+            server.shell(name=name, commands=["locale-gen en_US.UTF-8"])
         case _:
             assert_never(pm)
