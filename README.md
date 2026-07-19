@@ -3,13 +3,18 @@
 [![CI](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml)
 [![Secret Detection](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml/badge.svg)](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml)
 
-pyinfra deploy that automates Sebastiaan's Linux Mint desktop setup and configuration.
-Sibling of [`fedora-desktop`](../fedora-desktop) (Ansible/Fedora KDE) — same spirit, rebuilt with
-pyinfra instead of Ansible, and Mint/apt instead of Fedora/dnf.
+pyinfra deploy that automates Sebastiaan's Linux desktop setup and configuration, targeting both
+Linux Mint (apt) and Fedora (dnf) from a single codebase. Sibling of
+[`fedora-desktop`](../fedora-desktop) (Ansible/Fedora KDE) — same spirit, rebuilt with pyinfra
+instead of Ansible.
 
 ## Features
 
 - lean core deploy, one module per feature under `pyinfra/modules/`
+- targets both Mint/apt and Fedora/dnf — `pyinfra/pkgmgr.py` dispatches package
+  installs/names/service names/config-file-path differences on `PackageManager`, keyed from a
+  `Distro → PackageManager` mapping; adding a distro that shares an existing package manager
+  (e.g. Ubuntu, already added) is a one-line addition to that mapping
 - desktop-environment module is swappable (`pyinfra/modules/desktop/`) — Cinnamon/KDE/Xfce placeholders,
   filled in once the target desktop environment is decided
 - secrets (SSH keys, tokens) kept in a sibling `desktop-secrets` directory as `privy`-encrypted Python
@@ -40,7 +45,11 @@ pyinfra instead of Ansible, and Mint/apt instead of Fedora/dnf.
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
-git, SSH, bashrc/dotfiles, starship, Go.
+git, SSH, bashrc/dotfiles, starship, Go — all verified idempotent on both Mint (`remote` test VM) and
+Fedora (`localhost`).
+
+Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
+still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
 
 Still to come, same lean-core list, one module + Inspec control at a time: Rust, Node.js, Docker,
 VS Code, Python venv bootstrap, Cinc Auditor, desktop-environment placeholder.
