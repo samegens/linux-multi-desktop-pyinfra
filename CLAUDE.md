@@ -40,6 +40,7 @@ built** — don't assume they exist.
   package-manager abstraction generalizes to a third distro for free.
 
 **Per-module dev loop** (one module at a time):
+
 1. Write/port `pyinfra/modules/x.py`. Route any apt/dnf-specific fact through
    `pkgmgr.py`/`services.py`/`paths.py` — `modules/*.py` itself must never branch on
    `host.data.distro`.
