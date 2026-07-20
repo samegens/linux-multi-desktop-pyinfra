@@ -41,14 +41,15 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
-git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files) — all
-verified idempotent on both Mint (`remote` test VM) and Fedora (`localhost`).
+git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
+venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`) — all verified idempotent on
+both Mint (`remote` test VM) and Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
 still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
 
 Still to come, same lean-core list, one module + Inspec control at a time: Node.js, Docker,
-Python venv bootstrap, Cinc Auditor, desktop-environment placeholder.
+Cinc Auditor, desktop-environment placeholder.
 
 Also planned, as its own separate module (split out of `vscode.py` - see its docstring): a
 PowerShell/.NET SDK module that properly resolves the Fedora/Microsoft `dotnet-sdk-8.0` package

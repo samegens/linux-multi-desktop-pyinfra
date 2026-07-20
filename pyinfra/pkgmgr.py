@@ -22,17 +22,14 @@ from pyinfra.context import host
 from pyinfra.facts.server import Command
 from pyinfra.operations import apt, dnf, server
 
-
 class Distro(Enum):
     MINT = "mint"
     FEDORA = "fedora"
     UBUNTU = "ubuntu"
 
-
 class PackageManager(Enum):
     APT = "apt"
     DNF = "dnf"
-
 
 DISTRO_PACKAGE_MANAGERS: dict[Distro, PackageManager] = {
     Distro.MINT: PackageManager.APT,
@@ -52,6 +49,14 @@ PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
     },
 }
 
+# python3 -m venv needs python3-venv on apt (Debian splits it out of the base python3
+# package, confirmed via prepare.sh's existing bootstrap). Fedora's python3 package bundles
+# the venv module already (confirmed live: `python3 -m venv` works out of the box on a stock
+# Fedora install), so only pip needs installing explicitly there.
+VENV_PREREQUISITE_PACKAGES: dict[PackageManager, list[str]] = {
+    PackageManager.APT: ["python3-venv", "python3-pip"],
+    PackageManager.DNF: ["python3-pip"],
+}
 
 def get_distro() -> Distro:
     configured_distro = host.data.distro
@@ -62,17 +67,14 @@ def get_distro() -> Distro:
         )
     return configured_distro
 
-
 def get_package_manager() -> PackageManager:
     return DISTRO_PACKAGE_MANAGERS[get_distro()]
-
 
 def resolve_package_names(pm: PackageManager, packages: list[str]) -> list[str]:
     """Pure name-resolution logic, pulled out of install() so it's unit-testable without a
     live pyinfra host context (no host.data.distro, no apt/dnf operations involved)."""
     overrides = PACKAGE_NAME_OVERRIDES.get(pm, {})
     return [overrides.get(p, p) for p in packages]
-
 
 def install(name: str, packages: list[str]):
     pm = get_package_manager()
@@ -85,6 +87,14 @@ def install(name: str, packages: list[str]):
         case _:
             assert_never(pm)
 
+def get_venv_prerequisite_packages(pm: PackageManager) -> list[str]:
+    """Pure lookup, pulled out of install_venv_prerequisites() so it's unit-testable without a
+    live host context, same as resolve_package_names()."""
+    return VENV_PREREQUISITE_PACKAGES[pm]
+
+def install_venv_prerequisites(name: str):
+    pm = get_package_manager()
+    install(name=name, packages=get_venv_prerequisite_packages(pm))
 
 def update_cache(name: str):
     """No-op under dnf - it refreshes stale metadata itself on every install, unlike apt
@@ -100,7 +110,6 @@ def update_cache(name: str):
             host.noop("dnf refreshes its own metadata cache automatically")
         case _:
             assert_never(pm)
-
 
 def get_en_us_locale_content() -> str:
     """Locale file content, matching each package manager's own native convention - Debian's
@@ -130,7 +139,6 @@ def get_en_us_locale_content() -> str:
         case _:
             assert_never(pm)
 
-
 def ensure_en_us_locale(name: str):
     """The only locale this repo manages is en_US.UTF-8 (see modules/base.py) - not
     generalized to arbitrary locales since nothing here needs that yet.
@@ -143,7 +151,7 @@ def ensure_en_us_locale(name: str):
     Still correctly falls through to installing it on a genuinely fresh Fedora machine
     where the locale isn't already available.
     """
-    existing_locales = host.get_fact(Command, command="locale -a")
+    existing_locales = host.get_fact(Command, command="locale -a") # pyright: ignore[reportUnknownMemberType]
     if existing_locales and "en_US.utf8" in existing_locales:
         host.noop("en_US.UTF-8 locale is already generated")
         return

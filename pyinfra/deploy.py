@@ -16,3 +16,4 @@ import modules.starship  # pyright: ignore
 import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
 import modules.vscode  # pyright: ignore
+import modules.python_venv  # pyright: ignore

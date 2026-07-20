@@ -83,11 +83,12 @@ README.md's **Scope** section is the source of truth for ported vs. deferred —
 Done and verified (idempotent + Inspec-covered, both Mint and Fedora): `base`, `git`, `ssh`,
 `bashrc`, `starship`, `go`, `rust`, `vscode` (editor, extensions, config files - PowerShell/.NET
 SDK deliberately excluded, see `pyinfra/modules/vscode.py`'s docstring for the Fedora/Microsoft
-dotnet-sdk-8.0 package name collision that made it too risky for this pass).
+dotnet-sdk-8.0 package name collision that made it too risky for this pass), `python_venv`
+(`~/python3-venv/*`.
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`, `docker`,
-`python_venv`, `cinc_auditor`, `desktop` placeholder, then a dedicated PowerShell/.NET SDK
+`cinc_auditor`, `desktop` placeholder, then a dedicated PowerShell/.NET SDK
 module (split out of `vscode.py` - needs section-aware edits to Fedora's own
 `fedora.repo`/`fedora-updates.repo` to resolve the `dotnet-sdk-8.0` name collision, not the
 global-exclude approach that broke installs under dnf5). Wrapper scripts also outstanding.

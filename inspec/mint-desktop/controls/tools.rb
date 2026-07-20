@@ -219,6 +219,27 @@ end
 #   end
 # end
 
+# bin/activate existing proves the venv itself
+# was created, and `pip show` on one representative package per venv proves installs landed in
+# that venv (not the system Python).
+{
+  "pyinfra-latest" => "pyinfra",
+  "ansible-latest" => "ansible",
+  "blauwe-lucht-rpa" => "rpa",
+  "ansible-homedisplay" => "ansible",
+}.each do |venv_name, sample_package|
+  control "#{venv_name} venv is set up and working" do
+    username = input('username')
+    venv = "/home/#{username}/python3-venv/#{venv_name}"
+    describe file("#{venv}/bin/activate") do
+      it { should exist }
+    end
+    describe command("#{venv}/bin/pip show #{sample_package}") do
+      its('exit_status') { should eq 0 }
+    end
+  end
+end
+
 # TODO: uncomment once modules/nodejs.py is built
 # control "Node.js version is >= 20" do
 #   describe command('node --version') do
