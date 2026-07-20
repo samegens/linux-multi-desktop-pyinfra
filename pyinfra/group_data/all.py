@@ -23,6 +23,32 @@ go_version = "1.26.3"
 cinc_auditor_version = "7.1.7"
 ubuntu_release = "22.04"
 
+vscode_extensions = [
+    "redhat.ansible",
+    "redhat.vscode-yaml",
+    "yzhang.markdown-all-in-one",
+    "mhutchie.git-graph",
+    "ms-dotnettools.csdevkit",
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.cpptools-extension-pack",
+    "ms-vscode.cmake-tools",
+    "ms-python.python",
+    "blauwelucht.ansible-go-to-definition",
+    "rust-lang.rust-analyzer",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "hediet.vscode-drawio",
+    "edgardmessias.clipboard-manager",
+    "dbaeumer.vscode-eslint",
+    "davidanson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
+    "docker.docker",
+    "tomoki1207.pdf",
+    "platformio.platformio-ide",
+    "github.vscode-github-actions",
+]
+
 packages = [
     "byobu",
     "vim",

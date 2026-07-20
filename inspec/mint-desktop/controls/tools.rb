@@ -136,9 +136,47 @@ end
 
 # Development tools
 
-# TODO: uncomment once modules/vscode.py is built
-# control "vscode is installed and working" do
-#   describe file('/usr/bin/code') do
+control "vscode is installed and working" do
+  describe file('/usr/bin/code') do
+    it { should exist }
+    it { should be_executable }
+  end
+end
+
+control "vscode config files are in place" do
+  username = input('username')
+  describe file("/home/#{username}/.config/Code/User/settings.json") do
+    it { should exist }
+  end
+  describe file("/home/#{username}/.config/Code/User/keybindings.json") do
+    it { should exist }
+  end
+  describe file("/home/#{username}/.config/Code/User/snippets/csharp.json") do
+    it { should exist }
+  end
+end
+
+control "vscode extensions are installed" do
+  describe command("code --list-extensions") do
+    its('stdout') { should match /ms-python\.python/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+# TODO: uncomment once a dedicated PowerShell/.NET SDK module is built - see modules/vscode.py's
+# docstring for why it's not part of that module (Fedora/Microsoft dotnet-sdk-8.0 name collision).
+# control "dotnet is installed and working" do
+#   describe file('/usr/bin/dotnet') do
+#     it { should exist }
+#     it { should be_executable }
+#   end
+#   describe command('dotnet --version') do
+#     its('exit_status') { should eq 0 }
+#   end
+# end
+#
+# control "powershell is installed and working" do
+#   describe file('/usr/bin/pwsh') do
 #     it { should exist }
 #     it { should be_executable }
 #   end

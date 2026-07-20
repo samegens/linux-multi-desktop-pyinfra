@@ -1,0 +1,100 @@
+{
+    "redhat.telemetry.enabled": false,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "git.confirmSync": false,
+    "files.associations": {
+        "**/defaults/**/*.yml": "jinja-yaml",
+        "**/group_vars/**/*": "jinja-yaml",
+        "**/host_vars/**/*": "jinja-yaml",
+        "**/vars/**/*.yml": "jinja-yaml",
+        "**/tasks/**/*.yml": "ansible",
+        "**/handlers/*.yml": "ansible",
+        "**/meta/*.yml": "ansible",
+        "**/roles/**/*.yml": "ansible",
+        "**/playbooks/**/*.yml": "ansible",
+        "**/ansible/**/hosts": "ini",
+        "**/ansible/**/inventory": "ini",
+        "ansible.cfg": "ini",
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "files.autoSave": "onFocusChange",
+    "powershell.pester.codeLens": false,
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.formatOnSave": true
+    },
+    "omnisharp.enableEditorConfigSupport": true,
+    "editor.suggest.insertMode": "replace",
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "git.openRepositoryInParentFolders": "never",
+    "ansible.validation.lint.path": "/home/sebastiaan/python3-venv/ansible-latest/bin/ansible-lint",
+    "hediet.vscode-drawio.resizeImages": null,
+    "bicep.enableSurveys": false,
+    "editor.stickyScroll.enabled": false,
+    "workbench.activityBar.location": "top",
+    "window.customTitleBarVisibility": "auto",
+    "git.ignoreMissingGitWarning": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "prettier.tabWidth": 4,
+    "workbench.colorTheme": "Visual Studio Light",
+    "vs-kubernetes": {
+        "vscode-kubernetes.helm-path-linux": "/home/sebastiaan/.local/state/vs-kubernetes/tools/helm/linux-amd64/helm",
+        "vscode-kubernetes.minikube-path-linux": "/home/sebastiaan/.local/state/vs-kubernetes/tools/minikube/linux-amd64/minikube",
+        "vs-kubernetes.minikube-show-information-expiration": "2026-05-01T14:30:36.502Z",
+        "vs-kubernetes.crd-code-completion": "enabled"
+    },
+    "remote.autoForwardPortsSource": "hybrid",
+    "cmake.pinnedCommands": [
+        "workbench.action.tasks.configureTaskRunner",
+        "workbench.action.tasks.runTask"
+    ],
+    "cmake.showOptionsMovedNotification": false,
+    "ansible.lightspeed.suggestions.enabled": false,
+    "docker.extension.enableComposeLanguageServer": false,
+    "ansible.python.interpreterPath": "/home/sebastiaan/python3-venv/ansible-latest/bin/python3",
+    "editor.formatOnSave": true,
+    "github.copilot.enable": {
+        "*": false
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        },
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "powershell.promptToUpdatePowerShell": false,
+    "workbench.startupEditor": "none",
+    "ansible.lightspeed.enabled": false,
+    "git.autofetch": true,
+    "clipboard-manager.snippet.enabled": false,
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "terminal.integrated.initialHint": false,
+    "terminal.integrated.stickyScroll.enabled": false,
+    "yaml.disableSchemaDetection": [
+        "**/.github/workflows/*.yml",
+        "**/.github/workflows/*.yaml",
+        "**/.gitea/workflows/*.yml",
+        "**/.gitea/workflows/*.yaml",
+        "**/.forgejo/workflows/*.yml",
+        "**/.forgejo/workflows/*.yaml"
+    ]
+}
