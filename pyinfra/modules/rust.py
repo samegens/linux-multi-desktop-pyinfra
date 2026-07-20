@@ -1,7 +1,7 @@
-"""Rust toolchain (rustup) - distro-agnostic, doesn't route through pkgmgr."""
+"""Rust toolchain (rustup)."""
 
 from pyinfra.context import host
-from pyinfra.api.deploy import deploy
+from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.facts.server import Command
 from pyinfra.operations import files, server
 
@@ -10,7 +10,7 @@ def deploy_rust():
     username = host.data.username
     cargo_bin = f"/home/{username}/.cargo/bin"
 
-    is_installed = host.get_fact(
+    is_installed = host.get_fact( # pyright: ignore[reportUnknownMemberType]
         Command,
         command=f"{cargo_bin}/rustc --version 2>/dev/null || true",
         _sudo_user=username,
