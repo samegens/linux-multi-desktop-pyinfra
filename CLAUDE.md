@@ -190,3 +190,4 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
 - When testing the result of a deploy, modify and run the Cinc Auditor scripts.
 - Only comment why something is done, keep it succinct, only document what is actually necessary, don't explain yourself.
 - When running multiple commands in sequence, before each give a short explanation why you're going to run it.
+- When writing unit tests and using mock, put all mock setup in the Arrange section.

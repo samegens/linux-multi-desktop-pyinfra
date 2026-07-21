@@ -127,27 +127,54 @@ end
 
 # Kubernetes tools
 
-# TODO: uncomment once k3s/k9s/helm modules are built (deferred, see README backlog)
-# control "k3s is installed and working" do
-#   describe file('/usr/local/bin/k3s') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
-#
-# control "k9s is installed and working" do
-#   describe file('/usr/local/bin/k9s') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
-#
-# control "helm is installed and working" do
-#   describe file('/usr/local/bin/helm') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "k3s is installed and working" do
+  describe file('/usr/local/bin/k3s') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('k3s --version') do
+    its('stdout') { should match /^k3s version/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "k3s service is enabled and running" do
+  describe service('k3s') do
+    it { should be_enabled }
+    it { should be_running }
+  end
+end
+
+control "k3s kubeconfig is world-readable" do
+  describe file('/etc/rancher/k3s/k3s.yaml') do
+    it { should exist }
+    its('mode') { should cmp '0644' }
+  end
+end
+
+control "k9s is installed and working" do
+  describe file('/usr/local/bin/k9s') do
+    it { should exist }
+    it { should be_executable }
+    it { should be_symlink }
+    its('link_path') { should match %r{^/opt/k9s-} }
+  end
+  describe command('k9s version --short') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "helm is installed and working" do
+  describe file('/usr/local/bin/helm') do
+    it { should exist }
+    it { should be_executable }
+    it { should be_symlink }
+    its('link_path') { should match %r{^/opt/helm-} }
+  end
+  describe command('helm version --short') do
+    its('exit_status') { should eq 0 }
+  end
+end
 
 # Development tools
 
