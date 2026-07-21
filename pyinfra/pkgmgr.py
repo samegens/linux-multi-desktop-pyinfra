@@ -58,6 +58,35 @@ VENV_PREREQUISITE_PACKAGES: dict[PackageManager, list[str]] = {
     PackageManager.DNF: ["python3-pip"],
 }
 
+# Ubuntu codename -> numeric release, for apt-archive download URLs that are versioned
+# numerically (e.g. downloads.cinc.sh) rather than by codename. Public/stable Ubuntu release
+# data, not something that needs live verification per host - unlike PACKAGE_NAME_OVERRIDES.
+UBUNTU_CODENAME_TO_RELEASE: dict[str, str] = {
+    "resolute": "26.04",
+    "noble": "24.04",
+    "jammy": "22.04",
+}
+
+def get_ubuntu_release() -> str:
+    """The Ubuntu release a host's apt archive actually matches - NOT the host's own version
+    number. For Ubuntu itself that's its own codename; for a derivative like Mint it's
+    UBUNTU_CODENAME from /etc/os-release, which can differ a lot from the derivative's own
+    version (confirmed live: Mint 22.3 reports UBUNTU_CODENAME=noble, i.e. Ubuntu 24.04)."""
+    line = host.get_fact( # pyright: ignore[reportUnknownMemberType]
+        Command,
+        command=(
+            "grep -h '^UBUNTU_CODENAME=' /etc/os-release "
+            "|| grep -h '^VERSION_CODENAME=' /etc/os-release"
+        ),
+    )
+    codename = line.split("=", 1)[1].strip().strip('"') if line else None
+    if codename not in UBUNTU_CODENAME_TO_RELEASE:
+        raise ValueError(
+            f"Unknown Ubuntu codename {codename!r} - add it to UBUNTU_CODENAME_TO_RELEASE "
+            "in pkgmgr.py"
+        )
+    return UBUNTU_CODENAME_TO_RELEASE[codename]
+
 def get_distro() -> Distro:
     configured_distro = host.data.distro
     if configured_distro is None:

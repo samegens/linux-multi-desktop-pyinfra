@@ -47,13 +47,16 @@ end
 #   end
 # end
 
-# TODO: uncomment once modules/cinc_auditor.py is built
-# control "cinc-auditor is installed and working" do
-#   describe file('/opt/cinc-auditor/bin/cinc-auditor') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "cinc-auditor is installed and working" do
+  describe file('/opt/cinc-auditor/bin/cinc-auditor') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('cinc-auditor --version') do
+    its('stdout') { should match /^7\.1\.7/ }
+    its('exit_status') { should eq 0 }
+  end
+end
 
 # CLI tools
 

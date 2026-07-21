@@ -84,11 +84,21 @@ Done and verified (idempotent + Inspec-covered, both Mint and Fedora): `base`, `
 `bashrc`, `starship`, `go`, `rust`, `vscode` (editor, extensions, config files - PowerShell/.NET
 SDK deliberately excluded, see `pyinfra/modules/vscode.py`'s docstring for the Fedora/Microsoft
 dotnet-sdk-8.0 package name collision that made it too risky for this pass), `python_venv`
-(`~/python3-venv/*`.
+(`~/python3-venv/*`, data-driven `VENVS` dict in `pyinfra/modules/python_venv.py` - ported all
+four venvs from `fedora-desktop/ansible/tasks/python-venv.yml`, not just this repo's own
+pyinfra-latest. Note: pyinfra's `pip.packages` is only idempotent for `==`-pinned versions - a
+`<`/`<=`/`>`/`>=` spec makes it look up the literal spec version against what's installed, never
+matches, and reinstalls every run; confirmed live against `remote`. Use an exact pin instead),
+`cinc_auditor` (branches on `PackageManager` directly like `vscode.py`, since
+downloads.cinc.sh has no distro repo - just a pinned-version rpm/deb per release. Also ports the
+docker-resource deprecation-regex fix from `fedora-desktop`'s Ansible task, and derives the apt
+side's Ubuntu release from a live fact rather than a hardcoded `group_data` var - a hardcoded
+`ubuntu_release = "22.04"` had gone stale unnoticed; Mint 22.3's `remote` VM actually reports
+`UBUNTU_CODENAME=noble` i.e. 24.04, see `pkgmgr.get_ubuntu_release()`'s docstring).
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`, `docker`,
-`cinc_auditor`, `desktop` placeholder, then a dedicated PowerShell/.NET SDK
+`desktop` placeholder, then a dedicated PowerShell/.NET SDK
 module (split out of `vscode.py` - needs section-aware edits to Fedora's own
 `fedora.repo`/`fedora-updates.repo` to resolve the `dotnet-sdk-8.0` name collision, not the
 global-exclude approach that broke installs under dnf5). Wrapper scripts also outstanding.

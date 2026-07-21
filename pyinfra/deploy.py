@@ -17,3 +17,4 @@ import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
 import modules.vscode  # pyright: ignore
 import modules.python_venv  # pyright: ignore
+import modules.cinc_auditor  # pyright: ignore
