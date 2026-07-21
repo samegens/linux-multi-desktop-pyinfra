@@ -184,3 +184,9 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
   module exists), confirm it fails, then write the pyinfra operations to make it pass. A clean "No
   Change" on the *second* run against a real target is the actual idempotency bar — see
   "Verification targets" above for the full dev loop.
+- Use one empty line to separate blocks (for example functions).
+- Use verb + noun(s) in function names.
+- Apply Single Responsibility Principle, Don't Repeat Yourself, Easier To Change, don't mix levels of abstractions, keep functions small.
+- When testing the result of a deploy, modify and run the Cinc Auditor scripts.
+- Only comment why something is done, keep it succinct, only document what is actually necessary, don't explain yourself.
+- When running multiple commands in sequence, before each give a short explanation why you're going to run it.
