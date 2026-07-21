@@ -58,6 +58,14 @@ VENV_PREREQUISITE_PACKAGES: dict[PackageManager, list[str]] = {
     PackageManager.DNF: ["python3-pip"],
 }
 
+# apt's arch naming differs from uname's Arch fact - needed by any module building an apt repo
+# line or .deb download URL itself (e.g. cinc_auditor.py, docker.py). dnf-side URLs use uname's
+# own "x86_64"/"aarch64" directly, no mapping needed there.
+DEB_ARCH_MAP: dict[str, str] = {
+    "x86_64": "amd64",
+    "aarch64": "arm64",
+}
+
 # Ubuntu codename -> numeric release, for apt-archive download URLs that are versioned
 # numerically (e.g. downloads.cinc.sh) rather than by codename. Public/stable Ubuntu release
 # data, not something that needs live verification per host - unlike PACKAGE_NAME_OVERRIDES.
@@ -67,11 +75,11 @@ UBUNTU_CODENAME_TO_RELEASE: dict[str, str] = {
     "jammy": "22.04",
 }
 
-def get_ubuntu_release() -> str:
-    """The Ubuntu release a host's apt archive actually matches - NOT the host's own version
-    number. For Ubuntu itself that's its own codename; for a derivative like Mint it's
-    UBUNTU_CODENAME from /etc/os-release, which can differ a lot from the derivative's own
-    version (confirmed live: Mint 22.3 reports UBUNTU_CODENAME=noble, i.e. Ubuntu 24.04)."""
+def get_ubuntu_codename() -> str:
+    """The Ubuntu codename a host's apt archive actually matches - NOT the host's own codename.
+    For Ubuntu itself that's its own codename; for a derivative like Mint it's UBUNTU_CODENAME
+    from /etc/os-release, which can differ a lot from the derivative's own codename (confirmed
+    live: Mint 22.3 "zena" reports UBUNTU_CODENAME=noble, i.e. Ubuntu 24.04)."""
     line = host.get_fact( # pyright: ignore[reportUnknownMemberType]
         Command,
         command=(
@@ -80,6 +88,17 @@ def get_ubuntu_release() -> str:
         ),
     )
     codename = line.split("=", 1)[1].strip().strip('"') if line else None
+    if not codename:
+        raise ValueError(
+            "Could not resolve an Ubuntu codename from /etc/os-release's "
+            "UBUNTU_CODENAME/VERSION_CODENAME"
+        )
+    return codename
+
+def get_ubuntu_release() -> str:
+    """The Ubuntu release a host's apt archive actually matches - NOT the host's own version
+    number."""
+    codename = get_ubuntu_codename()
     if codename not in UBUNTU_CODENAME_TO_RELEASE:
         raise ValueError(
             f"Unknown Ubuntu codename {codename!r} - add it to UBUNTU_CODENAME_TO_RELEASE "
@@ -105,14 +124,14 @@ def resolve_package_names(pm: PackageManager, packages: list[str]) -> list[str]:
     overrides = PACKAGE_NAME_OVERRIDES.get(pm, {})
     return [overrides.get(p, p) for p in packages]
 
-def install(name: str, packages: list[str]):
+def install(name: str, packages: list[str], present: bool = True):
     pm = get_package_manager()
     resolved = resolve_package_names(pm, packages)
     match pm:
         case PackageManager.APT:
-            apt.packages(name=name, packages=resolved, present=True)
+            apt.packages(name=name, packages=resolved, present=present)
         case PackageManager.DNF:
-            dnf.packages(name=name, packages=resolved, present=True)
+            dnf.packages(name=name, packages=resolved, present=present)
         case _:
             assert_never(pm)
 

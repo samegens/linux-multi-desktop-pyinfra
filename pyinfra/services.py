@@ -9,16 +9,14 @@ from enum import Enum
 
 from pkgmgr import PackageManager, get_package_manager
 
-
 class Service(Enum):
     SSH = "ssh"
-
+    DOCKER = "docker"
 
 SERVICE_NAMES: dict[PackageManager, dict[Service, str]] = {
-    PackageManager.APT: {Service.SSH: "ssh"},
-    PackageManager.DNF: {Service.SSH: "sshd"},
+    PackageManager.APT: {Service.SSH: "ssh", Service.DOCKER: "docker"},
+    PackageManager.DNF: {Service.SSH: "sshd", Service.DOCKER: "docker"},
 }
-
 
 def get_service_name(service: Service) -> str:
     return SERVICE_NAMES[get_package_manager()][service]

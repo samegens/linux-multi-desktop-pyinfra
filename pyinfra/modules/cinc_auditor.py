@@ -12,14 +12,7 @@ from pyinfra.facts.server import Arch, Command
 from pyinfra.operations import apt, dnf, files
 
 import pkgmgr
-from pkgmgr import PackageManager
-
-# apt's arch naming differs from uname's Arch fact - same mapping go.py needs for its own
-# download URL. dnf's rpm build uses uname's own "x86_64"/"aarch64" directly, no mapping needed.
-DEB_ARCH_MAP = {
-    "x86_64": "amd64",
-    "aarch64": "arm64",
-}
+from pkgmgr import DEB_ARCH_MAP, PackageManager
 
 @deploy("Install Cinc Auditor")
 def deploy_cinc_auditor():

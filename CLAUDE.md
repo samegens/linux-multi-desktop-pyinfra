@@ -94,10 +94,15 @@ downloads.cinc.sh has no distro repo - just a pinned-version rpm/deb per release
 docker-resource deprecation-regex fix from `fedora-desktop`'s Ansible task, and derives the apt
 side's Ubuntu release from a live fact rather than a hardcoded `group_data` var - a hardcoded
 `ubuntu_release = "22.04"` had gone stale unnoticed; Mint 22.3's `remote` VM actually reports
-`UBUNTU_CODENAME=noble` i.e. 24.04, see `pkgmgr.get_ubuntu_release()`'s docstring).
+`UBUNTU_CODENAME=noble` i.e. 24.04, see `pkgmgr.get_ubuntu_release()`'s docstring), `docker`
+(Engine + Compose plugin from Docker's own apt/dnf repo, not docker.io/moby-engine; apt side uses
+`pkgmgr.get_ubuntu_codename()` since Docker has no Mint archive. Two gotchas: `apt.update()`
+after adding a repo must be gated behind a repo-file-exists check, it has no idempotency of its
+own; on Fedora, dnf's Provides matching makes legacy package "docker" falsely match the already-
+installed docker-ce, so the old-package cleanup is gated behind "docker not yet installed").
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
-immediately after Mint each time, don't leave a module Mint-only: `nodejs`, `docker`,
+immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
 `desktop` placeholder, then a dedicated PowerShell/.NET SDK
 module (split out of `vscode.py` - needs section-aware edits to Fedora's own
 `fedora.repo`/`fedora-updates.repo` to resolve the `dotnet-sdk-8.0` name collision, not the

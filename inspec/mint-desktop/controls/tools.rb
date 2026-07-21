@@ -11,17 +11,29 @@ control "git is installed and working" do
   end
 end
 
-# TODO: uncomment once modules/docker.py is built
-# control "docker is installed and working" do
-#   describe file('/usr/bin/docker') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-#   describe command('docker --version') do
-#     its('stdout') { should match /^Docker version/ }
-#     its('exit_status') { should eq 0 }
-#   end
-# end
+control "docker is installed and working" do
+  describe file('/usr/bin/docker') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('docker --version') do
+    its('stdout') { should match /^Docker version/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "docker service is enabled and running" do
+  describe service('docker') do
+    it { should be_enabled }
+    it { should be_running }
+  end
+end
+
+control "user is in the docker group" do
+  describe user(input('username')) do
+    its('groups') { should include 'docker' }
+  end
+end
 
 # TODO: uncomment once a terraform module is built (deferred, see README backlog)
 # control "terraform is installed and working" do
