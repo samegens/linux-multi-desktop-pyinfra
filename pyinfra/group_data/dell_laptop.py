@@ -1,4 +1,4 @@
-"""Per-host overrides for localhost."""
+"""Per-host overrides for dell_laptop."""
 
 from pkgmgr import Distro
 

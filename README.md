@@ -36,14 +36,14 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
    cd pyinfra && pyinfra inventory.py deploy.py --limit <group>
    ```
 
-   where group can be either localhost or remote.
+   where group is one of `localhost`, `mint_vm`, `dell_laptop`, or `raaf`.
 
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
-Compose plugin, from Docker's own apt/dnf repo) — all verified idempotent on both Mint (`remote`
+Compose plugin, from Docker's own apt/dnf repo) — all verified idempotent on both Mint (`mint_vm`
 test VM) and Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is

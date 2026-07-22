@@ -1,4 +1,4 @@
-"""Per-host overrides for remote."""
+"""Per-host overrides for mint_vm."""
 
 from pkgmgr import Distro
 

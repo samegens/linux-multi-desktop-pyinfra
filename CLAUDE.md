@@ -1,6 +1,6 @@
 # mint-desktop
 
-pyinfra deploy that automates Sebastiaan's Linux desktop setup and configuration, targeting both
+pyinfra deploy that automates a Linux desktop setup and configuration, targeting both
 Linux Mint (apt) and Fedora (dnf) from a single codebase — see "Multi-distro support" below.
 Rebuilt from [`../fedora-desktop`](../fedora-desktop) (Ansible, Fedora KDE) using pyinfra instead
 of Ansible — same spirit and conventions where they still apply. **Lean core** rebuild, not a full
@@ -14,14 +14,14 @@ shared with other repos. `pyinfra/secrets_data.py` is a **symlink** into it, cre
 hand-written stub so pyright still type-checks). `pyinfra/vault.py`'s `reveal(hidden: str) ->
 bytes` decrypts using `$VAULT_PASSWORD` env var → `~/Dropbox/ansible/.vault_pass` (shared with
 `fedora-desktop`), fails loudly if neither is set. Not named `secrets.py` (would shadow stdlib).
-`inventory.py`'s `_ssh_and_sudo_password = vault.reveal(...)` is reused for both `remote`/`raaf`'s
-SSH login and `localhost`'s local sudo (same real password). `.gitleaks.toml`/`.secrets.baseline` +
+`inventory.py`'s `_ssh_and_sudo_password = vault.reveal(...)` is reused for `mint_vm`/`dell_laptop`/
+`raaf`'s SSH login and `localhost`'s local sudo (same real password). `.gitleaks.toml`/`.secrets.baseline` +
 `secrets-detection.yml` catch leaks — don't bypass them.
 
 ## Run modes
 
 Same deploy (`pyinfra/deploy.py`) targets `localhost` (`@local`, reconfigure this machine) or
-`remote`/`raaf` (SSH to a different machine):
+`mint_vm`/`dell_laptop`/`raaf` (SSH to a different machine):
 
 ```bash
 cd pyinfra && /home/sebastiaan/python3-venv/pyinfra-latest/bin/pyinfra inventory.py deploy.py --limit <group> -y
@@ -32,8 +32,9 @@ built** — don't assume they exist.
 
 ## Verification targets
 
-- **`remote`** — disposable Mint test VM, `192.168.149.134` (IP may change — ask the user if
+- **`mint_vm`** — disposable Mint test VM, `192.168.149.134` (IP may change — ask the user if
   unreachable). Credentials: `secrets_data.SSH_PASSWORD`.
+- **`dell_laptop`** — real physical laptop, `192.168.88.90`. Not a verification target.
 - **`localhost`** — this dev machine (Fedora). Real, non-disposable — every run has real effects.
   Goal: eventually replace the user's Ansible-based `../fedora-desktop` with this repo here.
 - **`raaf`** — real physical box, `Distro.UBUNTU`, not a verification target — just proves the
@@ -47,12 +48,12 @@ built** — don't assume they exist.
 2. Preview: `pyinfra inventory.py modules/x.py --limit <group>` **without** `-y` shows a real
    "Detected changes" table then prompts — the actual `--check` equivalent. (`-y` disables change
    detection entirely per its own `--help` text; `--dry` alone shows nothing useful.)
-3. Run for real (`-y`) against **both** `remote` and `localhost`; run again — everything must show
+3. Run for real (`-y`) against **both** `mint_vm` and `localhost`; run again — everything must show
    "No Change" on the second run or it's a real idempotency bug.
 4. Add/update Inspec controls (`inspec/mint-desktop/controls/*.rb`) — prefer testing observable
    *behavior* over config-file syntax where the distros' native tooling differs (e.g.
    `command('localectl status')`, not a regex on `/etc/locale.conf`), so one control stays correct
-   on both without a conditional inside it. Confirm via `./test-remote.sh remote` + `./test-local.sh`.
+   on both without a conditional inside it. Confirm via `./test-remote.sh mint_vm` + `./test-local.sh`.
 5. Add `import modules.x  # pyright: ignore` to `deploy.py`; update README's "Scope" section.
 
 ## Multi-distro support (Mint/apt + Fedora/dnf)
@@ -88,12 +89,12 @@ dotnet-sdk-8.0 package name collision that made it too risky for this pass), `py
 four venvs from `fedora-desktop/ansible/tasks/python-venv.yml`, not just this repo's own
 pyinfra-latest. Note: pyinfra's `pip.packages` is only idempotent for `==`-pinned versions - a
 `<`/`<=`/`>`/`>=` spec makes it look up the literal spec version against what's installed, never
-matches, and reinstalls every run; confirmed live against `remote`. Use an exact pin instead),
+matches, and reinstalls every run; confirmed live against `mint_vm`. Use an exact pin instead),
 `cinc_auditor` (branches on `PackageManager` directly like `vscode.py`, since
 downloads.cinc.sh has no distro repo - just a pinned-version rpm/deb per release. Also ports the
 docker-resource deprecation-regex fix from `fedora-desktop`'s Ansible task, and derives the apt
 side's Ubuntu release from a live fact rather than a hardcoded `group_data` var - a hardcoded
-`ubuntu_release = "22.04"` had gone stale unnoticed; Mint 22.3's `remote` VM actually reports
+`ubuntu_release = "22.04"` had gone stale unnoticed; Mint 22.3's `mint_vm` VM actually reports
 `UBUNTU_CODENAME=noble` i.e. 24.04, see `pkgmgr.get_ubuntu_release()`'s docstring), `docker`
 (Engine + Compose plugin from Docker's own apt/dnf repo, not docker.io/moby-engine; apt side uses
 `pkgmgr.get_ubuntu_codename()` since Docker has no Mint archive. Two gotchas: `apt.update()`
