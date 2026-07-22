@@ -31,14 +31,23 @@ raaf = [
     )
 ]
 
-# Not a fixed machine - a generic placeholder host used when configuring some new/different
-# desktop machine from the current one. Currently pointed at the Mint test VM.
-
-remote = [
+mint_vm = [
     (
-        "remote",
+        "mint_vm",
         {
             "ssh_hostname": "192.168.149.134",
+            "ssh_user": _ssh_user,
+            "ssh_password": _ssh_and_sudo_password,
+            "_sudo_password": _ssh_and_sudo_password,
+        }
+    )
+]
+
+dell_laptop = [
+    (
+        "dell_laptop",
+        {
+            "ssh_hostname": "192.168.88.90",
             "ssh_user": _ssh_user,
             "ssh_password": _ssh_and_sudo_password,
             "_sudo_password": _ssh_and_sudo_password,
