@@ -4,12 +4,14 @@ a pinned-version rpm/deb per release, so this module branches on PackageManager 
 the right download URL.
 """
 
-from typing import assert_never
+from typing import Generator, assert_never
 
 from pyinfra.context import host
+from pyinfra.api.command import StringCommand
 from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
+from pyinfra.api.operation import operation # pyright: ignore[reportUnknownVariableType]
 from pyinfra.facts.server import Arch, Command
-from pyinfra.operations import apt, dnf, files, python
+from pyinfra.operations import apt, dnf, files
 
 import pkgmgr
 from pkgmgr import DEB_ARCH_MAP, PackageManager
@@ -43,23 +45,31 @@ def deploy_cinc_auditor():
         case _:
             assert_never(pm)
 
-    python.call( # pyright: ignore[reportUnknownMemberType]
+    _fix_docker_deprecation_regex(
         name="Fix docker resource deprecation regex bug in deprecations.json",
-        function=_fix_docker_deprecation_regex,
         version=version,
     )
 
-def _fix_docker_deprecation_regex(version: str):
+@operation()
+def _fix_docker_deprecation_regex(version: str) -> Generator[StringCommand, None, None]:
     """The installed inspec-core gem ships a bad regex in etc/deprecations.json -
     "docker\\.+" instead of
     "docker.*" - confirmed still present in 7.1.7 on both the el/9 and Ubuntu 24.04 builds, at
     the same /opt/cinc-auditor/.../inspec-core-<version>/etc/ path on both despite the differing
     Ruby version underneath.
 
-    Runs via python.call so the `find` fact and the fix below execute after the install
-    operation above has actually run on the target - a bare host.get_fact() call here would run
-    eagerly at deploy-build time, before dnf.rpm/apt.deb's install actually happens, and fail with
-    "No such file or directory" on any host that doesn't already have Cinc Auditor installed.
+    A custom operation (not a bare host.get_fact() call in deploy_cinc_auditor's body) so the
+    `find` fact runs lazily, only once this operation's generator is actually advanced - which
+    under a real -y run happens during the Execute stage, in queue order, after dnf.rpm/apt.deb's
+    install has actually run. A bare call would run eagerly at deploy-build time instead, before
+    the install happens, and fail with "No such file or directory" on any host that doesn't
+    already have Cinc Auditor installed.
+
+    Composes with files.replace's own generator via `_inner` (the same technique pyinfra's own
+    operations use, e.g. server.py's yield-from-files.replace._inner) rather than python.call,
+    since python.call's FunctionCommand always counts as "executed" just by running - it would
+    make this operation report as changed on every single run, breaking idempotency, even when
+    files.replace's own diff correctly finds nothing to fix.
     """
     inspec_core_dir = host.get_fact( # pyright: ignore[reportUnknownMemberType]
         Command,
@@ -74,8 +84,7 @@ def _fix_docker_deprecation_regex(version: str):
             "Cinc Auditor install may have failed or changed layout"
         )
 
-    files.replace( # pyright: ignore[reportUnknownMemberType]
-        name="Fix docker resource deprecation regex bug in deprecations.json",
+    yield from files.replace._inner( # pyright: ignore[reportPrivateUsage, reportUnknownMemberType]
         path=f"{inspec_core_dir.strip()}/etc/deprecations.json",
         text=r'"docker\.+"',
         replace='"docker.*"',
