@@ -9,7 +9,7 @@ from typing import assert_never
 from pyinfra.context import host
 from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.facts.server import Arch, Command
-from pyinfra.operations import apt, dnf, files
+from pyinfra.operations import apt, dnf, files, python
 
 import pkgmgr
 from pkgmgr import DEB_ARCH_MAP, PackageManager
@@ -43,7 +43,11 @@ def deploy_cinc_auditor():
         case _:
             assert_never(pm)
 
-    _fix_docker_deprecation_regex(version)
+    python.call( # pyright: ignore[reportUnknownMemberType]
+        name="Fix docker resource deprecation regex bug in deprecations.json",
+        function=_fix_docker_deprecation_regex,
+        version=version,
+    )
 
 def _fix_docker_deprecation_regex(version: str):
     """The installed inspec-core gem ships a bad regex in etc/deprecations.json -
@@ -51,6 +55,11 @@ def _fix_docker_deprecation_regex(version: str):
     "docker.*" - confirmed still present in 7.1.7 on both the el/9 and Ubuntu 24.04 builds, at
     the same /opt/cinc-auditor/.../inspec-core-<version>/etc/ path on both despite the differing
     Ruby version underneath.
+
+    Runs via python.call so the `find` fact and the fix below execute after the install
+    operation above has actually run on the target - a bare host.get_fact() call here would run
+    eagerly at deploy-build time, before dnf.rpm/apt.deb's install actually happens, and fail with
+    "No such file or directory" on any host that doesn't already have Cinc Auditor installed.
     """
     inspec_core_dir = host.get_fact( # pyright: ignore[reportUnknownMemberType]
         Command,
