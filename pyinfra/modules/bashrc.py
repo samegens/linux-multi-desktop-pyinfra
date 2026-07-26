@@ -32,6 +32,14 @@ def deploy_bashrc():
         "sizeof": "alias sizeof='du -sh'",
         "ds": 'ds() { if [ -z "$1" ]; then echo "Usage: ds <docker-image>"; return 1; fi; '
         'docker run --rm -it -v "$(pwd):/data" "$1" /bin/bash; }',
+        "ssh-fitpc": "alias ssh-fitpc='ssh -t sam@sydneystraat.duckdns.org -p 27372 byobu'",
+        "ssh-cubi": "alias ssh-cubi='ssh -t sam@cubi byobu'",
+        "ssh-thuis": "alias ssh-thuis='ssh -t thuis byobu'",
+        "emby-thuis": "alias emby-thuis='ssh -fN thuis && xdg-open http://localhost:8096'",
+        "ssh-liteserver": "alias ssh-liteserver='ssh -t liteserver byobu'",
+        "ssh-bhosted": "alias ssh-bhosted='ssh -t bhosted'",
+        "activate-ansible": "alias activate-ansible='. ~/python3-venv/ansible-latest/bin/activate && ansible --version'",
+        "k": "alias k='kubectl'"
     }
     for alias_name, line in aliases.items():
         files.line(
