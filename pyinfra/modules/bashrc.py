@@ -4,9 +4,8 @@ add lines back here as deferred modules (k3s, SSH host aliases, ...) get ported.
 from io import StringIO
 
 from pyinfra.context import host
-from pyinfra.api.deploy import deploy
+from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.operations import files
-
 
 @deploy("Configure dotfiles")
 def deploy_bashrc():
@@ -59,6 +58,5 @@ def deploy_bashrc():
         mode="644",
         _sudo=False,
     )
-
 
 deploy_bashrc()
