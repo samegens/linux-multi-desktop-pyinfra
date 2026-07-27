@@ -8,14 +8,13 @@ then list <name> in ssh_key_names (group_data/all.py). Empty for now.
 from io import BytesIO
 
 from pyinfra.context import host
-from pyinfra.api.deploy import deploy
+from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.operations import files, server
 
 import pkgmgr
 import secrets_data
 import vault
 from services import Service, get_service_name
-
 
 @deploy("Configure SSH")
 def deploy_ssh():
@@ -59,6 +58,5 @@ def deploy_ssh():
         running=True,
         enabled=True,
     )
-
 
 deploy_ssh()
