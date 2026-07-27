@@ -58,12 +58,13 @@ def _fix_docker_deprecation_regex(version: str) -> Generator[StringCommand, None
     the same /opt/cinc-auditor/.../inspec-core-<version>/etc/ path on both despite the differing
     Ruby version underneath.
 
-    A custom operation (not a bare host.get_fact() call in deploy_cinc_auditor's body) so the
-    `find` fact runs lazily, only once this operation's generator is actually advanced - which
-    under a real -y run happens during the Execute stage, in queue order, after dnf.rpm/apt.deb's
-    install has actually run. A bare call would run eagerly at deploy-build time instead, before
-    the install happens, and fail with "No such file or directory" on any host that doesn't
-    already have Cinc Auditor installed.
+    Facts are gathered for every queued operation during pyinfra's Preparing-operations stage,
+    before any operation's commands actually execute - so on a host that's never had Cinc Auditor
+    installed before, this `find` always runs against a not-yet-existing /opt/cinc-auditor,
+    regardless of where this operation sits in deploy.py's module order. Skip cleanly in that case
+    instead of raising - dnf.rpm/apt.deb's install still runs normally this pass, and the following
+    pass (every module's dev loop already requires a second run to confirm idempotency - see
+    CLAUDE.md) finds the now-installed gem dir and applies the fix.
 
     Composes with files.replace's own generator via `_inner` (the same technique pyinfra's own
     operations use, e.g. server.py's yield-from-files.replace._inner) rather than python.call,
@@ -75,14 +76,11 @@ def _fix_docker_deprecation_regex(version: str) -> Generator[StringCommand, None
         Command,
         command=(
             "find /opt/cinc-auditor/embedded/lib/ruby/gems -type d "
-            f"-name inspec-core-{version}"
+            f"-name inspec-core-{version} 2>/dev/null || true"
         ),
     )
     if not inspec_core_dir:
-        raise ValueError(
-            f"Could not locate inspec-core-{version} gem dir under /opt/cinc-auditor - "
-            "Cinc Auditor install may have failed or changed layout"
-        )
+        return
 
     yield from files.replace._inner( # pyright: ignore[reportPrivateUsage, reportUnknownMemberType]
         path=f"{inspec_core_dir.strip()}/etc/deprecations.json",
