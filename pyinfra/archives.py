@@ -12,7 +12,6 @@ from pyinfra.api.operation import operation # pyright: ignore[reportUnknownVaria
 from pyinfra.facts.files import File
 from pyinfra.operations import files
 
-
 @operation()
 def download_and_extract(url: str, dest: str, creates: str) -> Generator[StringCommand, None, None]:
     """Download a .tar.gz `url` and extract its full contents into `dest` (created if needed),
