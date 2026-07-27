@@ -35,7 +35,7 @@ mint_vm = [
     (
         "mint_vm",
         {
-            "ssh_hostname": "192.168.149.134",
+            "ssh_hostname": "172.16.101.128",
             "ssh_user": _ssh_user,
             "ssh_password": _ssh_and_sudo_password,
             "_sudo_password": _ssh_and_sudo_password,
