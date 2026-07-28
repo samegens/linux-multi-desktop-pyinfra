@@ -78,4 +78,17 @@ flatpaks = [
 ]
 
 # See pyinfra/modules/ssh.py for how to add an entry.
-ssh_key_names = []
+ssh_key_names = [
+    "cubi",
+    "fitpc",
+    "fitlet",
+    "fitlet-tst",
+    "fitlet-acc",
+    "liteserver",
+    "liteserver-tst",
+    "github_samegens",
+    "github_blauwe-lucht",
+    "gitlab",
+    "github_adopteerregenwoud",
+    "bhosted",
+]

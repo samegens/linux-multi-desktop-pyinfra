@@ -111,33 +111,79 @@ control "ssh directory has correct permissions" do
   end
 end
 
-# TODO: uncomment once ssh.py writes ~/.ssh/config (deferred until real hosts/keys are added)
-# control "ssh config is in place with correct permissions" do
-#   describe file("/home/#{username}/.ssh/config") do
-#     it { should exist }
-#     its('mode') { should cmp '0600' }
-#     its('owner') { should eq username }
-#   end
-# end
+control "ssh config is in place with correct permissions" do
+  describe file("/home/#{username}/.ssh/config") do
+    it { should exist }
+    its('mode') { should cmp '0600' }
+    its('owner') { should eq username }
+  end
+end
 
-# TODO: uncomment and populate once group_data/all.py:ssh_key_names has entries
-# ssh_keys = []
-# ssh_keys.each do |key_name|
-#   control "SSH private key #{key_name} is installed with correct permissions" do
-#     describe file("/home/#{username}/.ssh/#{key_name}") do
-#       it { should exist }
-#       its('mode') { should cmp '0600' }
-#       its('owner') { should eq username }
-#     end
-#   end
-#
-#   control "SSH public key #{key_name}.pub is installed" do
-#     describe file("/home/#{username}/.ssh/#{key_name}.pub") do
-#       it { should exist }
-#       its('owner') { should eq username }
-#     end
-#   end
-# end
+ssh_keys = [
+  'cubi', 'fitpc', 'fitlet', 'fitlet-tst', 'fitlet-acc', 'liteserver', 'liteserver-tst',
+  'github_samegens', 'github_blauwe-lucht', 'gitlab', 'github_adopteerregenwoud', 'bhosted',
+]
+ssh_keys.each do |key_name|
+  control "SSH private key #{key_name} is installed with correct permissions" do
+    describe file("/home/#{username}/.ssh/#{key_name}") do
+      it { should exist }
+      its('mode') { should cmp '0600' }
+      its('owner') { should eq username }
+    end
+  end
+
+  control "SSH public key #{key_name}.pub is installed" do
+    describe file("/home/#{username}/.ssh/#{key_name}.pub") do
+      it { should exist }
+      its('owner') { should eq username }
+    end
+  end
+end
+
+control "homeserver key symlinks point to cubi" do
+  describe file("/home/#{username}/.ssh/homeserver") do
+    it { should be_symlink }
+    it { should exist }
+  end
+  describe file("/home/#{username}/.ssh/homeserver.pub") do
+    it { should be_symlink }
+    it { should exist }
+  end
+end
+
+# Root's own keys under /root/.ssh (mode 0700) aren't checked here - the test user can't stat
+# inside /root without sudo, and this repo doesn't grant the test user broader sudo access just
+# for that. Verified manually instead: `sudo ls -la /root/.ssh` on mint_vm after a real deploy.
+
+# Only tests machines that are publicly reachable, we may be running the tests from
+# outside the local network.
+ssh_simple_auth_checks = {
+  'github.com' => /successfully authenticated/,
+  'github.com-blauwe-lucht' => /successfully authenticated/,
+# broken, fix later  'github_adopteerregenwoud' => /successfully authenticated/,
+  'gitlab.com' => /Welcome to GitLab/,
+}
+ssh_simple_auth_checks.each do |host_alias, expected_output|
+  control "ssh key auth works for #{host_alias}" do
+    describe command("ssh -T -o BatchMode=yes -o StrictHostKeyChecking=no #{host_alias} 2>&1") do
+      its('stdout') { should match expected_output }
+    end
+  end
+end
+
+ssh_checks = [
+  'bhosted',
+  'liteserver',
+# broken, fix later  'backup_server',
+  'thuis',
+]
+ssh_checks.each do |host_alias|
+  control "ssh works for #{host_alias}" do
+    describe command("ssh -o BatchMode=yes -o StrictHostKeyChecking=no #{host_alias} -- echo success 2>&1") do
+      its('stdout') { should match /success/ }
+    end
+  end
+end
 
 # Git config
 

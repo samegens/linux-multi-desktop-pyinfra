@@ -41,7 +41,8 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
-git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
+git, SSH (including real user/root keys, the `~/.ssh/config` Host aliases, and the homeserver
+symlink), bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo) — all verified idempotent on both Mint (`mint_vm`
 test VM) and Fedora (`localhost`).
@@ -61,7 +62,7 @@ Deliberately not yet ported (add on demand, following the existing `pyinfra/modu
 printer, VeraCrypt, TagUI, balenaEtcher, Double Commander, Darktable, Obsidian, Workrave,
 VirtualBox/Vagrant, k3s, NVIDIA, GRUB tweaks, hibernate, SELinux, Google Fonts, Miniconda,
 gitleaks/trufflehog *install* tasks, P4Merge, Terraform/Packer, NFS/SSHFS mounts, Fastfetch,
-MS TTF fonts, personal `/etc/hosts` entries, SSH host aliases (`~/.ssh/config`).
+MS TTF fonts, personal `/etc/hosts` entries.
 
 ## Secret Detection
 
