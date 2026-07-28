@@ -1,7 +1,7 @@
-# Mint Desktop Configuration
+# Linux Multi Desktop Configuration using pyinfra
 
-[![CI](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/samegens/linux-mint-desktop/actions/workflows/ci.yml)
-[![Secret Detection](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml/badge.svg)](https://github.com/samegens/linux-mint-desktop/actions/workflows/secrets-detection.yml)
+[![CI](https://github.com/samegens/linux-multi-desktop-pyinfra/actions/workflows/ci.yml/badge.svg)](https://github.com/samegens/linux-multi-desktop-pyinfra/actions/workflows/ci.yml)
+[![Secret Detection](https://github.com/samegens/linux-multi-desktop-pyinfra/actions/workflows/secrets-detection.yml/badge.svg)](https://github.com/samegens/linux-multi-desktop-pyinfra/actions/workflows/secrets-detection.yml)
 
 pyinfra deploy that automates my Linux desktop setup and configuration, targeting Linux Mint, Fedora and Ubuntu from a single codebase.
 
@@ -41,8 +41,7 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 ## Scope
 
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
-git, SSH (including real user/root keys, the `~/.ssh/config` Host aliases, and the homeserver
-symlink), bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
+git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo) — all verified idempotent on both Mint (`mint_vm`
 test VM) and Fedora (`localhost`).
