@@ -31,6 +31,8 @@ def deploy_base():
             _sudo=False,
         )
 
+    files.directory(name="Ensure /var/cache/pyinfra exists", path="/var/cache/pyinfra")
+
     pkgmgr.update_cache(name="Update package cache")
     pkgmgr.install(name="Install base packages", packages=host.data.packages)
 

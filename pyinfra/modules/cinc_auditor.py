@@ -25,23 +25,18 @@ def deploy_cinc_auditor():
         case PackageManager.DNF:
             # Fedora has no native cinc-auditor build - use the el/9 (RHEL 9) rpm.
             arch = host.get_fact(Arch) # pyright: ignore[reportUnknownMemberType]
-            dnf.rpm(
-                name="Install Cinc Auditor",
-                src=(
-                    f"https://downloads.cinc.sh/files/stable/cinc-auditor/{version}"
-                    f"/el/9/cinc-auditor-{version}-1.el9.{arch}.rpm"
-                ),
-            )
+            filename = f"cinc-auditor-{version}-1.el9.{arch}.rpm"
+            url = f"https://downloads.cinc.sh/files/stable/cinc-auditor/{version}/el/9/{filename}"
+            dnf.rpm(name="Install Cinc Auditor", src=_download_cinc_auditor_package(url, filename))
         case PackageManager.APT:
             ubuntu_release = pkgmgr.get_ubuntu_release()
             arch = DEB_ARCH_MAP[host.get_fact(Arch)] # pyright: ignore[reportUnknownMemberType]
-            apt.deb(
-                name="Install Cinc Auditor",
-                src=(
-                    f"https://downloads.cinc.sh/files/stable/cinc-auditor/{version}"
-                    f"/ubuntu/{ubuntu_release}/cinc-auditor_{version}-1_{arch}.deb"
-                ),
+            filename = f"cinc-auditor_{version}-1_{arch}.deb"
+            url = (
+                f"https://downloads.cinc.sh/files/stable/cinc-auditor/{version}"
+                f"/ubuntu/{ubuntu_release}/{filename}"
             )
+            apt.deb(name="Install Cinc Auditor", src=_download_cinc_auditor_package(url, filename))
         case _:
             assert_never(pm)
 
@@ -49,6 +44,22 @@ def deploy_cinc_auditor():
         name="Fix docker resource deprecation regex bug in deprecations.json",
         version=version,
     )
+
+def _download_cinc_auditor_package(url: str, filename: str) -> str:
+    """Downloads to /var/cache/pyinfra (created by modules/base.py) instead of letting
+    apt.deb/dnf.rpm handle the URL src themselves - they'd otherwise re-download to a
+    pyinfra-managed /tmp temp file every run, which doesn't survive a reboot on mint_vm
+    (confirmed live: present right after a real install, gone after rebooting the VM). That
+    made every post-reboot run look like a real change, since apt.deb/dnf.rpm's own
+    version-comparison idempotency check never got to run against an already-downloaded file.
+
+    Passing a plain local path (no URL scheme) as their src makes apt.deb/dnf.rpm skip their
+    internal download step and compare this file's version against what's installed directly -
+    the same comparison, just against a file that's actually still there.
+    """
+    dest = f"/var/cache/pyinfra/{filename}"
+    files.download(name=f"Download Cinc Auditor package ({filename})", src=url, dest=dest)
+    return dest
 
 @operation()
 def _fix_docker_deprecation_regex(version: str) -> Generator[StringCommand, None, None]:
