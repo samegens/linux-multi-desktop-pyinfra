@@ -20,3 +20,4 @@ import modules.python_venv  # pyright: ignore
 import modules.cinc_auditor  # pyright: ignore
 import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
+import modules.firefox  # pyright: ignore

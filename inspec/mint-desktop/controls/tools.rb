@@ -261,6 +261,22 @@ end
 #   end
 # end
 
+# Firefox
+
+control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do
+  only_if('this is a dnf-based host') { !os.debian? }
+
+  describe command('rpm -q libavcodec-freeworld') do
+    its('exit_status') { should eq 0 }
+  end
+  describe command('rpm -q ffmpeg') do
+    its('exit_status') { should eq 0 }
+  end
+  describe command('rpm -q ffmpeg-free') do
+    its('exit_status') { should_not eq 0 }
+  end
+end
+
 # bin/activate existing proves the venv itself
 # was created, and `pip show` on one representative package per venv proves installs landed in
 # that venv (not the system Python).
