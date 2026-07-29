@@ -31,7 +31,7 @@ format = 'on [$hostname](bold yellow) '
 truncation_length = 0
 truncate_to_repo = false
 style = "#4169e1"
-format = "[](bg:$style fg:black)[$path](bg:$style)[](fg:$style)[$read_only]($read_only_style) "
+format = "[](bg:$style fg:black)[$path](bg:$style)[](fg:$style)[$read_only]($read_only_style) "
 
 # Show current time
 [time]
@@ -46,6 +46,18 @@ show_milliseconds = true
 # Python settings - replace symbol with text
 [python]
 symbol = 'Python '
+
+# Vagrant settings - replace symbol with text
+[vagrant]
+symbol = 'Vagrant '
+
+# Ansible custom module - show version when ansible files are present
+[custom.ansible]
+command = "ansible --version 2>/dev/null | head -n1 | grep -oP '\\[core \\K[0-9.]+'"
+when = """ test -f ansible.cfg || test -f playbook.yml || test -d roles || test -d group_vars || test -d host_vars """
+symbol = "Ansible "
+style = "bold red"
+format = "via [$symbol$output]($style) "
 
 # Disable Kubernetes module
 [kubernetes]
