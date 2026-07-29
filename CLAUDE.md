@@ -100,7 +100,8 @@ side's Ubuntu release from a live fact rather than a hardcoded `group_data` var 
 `pkgmgr.get_ubuntu_codename()` since Docker has no Mint archive. Two gotchas: `apt.update()`
 after adding a repo must be gated behind a repo-file-exists check, it has no idempotency of its
 own; on Fedora, dnf's Provides matching makes legacy package "docker" falsely match the already-
-installed docker-ce, so the old-package cleanup is gated behind "docker not yet installed").
+installed docker-ce, so the old-package cleanup is gated behind "docker not yet installed"), `k3s`
+(developer/k3s-experiment-station goal).
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
@@ -108,7 +109,6 @@ immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
 module (split out of `vscode.py` - needs section-aware edits to Fedora's own
 `fedora.repo`/`fedora-updates.repo` to resolve the `dotnet-sdk-8.0` name collision, not the
 global-exclude approach that broke installs under dnf5). Wrapper scripts also outstanding.
-`k3s` added to the end of this queue (developer/k3s-experiment-station goal) once the above land.
 
 ## Layout
 
