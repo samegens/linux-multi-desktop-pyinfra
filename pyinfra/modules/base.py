@@ -55,5 +55,12 @@ def deploy_base():
         present=True,
     )
 
+    server.user(
+        name="Allow access to webcams and USB ports",
+        user=host.data.username,
+        groups=["video", "dialout"],
+        append=True,
+    )
+
 
 deploy_base()

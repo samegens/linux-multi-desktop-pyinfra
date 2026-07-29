@@ -11,41 +11,37 @@ control "#{ssh_service_name} service is enabled and running" do
   end
 end
 
-# TODO: uncomment once modules/docker.py is built
-# ['docker'].each do |svc|
-#   control "#{svc} service is enabled and running" do
-#     describe service(svc) do
-#       it { should be_enabled }
-#       it { should be_running }
-#     end
-#   end
-# end
+['docker'].each do |svc|
+  control "#{svc} service is enabled and running" do
+    describe service(svc) do
+      it { should be_enabled }
+      it { should be_running }
+    end
+  end
+end
 
-# TODO: uncomment once a k3s module is built (deferred, see README backlog)
-# control "k3s service is enabled and running" do
-#   describe service('k3s') do
-#     it { should be_enabled }
-#     it { should be_running }
-#   end
-# end
+control "k3s service is enabled and running" do
+  describe service('k3s') do
+    it { should be_enabled }
+    it { should be_running }
+  end
+end
 
 # Group memberships
 
-# TODO: uncomment once modules/docker.py is built (adds username to the docker group)
-# control "user is in docker group" do
-#   describe user(username) do
-#     its('groups') { should include 'docker' }
-#   end
-# end
+control "user is in docker group" do
+  describe user(username) do
+    its('groups') { should include 'docker' }
+  end
+end
 
-# TODO: uncomment if/once webcam (video) and USB (dialout) access tasks are ported
-# ['video', 'dialout'].each do |grp|
-#   control "user is in #{grp} group" do
-#     describe user(username) do
-#       its('groups') { should include grp }
-#     end
-#   end
-# end
+['video', 'dialout'].each do |grp|
+  control "user is in #{grp} group" do
+    describe user(username) do
+      its('groups') { should include grp }
+    end
+  end
+end
 
 # TODO: uncomment once an NFS mounts module is built (deferred, see README backlog)
 # control "homeserver-public NFS share is mounted and accessible" do
@@ -92,14 +88,6 @@ control "go PATH script is in place" do
     its('content') { should match %r{/usr/local/go/bin} }
   end
 end
-
-# TODO: uncomment once pyinfra/run.sh creates /var/log/pyinfra (task 5)
-# control "pyinfra log directory exists with correct ownership" do
-#   describe directory('/var/log/pyinfra') do
-#     it { should exist }
-#     its('owner') { should eq username }
-#   end
-# end
 
 # SSH
 
@@ -209,10 +197,9 @@ control ".bashrc is configured" do
   end
 end
 
-# TODO: uncomment once modules/python_venv.py is built
-# control "Python venv pyinfra-latest exists" do
-#   describe file("/home/#{username}/python3-venv/pyinfra-latest/bin/activate") do
-#     it { should exist }
-#     its('owner') { should eq username }
-#   end
-# end
+control "Python venv pyinfra-latest exists" do
+  describe file("/home/#{username}/python3-venv/pyinfra-latest/bin/activate") do
+    it { should exist }
+    its('owner') { should eq username }
+  end
+end
