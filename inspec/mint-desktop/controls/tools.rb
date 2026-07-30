@@ -310,6 +310,22 @@ control "workrave autostart entry is in place" do
   end
 end
 
+# Obsidian
+
+control "obsidian flatpak is installed" do
+  describe command('flatpak info md.obsidian.Obsidian') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "obsidian config is in place" do
+  username = input('username')
+  describe file("/home/#{username}/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json") do
+    it { should exist }
+    its('content') { should match /Dropbox\/projects\/Obsidian\/notes/ }
+  end
+end
+
 # Firefox
 
 control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do

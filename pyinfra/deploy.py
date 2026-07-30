@@ -23,3 +23,4 @@ import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore
 import modules.doublecmd  # pyright: ignore
 import modules.workrave  # pyright: ignore
+import modules.obsidian  # pyright: ignore
