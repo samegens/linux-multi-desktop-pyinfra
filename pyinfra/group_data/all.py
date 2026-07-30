@@ -19,8 +19,9 @@ distro: Distro | None = None
 starship_version = "v1.23.0"
 go_version = "1.26.3"
 
-# Used to build cinc-auditor's rpm/deb download URL (downloads.cinc.sh has no "latest" alias).
 cinc_auditor_version = "7.1.7"
+
+doublecmd_version = "1.2.7"
 
 vscode_extensions = [
     "redhat.ansible",

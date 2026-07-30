@@ -43,8 +43,9 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported so far: base packages,
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
-Compose plugin, from Docker's own apt/dnf repo), k3s — all verified idempotent on both Mint
-(`mint_vm` test VM) and Fedora (`localhost`).
+Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
+Commander — all verified idempotent on both Mint (`mint_vm` test VM) and Fedora
+(`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
 still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
@@ -58,10 +59,10 @@ name collision via section-aware edits to Fedora's own `fedora.repo`/`fedora-upd
 rather than the global-exclude approach that broke installs outright under dnf5.
 
 Deliberately not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
-printer, VeraCrypt, TagUI, balenaEtcher, Double Commander, Darktable, Obsidian, Workrave,
+printer, VeraCrypt, TagUI, balenaEtcher, Darktable, Obsidian, Workrave,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Google Fonts, Miniconda,
 gitleaks/trufflehog *install* tasks, P4Merge, Terraform/Packer, NFS/SSHFS mounts, Fastfetch,
-MS TTF fonts, Claude Code, Dropbox, Firefox, personal `/etc/hosts` entries.
+MS TTF fonts, Claude Code, Dropbox, personal `/etc/hosts` entries.
 
 ## Secret Detection
 
