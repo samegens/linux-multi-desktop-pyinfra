@@ -173,6 +173,12 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
   must be an absolute path before `--pythonpath` (CI overrides it to bare `python3`, which pyright
   silently can't resolve, hiding every installed package). If a CI-only failure looks bizarre,
   reproduce with a clean venv + the exact CI env override rather than trusting local `./check.sh`.
+- **`dnf.packages()` on a bare (unpinned) name checks the installed EVR against
+  `dnf repoquery --whatprovides <name>`'s currently-repo-offered versions, not just "is it
+  installed"** - if the installed version isn't among those (e.g. a superseded rc build), it
+  reports "changed" and re-runs install every time, even though nothing's actually wrong.
+  Confirmed on `localhost`'s `workrave-1.11.0~rc.4-1.fc43` vs. `modules/workrave.py`. Harmless
+  (the re-run install is itself a no-op) and not fixable from this repo's code.
 - **`privy`/`secrets_data` have hand-written stubs in `typings/`** (upstream `privy` ships none;
   `secrets_data` doesn't exist in a fresh checkout). Re-exports need redundant aliasing (`from X
   import y as y`) or pyright treats them as private. Pylance's unused-import warning needs `#

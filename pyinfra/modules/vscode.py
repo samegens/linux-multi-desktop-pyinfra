@@ -14,6 +14,8 @@ from pyinfra.operations import apt, dnf, files, server
 import pkgmgr
 from pkgmgr import PackageManager
 
+import dbus_session
+
 DNF_GPG_KEY_URL = "https://packages.microsoft.com/yumrepos/vscode/repodata/repomd.xml.key"
 DNF_GPG_KEY_PATH = "/etc/pki/rpm-gpg/microsoft-vscode.asc"
 APT_GPG_KEY_URL = "https://packages.microsoft.com/keys/microsoft.asc"
@@ -73,7 +75,6 @@ def _install_extensions():
         _sudo_user=username,
     )
 
-
 def _copy_config_files():
     username = host.data.username
     config_dir = f"/home/{username}/.config/Code/User"
@@ -99,31 +100,17 @@ def _copy_config_files():
             _sudo=False,
         )
 
-
-def _dbus_env(uid: str) -> str:
-    """`sudo -u` alone gives a bare shell with no XDG_RUNTIME_DIR/DBUS_SESSION_BUS_ADDRESS, so
-    gsettings/dconf can't find the target user's real per-user bus at /run/user/<uid>/bus and
-    silently talks to a disposable one instead - writes appear to succeed but vanish. Pointing
-    at the real bus explicitly means a missing session now fails/returns nothing instead of
-    silently no-opping against a fake one."""
-    return f"XDG_RUNTIME_DIR=/run/user/{uid} DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{uid}/bus"
-
-
 def _disable_ibus_emoji_hotkey():
     """Ctrl-. is used by VS Code but IBus steals it for its emoji picker by default. Guarded
     to skip cleanly (not error) when there's no desktop/dbus session for gsettings to talk to -
     e.g. a headless verification VM."""
     username = host.data.username
-    uid = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command,
-        command=f"id -u {username} 2>/dev/null || true",
-        _sudo_user=username,
-    )
+    uid = dbus_session.resolve_uid(username)
     if not uid:
         host.noop("could not resolve uid - skipping IBus tweak")
         return
 
-    env = _dbus_env(uid.strip())
+    env = dbus_session.get_dbus_env(uid)
     current = host.get_fact( # pyright: ignore[reportUnknownMemberType]
         Command,
         command=f"{env} gsettings get org.freedesktop.ibus.panel.emoji hotkey 2>/dev/null || true",
@@ -158,6 +145,5 @@ def deploy_vscode():
     _install_extensions()
     _copy_config_files()
     _disable_ibus_emoji_hotkey()
-
 
 deploy_vscode()

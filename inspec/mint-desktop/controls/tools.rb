@@ -293,6 +293,23 @@ control "doublecmd desktop entry is in place" do
   end
 end
 
+# Workrave
+
+control "workrave is installed and working" do
+  describe file('/usr/bin/workrave') do
+    it { should exist }
+    it { should be_executable }
+  end
+end
+
+control "workrave autostart entry is in place" do
+  username = input('username')
+  describe file("/home/#{username}/.config/autostart/workrave.desktop") do
+    it { should exist }
+    its('content') { should match /Exec=workrave/ }
+  end
+end
+
 # Firefox
 
 control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do
