@@ -24,3 +24,4 @@ import modules.firefox  # pyright: ignore
 import modules.doublecmd  # pyright: ignore
 import modules.workrave  # pyright: ignore
 import modules.obsidian  # pyright: ignore
+import modules.balena_etcher  # pyright: ignore

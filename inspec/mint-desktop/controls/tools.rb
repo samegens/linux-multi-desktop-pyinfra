@@ -326,6 +326,15 @@ control "obsidian config is in place" do
   end
 end
 
+# balenaEtcher
+
+control "balenaEtcher is installed" do
+  describe file('/usr/bin/balena-etcher') do
+    it { should exist }
+    it { should be_executable }
+  end
+end
+
 # Firefox
 
 control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do

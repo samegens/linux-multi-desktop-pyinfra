@@ -23,6 +23,8 @@ cinc_auditor_version = "7.1.7"
 
 doublecmd_version = "1.2.7"
 
+balena_etcher_version = "2.1.6"
+
 vscode_extensions = [
     "redhat.ansible",
     "redhat.vscode-yaml",
