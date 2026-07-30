@@ -1,7 +1,6 @@
-"""Custom pyinfra operation for downloading + extracting a .tar.gz archive as a single atomic
-step. Not distro-specific (no PackageManager/Distro dispatch here) - a generic helper for any
-module that installs a binary from a GitHub-release-style tarball (currently modules/k3s.py's
-Helm and k9s installs).
+"""Custom pyinfra operation for downloading + extracting a .tar.gz/.tar.xz archive as a single
+atomic step. Not distro-specific (no PackageManager/Distro dispatch here) - a generic helper for
+any module that installs a binary from a GitHub-release-style tarball.
 """
 
 from typing import Generator
@@ -12,10 +11,23 @@ from pyinfra.api.operation import operation # pyright: ignore[reportUnknownVaria
 from pyinfra.facts.files import File
 from pyinfra.operations import files
 
+TAR_EXTRACT_FLAGS = {
+    ".tgz": "-xzf",
+    ".tar.gz": "-xzf",
+    ".tar.xz": "-xJf",
+}
+
+def _get_tar_extract_flags(url: str) -> str:
+    for suffix, flags in TAR_EXTRACT_FLAGS.items():
+        if url.endswith(suffix):
+            return flags
+    raise ValueError(f"Unsupported archive extension in url {url!r} - add it to TAR_EXTRACT_FLAGS")
+
 @operation()
 def download_and_extract(url: str, dest: str, creates: str) -> Generator[StringCommand, None, None]:
-    """Download a .tar.gz `url` and extract its full contents into `dest` (created if needed),
-    as a single atomic operation, skipping entirely if `creates` already exists.
+    """Download a tarball from `url` and extract
+    its full contents into `dest` (created if needed), as a single atomic operation, skipping
+    entirely if file specified by `creates` already exists.
 
     `creates` must be a specific expected file, not just `dest` itself - checking `dest` alone
     breaks if it's a directory that already exists for unrelated reasons (e.g. /usr/share),
@@ -42,8 +54,9 @@ def download_and_extract(url: str, dest: str, creates: str) -> Generator[StringC
         host.noop(f"{creates} already exists")
         return
 
+    tar_flags = _get_tar_extract_flags(url)
     archive = host.get_temp_filename(url)
     yield from files.download._inner(src=url, dest=archive) # pyright: ignore[reportPrivateUsage, reportUnknownMemberType]
     yield StringCommand("mkdir", "-p", QuoteString(dest))
-    yield StringCommand("tar", "-xzf", QuoteString(archive), "-C", QuoteString(dest))
+    yield StringCommand("tar", tar_flags, QuoteString(archive), "-C", QuoteString(dest))
     yield StringCommand("rm", "-f", QuoteString(archive))
