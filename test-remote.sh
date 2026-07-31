@@ -6,4 +6,4 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-exec "$(dirname "$0")/run-test.py" "$1"
+exec "$(dirname "$0")/_run-test.py" "$1"

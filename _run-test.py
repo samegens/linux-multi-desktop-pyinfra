@@ -3,7 +3,7 @@
 same connection data pyinfra itself uses (pyinfra/inventory.py) - no separate secret
 lookup. Used by test-local.sh and test-remote.sh; not normally run directly.
 
-Usage: ./run-test.py <inventory-group>   # e.g. localhost, mint_vm, dell_laptop, raaf
+Usage: ./_run-test.py <inventory-group>   # e.g. localhost, mint_vm, dell_laptop, raaf
 """
 
 import subprocess
