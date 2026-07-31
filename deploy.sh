@@ -1,12 +1,12 @@
 #!/bin/bash
 # Runs pyinfra against an inventory group, tee-ing output to a timestamped log.
 #
-# Usage: ./run.sh <host> [modules...] [pyinfra options...]
+# Usage: ./deploy.sh <host> [modules...] [pyinfra options...]
 #   Bare module names are resolved to modules/<name>.py; with no modules given, deploy.py
 #   is run instead.
-#   e.g. ./run.sh mint_vm -y                  # deploy.py
-#        ./run.sh mint_vm base ssh -y         # modules/base.py modules/ssh.py
-#        ./run.sh dell_laptop modules/git.py
+#   e.g. ./deploy.sh mint_vm -y                  # deploy.py
+#        ./deploy.sh mint_vm base ssh -y         # modules/base.py modules/ssh.py
+#        ./deploy.sh dell_laptop modules/git.py
 
 set -euo pipefail
 
