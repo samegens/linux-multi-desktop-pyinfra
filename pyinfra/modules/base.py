@@ -3,12 +3,11 @@
 from io import StringIO
 
 from pyinfra.context import host
-from pyinfra.api.deploy import deploy
+from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.facts.server import Command
 from pyinfra.operations import files, flatpak, server
 
 import pkgmgr
-
 
 @deploy("Base system setup")
 def deploy_base():
@@ -31,7 +30,7 @@ def deploy_base():
             _sudo=False,
         )
 
-    files.directory(name="Ensure /var/cache/pyinfra exists", path="/var/cache/pyinfra")
+    files.directory(name="Create /var/cache/pyinfra", path="/var/cache/pyinfra")
 
     pkgmgr.update_cache(name="Update package cache")
     pkgmgr.install(name="Install base packages", packages=host.data.packages)
@@ -39,7 +38,7 @@ def deploy_base():
     pkgmgr.install(name="Install flatpak", packages=["flatpak"])
 
     # No dedicated pyinfra flatpak-remote operation, so check + shell out instead.
-    existing_remotes = host.get_fact(Command, command="flatpak remote-list --columns=name")
+    existing_remotes = host.get_fact(Command, command="flatpak remote-list --columns=name") # pyright: ignore[reportUnknownMemberType]
     if "flathub" in existing_remotes.split():
         host.noop("Flathub remote is already configured")
     else:
@@ -63,6 +62,5 @@ def deploy_base():
         groups=["video", "dialout"],
         append=True,
     )
-
 
 deploy_base()
