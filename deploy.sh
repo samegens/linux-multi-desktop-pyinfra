@@ -2,9 +2,9 @@
 # Runs pyinfra against an inventory group, tee-ing output to a timestamped log.
 #
 # Usage: ./deploy.sh <host> [modules...] [pyinfra options...]
-#   Bare module names are resolved to modules/<name>.py; with no modules given, deploy.py
+#   Bare module names are resolved to modules/<name>.py; with no modules given, all.py
 #   is run instead.
-#   e.g. ./deploy.sh mint_vm -y                  # deploy.py
+#   e.g. ./deploy.sh mint_vm -y                  # all.py
 #        ./deploy.sh mint_vm base ssh -y         # modules/base.py modules/ssh.py
 #        ./deploy.sh dell_laptop modules/git.py
 
@@ -45,7 +45,7 @@ for arg in "$@"; do
 done
 
 if [ "${#targets[@]}" -eq 0 ]; then
-    targets=(deploy.py)
+    targets=(all.py)
 fi
 
 PYINFRA="$HOME/python3-venv/pyinfra-latest/bin/pyinfra"

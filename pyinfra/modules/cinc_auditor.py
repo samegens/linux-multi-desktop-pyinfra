@@ -72,7 +72,7 @@ def _fix_docker_deprecation_regex(version: str) -> Generator[StringCommand, None
     Facts are gathered for every queued operation during pyinfra's Preparing-operations stage,
     before any operation's commands actually execute - so on a host that's never had Cinc Auditor
     installed before, this `find` always runs against a not-yet-existing /opt/cinc-auditor,
-    regardless of where this operation sits in deploy.py's module order. Skip cleanly in that case
+    regardless of where this operation sits in all.py's module order. Skip cleanly in that case
     instead of raising - dnf.rpm/apt.deb's install still runs normally this pass, and the following
     pass (every module's dev loop already requires a second run to confirm idempotency - see
     CLAUDE.md) finds the now-installed gem dir and applies the fix.

@@ -205,24 +205,68 @@ control "vscode extensions are installed" do
   end
 end
 
-# TODO: uncomment once a dedicated PowerShell/.NET SDK module is built - see modules/vscode.py's
-# docstring for why it's not part of that module (Fedora/Microsoft dotnet-sdk-8.0 name collision).
-# control "dotnet is installed and working" do
-#   describe file('/usr/bin/dotnet') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-#   describe command('dotnet --version') do
-#     its('exit_status') { should eq 0 }
-#   end
-# end
-#
-# control "powershell is installed and working" do
-#   describe file('/usr/bin/pwsh') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "dotnet is installed and working" do
+  describe file('/usr/local/bin/dotnet') do
+    it { should exist }
+    it { should be_executable }
+    it { should be_symlink }
+    its('link_path') { should match %r{^/opt/dotnet-} }
+  end
+  describe command('dotnet --version') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+# Checks the actual toolchain works - dotnet --version alone only proves the binary runs, not
+# that it can resolve its shared frameworks/SDK packs and actually compile a project into a real
+# apphost executable (the real risk with a non-standard, non-distro-packaged install). Builds
+# and then runs the produced executable directly, not `dotnet run` - proves the apphost itself
+# (not just `dotnet` acting as a JIT/run wrapper) is correctly wired to the installed runtime.
+# One control per runtime channel modules/dotnet.py's DOTNET_EXTRA_RUNTIME_CHANNELS installs
+# side-by-side (7.0/8.0/9.0 EOL, plus 10.0 - the pinned SDK's own bundled runtime), so an old
+# csproj's TargetFramework is proven to actually run, not just that dotnet-install.sh reported
+# success installing it. `dotnet new console -f <tfm>` can't scaffold this directly - confirmed
+# live that SDK 10's console template only accepts its own current TFM as a valid -f value
+# ("net7.0 is not a valid value for -f"); sed the .csproj afterward instead, which `dotnet build`
+# honors for any TargetFramework as long as the runtime/targeting pack is present.
+["7.0", "8.0", "9.0", "10.0"].each do |framework|
+  control "dotnet can build and run a net#{framework} executable" do
+    workdir = "/tmp/dotnet-net#{framework}-inspec-test"
+    project = "Net#{framework.sub('.', '')}InspecTest"
+
+    describe command(
+      "rm -rf #{workdir} && mkdir -p #{workdir} && cd #{workdir} && " \
+      "dotnet new console --no-restore -o . -n #{project} && " \
+      "sed -i 's#<TargetFramework>.*</TargetFramework>#<TargetFramework>net#{framework}</TargetFramework>#' " \
+      "#{project}.csproj && " \
+      "dotnet build -c Release -o out && ./out/#{project}; " \
+      "status=$?; rm -rf #{workdir}; exit $status"
+    ) do
+      its('exit_status') { should eq 0 }
+      its('stdout') { should match /Hello, World!/ }
+    end
+  end
+end
+
+control "powershell is installed and working" do
+  describe file('/usr/local/bin/pwsh') do
+    it { should exist }
+    it { should be_executable }
+    it { should be_symlink }
+    its('link_path') { should match %r{^/opt/powershell-} }
+  end
+  describe command('pwsh --version') do
+    its('stdout') { should match /^PowerShell/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "powershell can run a hello world script" do
+  describe command("pwsh -NoProfile -Command \"Write-Output 'Hello, World!'\"") do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match /Hello, World!/ }
+  end
+end
 
 control "go is installed and working" do
   describe file('/usr/local/go/bin/go') do

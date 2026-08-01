@@ -33,7 +33,7 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 
    ```bash
    . ~/python3-venv/pyinfra-latest/bin/activate
-   cd pyinfra && pyinfra inventory.py deploy.py --limit <group>
+   cd pyinfra && pyinfra inventory.py all.py --limit <group>
    ```
 
    where group is one of `localhost`, `mint_vm`, `dell_laptop`, or `raaf`.
@@ -44,19 +44,16 @@ This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
-Commander, Workrave — all verified idempotent on both Mint (`mint_vm` test VM) and Fedora
-(`localhost`).
+Commander, Workrave, .NET SDK + PowerShell (from Microsoft's own upstream release artifacts, not
+distro packages - sidesteps the Fedora/Microsoft `dotnet-sdk-8.0` package name collision entirely,
+see `pyinfra/modules/dotnet.py`) — all verified idempotent on both Mint (`mint_vm` test VM) and
+Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
 still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
 
 Still to come, same lean-core list, one module + Inspec control at a time: Node.js,
 desktop-environment placeholder.
-
-Also planned, as its own separate module (split out of `vscode.py` - see its docstring): a
-PowerShell/.NET SDK module that properly resolves the Fedora/Microsoft `dotnet-sdk-8.0` package
-name collision via section-aware edits to Fedora's own `fedora.repo`/`fedora-updates.repo`,
-rather than the global-exclude approach that broke installs outright under dnf5.
 
 Deliberately not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
 printer, VeraCrypt, TagUI, balenaEtcher, Darktable, Obsidian,

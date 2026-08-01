@@ -20,11 +20,11 @@ bytes` decrypts using `$VAULT_PASSWORD` env var → `~/Dropbox/ansible/.vault_pa
 
 ## Run modes
 
-Same deploy (`pyinfra/deploy.py`) targets `localhost` (`@local`, reconfigure this machine) or
+Same deploy (`pyinfra/all.py`) targets `localhost` (`@local`, reconfigure this machine) or
 `mint_vm`/`dell_laptop`/`raaf` (SSH to a different machine):
 
 ```bash
-cd pyinfra && /home/sebastiaan/python3-venv/pyinfra-latest/bin/pyinfra inventory.py deploy.py --limit <group> -y
+cd pyinfra && /home/sebastiaan/python3-venv/pyinfra-latest/bin/pyinfra inventory.py all.py --limit <group> -y
 ```
 
 Wrapper scripts (`run.sh`/`run-local.sh`, tee output to a timestamped log) are **planned, not yet
@@ -54,7 +54,7 @@ built** — don't assume they exist.
    *behavior* over config-file syntax where the distros' native tooling differs (e.g.
    `command('localectl status')`, not a regex on `/etc/locale.conf`), so one control stays correct
    on both without a conditional inside it. Confirm via `./test-remote.sh mint_vm` + `./test-local.sh`.
-5. Add `import modules.x  # pyright: ignore` to `deploy.py`; update README's "Scope" section.
+5. Add `import modules.x  # pyright: ignore` to `all.py`; update README's "Scope" section.
 
 ## Multi-distro support (Mint/apt + Fedora/dnf)
 
@@ -101,18 +101,15 @@ side's Ubuntu release from a live fact rather than a hardcoded `group_data` var 
 after adding a repo must be gated behind a repo-file-exists check, it has no idempotency of its
 own; on Fedora, dnf's Provides matching makes legacy package "docker" falsely match the already-
 installed docker-ce, so the old-package cleanup is gated behind "docker not yet installed"), `k3s`
-(developer/k3s-experiment-station goal).
+(developer/k3s-experiment-station goal), `dotnet` (.NET SDK + PowerShell).
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
-`desktop` placeholder, then a dedicated PowerShell/.NET SDK
-module (split out of `vscode.py` - needs section-aware edits to Fedora's own
-`fedora.repo`/`fedora-updates.repo` to resolve the `dotnet-sdk-8.0` name collision, not the
-global-exclude approach that broke installs under dnf5). Wrapper scripts also outstanding.
+`desktop` placeholder. Wrapper scripts also outstanding.
 
 ## Layout
 
-- `pyinfra/deploy.py` — entrypoint, plain `import modules.X  # pyright: ignore` per module (each
+- `pyinfra/all.py` — entrypoint, plain `import modules.X  # pyright: ignore` per module (each
   module self-invokes `deploy_x()` at the bottom — see gotchas for why).
 - `pyinfra/modules/*.py` — one file per feature, mirrors `fedora-desktop/ansible/tasks/*.yml`.
 - `pyinfra/pkgmgr.py`, `services.py`, `paths.py` — multi-distro abstraction (see above), plain
@@ -138,7 +135,7 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
   `host`/`deploy` imports — `from pyinfra.context import host`, `from pyinfra.api.deploy import deploy`.
 - **Module self-invocation**: a `@deploy`-decorated function that's merely defined, never called,
   does nothing when pyinfra loads the file — every module calls its own `deploy_x()`
-  unconditionally at the bottom. `deploy.py` then just imports each module for its side effect.
+  unconditionally at the bottom. `all.py` then just imports each module for its side effect.
 - **`git.config` keys must be lowercase** — git normalizes storage, so mixed-case keys never match
   and report "changed" every run.
 - **`files.line` needs both `escape_regex_characters=True` *and* `extended_regex=True` together**,

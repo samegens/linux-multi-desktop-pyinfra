@@ -1,7 +1,7 @@
 """pyinfra inventory
 
 Groups double as --limit targets, e.g.:
-    pyinfra inventory.py deploy.py --limit localhost
+    pyinfra inventory.py all.py --limit localhost
 """
 
 import secrets_data
