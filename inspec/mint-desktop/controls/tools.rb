@@ -99,13 +99,16 @@ end
 #   end
 # end
 
-# TODO: uncomment once a claude-code module is built (deferred, see README backlog)
-# control "claude is installed and working" do
-#   describe file("/home/#{input('username')}/.local/bin/claude") do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "claude is installed and working" do
+  describe file("/home/#{input('username')}/.local/bin/claude") do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command("/home/#{input('username')}/.local/bin/claude --version") do
+    its('stdout') { should match /^[0-9]/ }
+    its('exit_status') { should eq 0 }
+  end
+end
 
 # Security scanning tools
 

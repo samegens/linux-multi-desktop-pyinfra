@@ -46,7 +46,7 @@ venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
 Commander, Workrave, .NET SDK + PowerShell (from Microsoft's own upstream release artifacts, not
 distro packages - sidesteps the Fedora/Microsoft `dotnet-sdk-8.0` package name collision entirely,
-see `pyinfra/modules/dotnet.py`) — all verified idempotent on both Mint (`mint_vm` test VM) and
+see `pyinfra/modules/dotnet.py`), Claude Code — all verified idempotent on both Mint (`mint_vm` test VM) and
 Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
@@ -59,7 +59,7 @@ Deliberately not yet ported (add on demand, following the existing `pyinfra/modu
 printer, VeraCrypt, TagUI, balenaEtcher, Darktable, Obsidian,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Google Fonts, Miniconda,
 gitleaks/trufflehog *install* tasks, P4Merge, Terraform/Packer, NFS/SSHFS mounts, Fastfetch,
-MS TTF fonts, Claude Code, Dropbox, personal `/etc/hosts` entries.
+MS TTF fonts, Dropbox, personal `/etc/hosts` entries.
 
 ## Secret Detection
 

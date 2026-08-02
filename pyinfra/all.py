@@ -26,3 +26,4 @@ import modules.workrave  # pyright: ignore
 import modules.obsidian  # pyright: ignore
 import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore
+import modules.claude_code  # pyright: ignore

@@ -101,7 +101,7 @@ side's Ubuntu release from a live fact rather than a hardcoded `group_data` var 
 after adding a repo must be gated behind a repo-file-exists check, it has no idempotency of its
 own; on Fedora, dnf's Provides matching makes legacy package "docker" falsely match the already-
 installed docker-ce, so the old-package cleanup is gated behind "docker not yet installed"), `k3s`
-(developer/k3s-experiment-station goal), `dotnet` (.NET SDK + PowerShell).
+(developer/k3s-experiment-station goal), `dotnet` (.NET SDK + PowerShell), `claude_code`.
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
