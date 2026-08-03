@@ -72,6 +72,18 @@ control "locale is set to en_US.UTF-8" do
   end
 end
 
+control "right Alt is configured as compose key" do
+  if os.debian?
+    describe file('/etc/default/keyboard') do
+      its('content') { should match /XKBOPTIONS="?compose:ralt"?/ }
+    end
+  else
+    describe command('localectl status') do
+      its('stdout') { should match /X11 Options:.*compose:ralt/ }
+    end
+  end
+end
+
 # Config files
 
 control ".inputrc is configured" do
