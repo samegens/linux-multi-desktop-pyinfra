@@ -63,6 +63,7 @@ packages = [
     "imagemagick",
     "htop",
     "jq",
+    "moreutils",
     "gimp",
     "gh",
     "ncdu",

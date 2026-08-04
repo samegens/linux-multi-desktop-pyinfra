@@ -300,6 +300,13 @@ control "cargo is installed and working" do
   end
 end
 
+control "ts is installed" do
+  describe command("which ts") do
+    its('stdout') { should match /^.*\/ts$/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
 # TODO: uncomment once a p4merge module is built (deferred, see README backlog)
 # control "p4merge is installed and working" do
 #   describe file('/usr/local/bin/p4merge') do
