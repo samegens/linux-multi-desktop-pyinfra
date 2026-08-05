@@ -57,4 +57,7 @@ mkdir -p "$LOG_DIR"
 echo "Logging to $LOG_FILE"
 
 cd "$REPO_DIR/pyinfra"
-"$PYINFRA" inventory.py "${targets[@]}" --limit "$host" "${options[@]}" -v 2>&1 | ts '%Y-%m-%d %H:%M:%.S' | tee "$LOG_FILE"
+# Console gets raw output (immediate, no buffering wait on unterminated prompt lines);
+# only the log file copy goes through `ts`, which can only timestamp complete lines and
+# would otherwise hold an interactive prompt back until it sees a trailing newline.
+"$PYINFRA" inventory.py "${targets[@]}" --limit "$host" "${options[@]}" -v 2>&1 | tee >(ts '%Y-%m-%d %H:%M:%.S' > "$LOG_FILE")
