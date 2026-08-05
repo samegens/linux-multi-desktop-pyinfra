@@ -12,7 +12,7 @@ from pyinfra.operations import files, server
 import pkgmgr
 from pkgmgr import PackageManager
 
-COMPOSE_OPTION = "compose:ralt"
+COMPOSE_OPTION: str = "compose:ralt"
 
 def _parse_localectl_field(status: str, field: str) -> str:
     match = re.search(rf"^\s*X11 {field}:\s*(.*)$", status, re.MULTILINE)
