@@ -27,8 +27,9 @@ Same deploy (`pyinfra/all.py`) targets `localhost` (`@local`, reconfigure this m
 cd pyinfra && /home/sebastiaan/python3-venv/pyinfra-latest/bin/pyinfra inventory.py all.py --limit <group> -y
 ```
 
-Wrapper scripts (`run.sh`/`run-local.sh`, tee output to a timestamped log) are **planned, not yet
-built** — don't assume they exist.
+`deploy.sh <host> [modules...] [pyinfra options...]` wraps that invocation, timestamping each
+line and tee-ing output to a timestamped log under
+`logs/`.
 
 ## Verification targets
 
@@ -105,7 +106,7 @@ installed docker-ce, so the old-package cleanup is gated behind "docker not yet 
 
 **Next up**, one module + Inspec control at a time via the dev loop above — verify Fedora
 immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
-`desktop` placeholder. Wrapper scripts also outstanding.
+`desktop` placeholder.
 
 ## Layout
 

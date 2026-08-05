@@ -24,4 +24,4 @@ echo "Installing pyinfra + privy into $VENV_DIR..."
 echo
 echo "Done. Then:"
 echo "  ./setup-repo.sh"
-echo "  cd pyinfra && ./run-local.sh"
+echo "  ./deploy.sh localhost -y"

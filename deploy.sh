@@ -1,5 +1,6 @@
 #!/bin/bash
-# Runs pyinfra against an inventory group, tee-ing output to a timestamped log.
+# Runs pyinfra against an inventory group, timestamping each line
+# and tee-ing output to a timestamped log.
 #
 # Usage: ./deploy.sh <host> [modules...] [pyinfra options...]
 #   Bare module names are resolved to modules/<name>.py; with no modules given, all.py
@@ -56,4 +57,4 @@ mkdir -p "$LOG_DIR"
 echo "Logging to $LOG_FILE"
 
 cd "$REPO_DIR/pyinfra"
-"$PYINFRA" inventory.py "${targets[@]}" --limit "$host" "${options[@]}" -v 2>&1 | tee "$LOG_FILE"
+"$PYINFRA" inventory.py "${targets[@]}" --limit "$host" "${options[@]}" -v 2>&1 | ts '%Y-%m-%d %H:%M:%.S' | tee "$LOG_FILE"
