@@ -380,6 +380,25 @@ control "obsidian config is in place" do
   end
 end
 
+# darktable
+
+control "darktable flatpak is installed" do
+  describe command('flatpak info org.darktable.Darktable') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "darktable settings are pinned" do
+  username = input('username')
+  describe file("/home/#{username}/.var/app/org.darktable.Darktable/config/darktable/darktablerc") do
+    it { should exist }
+    its('content') { should match %r{^plugins/darkroom/workflow=scene-referred \(filmic\)$} }
+    its('content') { should match %r{^plugins/darkroom/histogram/mode=histogram$} }
+    its('content') { should match %r{^plugins/imageio/format/jpeg/quality=85$} }
+    its('content') { should match /^session\/use_filename=TRUE$/ }
+  end
+end
+
 # balenaEtcher
 
 control "balenaEtcher is installed" do
