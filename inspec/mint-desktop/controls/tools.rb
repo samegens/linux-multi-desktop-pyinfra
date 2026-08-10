@@ -1,6 +1,7 @@
 # System tools
 
 control "git is installed and working" do
+  tag :tools
   describe file('/usr/bin/git') do
     it { should exist }
     it { should be_executable }
@@ -12,6 +13,7 @@ control "git is installed and working" do
 end
 
 control "docker is installed and working" do
+  tag :tools
   describe file('/usr/bin/docker') do
     it { should exist }
     it { should be_executable }
@@ -23,6 +25,7 @@ control "docker is installed and working" do
 end
 
 control "docker service is enabled and running" do
+  tag :tools
   describe service('docker') do
     it { should be_enabled }
     it { should be_running }
@@ -30,6 +33,7 @@ control "docker service is enabled and running" do
 end
 
 control "user is in the docker group" do
+  tag :tools
   describe user(input('username')) do
     its('groups') { should include 'docker' }
   end
@@ -60,6 +64,7 @@ end
 # end
 
 control "cinc-auditor is installed and working" do
+  tag :tools
   describe file('/opt/cinc-auditor/bin/cinc-auditor') do
     it { should exist }
     it { should be_executable }
@@ -73,6 +78,7 @@ end
 # CLI tools
 
 control "starship is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/starship') do
     it { should exist }
     it { should be_executable }
@@ -100,6 +106,7 @@ end
 # end
 
 control "claude is installed and working" do
+  tag :tools
   describe file("/home/#{input('username')}/.local/bin/claude") do
     it { should exist }
     it { should be_executable }
@@ -131,6 +138,7 @@ end
 # Kubernetes tools
 
 control "k3s is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/k3s') do
     it { should exist }
     it { should be_executable }
@@ -142,6 +150,7 @@ control "k3s is installed and working" do
 end
 
 control "k3s service is enabled and running" do
+  tag :tools
   describe service('k3s') do
     it { should be_enabled }
     it { should be_running }
@@ -149,6 +158,7 @@ control "k3s service is enabled and running" do
 end
 
 control "k3s kubeconfig is world-readable" do
+  tag :tools
   describe file('/etc/rancher/k3s/k3s.yaml') do
     it { should exist }
     its('mode') { should cmp '0644' }
@@ -156,6 +166,7 @@ control "k3s kubeconfig is world-readable" do
 end
 
 control "k9s is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/k9s') do
     it { should exist }
     it { should be_executable }
@@ -168,6 +179,7 @@ control "k9s is installed and working" do
 end
 
 control "helm is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/helm') do
     it { should exist }
     it { should be_executable }
@@ -182,6 +194,7 @@ end
 # Development tools
 
 control "vscode is installed and working" do
+  tag :tools
   describe file('/usr/bin/code') do
     it { should exist }
     it { should be_executable }
@@ -189,6 +202,7 @@ control "vscode is installed and working" do
 end
 
 control "vscode config files are in place" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.config/Code/User/settings.json") do
     it { should exist }
@@ -202,6 +216,7 @@ control "vscode config files are in place" do
 end
 
 control "vscode extensions are installed" do
+  tag :tools
   describe command("code --list-extensions") do
     its('stdout') { should match /ms-python\.python/ }
     its('exit_status') { should eq 0 }
@@ -209,6 +224,7 @@ control "vscode extensions are installed" do
 end
 
 control "dotnet is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/dotnet') do
     it { should exist }
     it { should be_executable }
@@ -234,6 +250,7 @@ end
 # honors for any TargetFramework as long as the runtime/targeting pack is present.
 ["7.0", "8.0", "9.0", "10.0"].each do |framework|
   control "dotnet can build and run a net#{framework} executable" do
+    tag :tools
     workdir = "/tmp/dotnet-net#{framework}-inspec-test"
     project = "Net#{framework.sub('.', '')}InspecTest"
 
@@ -252,6 +269,7 @@ end
 end
 
 control "powershell is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/pwsh') do
     it { should exist }
     it { should be_executable }
@@ -265,6 +283,7 @@ control "powershell is installed and working" do
 end
 
 control "powershell can run a hello world script" do
+  tag :tools
   describe command("pwsh -NoProfile -Command \"Write-Output 'Hello, World!'\"") do
     its('exit_status') { should eq 0 }
     its('stdout') { should match /Hello, World!/ }
@@ -272,6 +291,7 @@ control "powershell can run a hello world script" do
 end
 
 control "go is installed and working" do
+  tag :tools
   describe file('/usr/local/go/bin/go') do
     it { should exist }
     it { should be_executable }
@@ -283,6 +303,7 @@ control "go is installed and working" do
 end
 
 control "rustc is installed and working" do
+  tag :tools
   describe file("/home/#{input('username')}/.cargo/bin/rustc") do
     it { should exist }
     it { should be_executable }
@@ -294,6 +315,7 @@ control "rustc is installed and working" do
 end
 
 control "cargo is installed and working" do
+  tag :tools
   describe file("/home/#{input('username')}/.cargo/bin/cargo") do
     it { should exist }
     it { should be_executable }
@@ -301,6 +323,7 @@ control "cargo is installed and working" do
 end
 
 control "ts is installed" do
+  tag :tools
   describe command("which ts") do
     its('stdout') { should match /^.*\/ts$/ }
     its('exit_status') { should eq 0 }
@@ -318,6 +341,7 @@ end
 # Double Commander
 
 control "doublecmd is installed and working" do
+  tag :tools
   describe file('/usr/local/bin/doublecmd') do
     it { should exist }
     it { should be_executable }
@@ -327,6 +351,7 @@ control "doublecmd is installed and working" do
 end
 
 control "doublecmd config files are in place" do
+  tag :tools
   username = input('username')
   config_dir = "/home/#{username}/.config/doublecmd"
   ["doublecmd.xml", "multiarc.ini", "session.ini", "shortcuts.scf"].each do |config_file|
@@ -337,6 +362,7 @@ control "doublecmd config files are in place" do
 end
 
 control "doublecmd desktop entry is in place" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.local/share/applications/doublecmd.desktop") do
     it { should exist }
@@ -348,6 +374,7 @@ control "doublecmd desktop entry is in place" do
 end
 
 control "doublecmd F9 launches ghostty in the active directory" do
+  tag :tools
   username = input('username')
 
   shortcuts_content = file("/home/#{username}/.config/doublecmd/shortcuts.scf").content
@@ -368,12 +395,14 @@ end
 # Ghostty
 
 control "ghostty is installed and working" do
+  tag :tools
   describe command('ghostty --version') do
     its('exit_status') { should eq 0 }
   end
 end
 
 control "ghostty new windows are maximized" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.config/ghostty/config") do
     it { should exist }
@@ -384,6 +413,7 @@ end
 # Workrave
 
 control "workrave is installed and working" do
+  tag :tools
   describe file('/usr/bin/workrave') do
     it { should exist }
     it { should be_executable }
@@ -391,6 +421,7 @@ control "workrave is installed and working" do
 end
 
 control "workrave autostart entry is in place" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.config/autostart/workrave.desktop") do
     it { should exist }
@@ -401,12 +432,14 @@ end
 # Obsidian
 
 control "obsidian flatpak is installed" do
+  tag :tools
   describe command('flatpak info md.obsidian.Obsidian') do
     its('exit_status') { should eq 0 }
   end
 end
 
 control "obsidian config is in place" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json") do
     it { should exist }
@@ -417,12 +450,14 @@ end
 # darktable
 
 control "darktable flatpak is installed" do
+  tag :tools
   describe command('flatpak info org.darktable.Darktable') do
     its('exit_status') { should eq 0 }
   end
 end
 
 control "darktable settings are pinned" do
+  tag :tools
   username = input('username')
   describe file("/home/#{username}/.var/app/org.darktable.Darktable/config/darktable/darktablerc") do
     it { should exist }
@@ -436,6 +471,7 @@ end
 # balenaEtcher
 
 control "balenaEtcher is installed" do
+  tag :tools
   describe file('/usr/bin/balena-etcher') do
     it { should exist }
     it { should be_executable }
@@ -445,6 +481,7 @@ end
 # Firefox
 
 control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do
+  tag :tools
   only_if('this is a dnf-based host') { !os.debian? }
 
   describe command('rpm -q libavcodec-freeworld') do
@@ -468,6 +505,7 @@ end
   "ansible-homedisplay" => "ansible",
 }.each do |venv_name, sample_package|
   control "#{venv_name} venv is set up and working" do
+    tag :tools
     username = input('username')
     venv = "/home/#{username}/python3-venv/#{venv_name}"
     describe file("#{venv}/bin/activate") do

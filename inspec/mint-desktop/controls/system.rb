@@ -5,6 +5,7 @@ username = input('username')
 ssh_service_name = os.debian? ? 'ssh' : 'sshd'
 
 control "#{ssh_service_name} service is enabled and running" do
+  tag :system
   describe service(ssh_service_name) do
     it { should be_enabled }
     it { should be_running }
@@ -13,6 +14,7 @@ end
 
 ['docker'].each do |svc|
   control "#{svc} service is enabled and running" do
+    tag :system
     describe service(svc) do
       it { should be_enabled }
       it { should be_running }
@@ -21,6 +23,7 @@ end
 end
 
 control "k3s service is enabled and running" do
+  tag :system
   describe service('k3s') do
     it { should be_enabled }
     it { should be_running }
@@ -30,6 +33,7 @@ end
 # Group memberships
 
 control "user is in docker group" do
+  tag :system
   describe user(username) do
     its('groups') { should include 'docker' }
   end
@@ -37,6 +41,7 @@ end
 
 ['video', 'dialout'].each do |grp|
   control "user is in #{grp} group" do
+    tag :system
     describe user(username) do
       its('groups') { should include grp }
     end
@@ -67,12 +72,14 @@ end
 # Locale
 
 control "locale is set to en_US.UTF-8" do
+  tag :system
   describe command('localectl status') do
     its('stdout') { should match /LANG=en_US\.UTF-8/ }
   end
 end
 
 control "right Alt is configured as compose key" do
+  tag :system
   if os.debian?
     describe file('/etc/default/keyboard') do
       its('content') { should match /XKBOPTIONS="?compose:ralt"?/ }
@@ -86,15 +93,8 @@ end
 
 # Config files
 
-control ".inputrc is configured" do
-  describe file("/home/#{username}/.inputrc") do
-    it { should exist }
-    its('owner') { should eq username }
-    its('content') { should match /completion-ignore-case On/ }
-  end
-end
-
 control "go PATH script is in place" do
+  tag :system
   describe file('/etc/profile.d/go.sh') do
     it { should exist }
     its('content') { should match %r{/usr/local/go/bin} }
@@ -104,6 +104,7 @@ end
 # SSH
 
 control "ssh directory has correct permissions" do
+  tag :system
   describe file("/home/#{username}/.ssh") do
     it { should be_directory }
     its('mode') { should cmp '0700' }
@@ -112,6 +113,7 @@ control "ssh directory has correct permissions" do
 end
 
 control "ssh config is in place with correct permissions" do
+  tag :system
   describe file("/home/#{username}/.ssh/config") do
     it { should exist }
     its('mode') { should cmp '0600' }
@@ -125,6 +127,7 @@ ssh_keys = [
 ]
 ssh_keys.each do |key_name|
   control "SSH private key #{key_name} is installed with correct permissions" do
+    tag :system
     describe file("/home/#{username}/.ssh/#{key_name}") do
       it { should exist }
       its('mode') { should cmp '0600' }
@@ -133,6 +136,7 @@ ssh_keys.each do |key_name|
   end
 
   control "SSH public key #{key_name}.pub is installed" do
+    tag :system
     describe file("/home/#{username}/.ssh/#{key_name}.pub") do
       it { should exist }
       its('owner') { should eq username }
@@ -141,6 +145,7 @@ ssh_keys.each do |key_name|
 end
 
 control "homeserver key symlinks point to cubi" do
+  tag :system
   describe file("/home/#{username}/.ssh/homeserver") do
     it { should be_symlink }
     it { should exist }
@@ -165,6 +170,7 @@ ssh_simple_auth_checks = {
 }
 ssh_simple_auth_checks.each do |host_alias, expected_output|
   control "ssh key auth works for #{host_alias}" do
+    tag :system
     describe command("ssh -T -o BatchMode=yes -o StrictHostKeyChecking=no #{host_alias} 2>&1") do
       its('stdout') { should match expected_output }
     end
@@ -179,6 +185,7 @@ ssh_checks = [
 ]
 ssh_checks.each do |host_alias|
   control "ssh works for #{host_alias}" do
+    tag :system
     describe command("ssh -o BatchMode=yes -o StrictHostKeyChecking=no #{host_alias} -- echo success 2>&1") do
       its('stdout') { should match /success/ }
     end
@@ -188,6 +195,7 @@ end
 # Git config
 
 control "git is configured correctly" do
+  tag :system
   describe file("/home/#{username}/.gitconfig") do
     it { should exist }
     its('content') { should match /name\s*=\s*Sebastiaan/ }
@@ -199,17 +207,8 @@ control "git is configured correctly" do
   end
 end
 
-# Bashrc
-
-control ".bashrc is configured" do
-  describe file("/home/#{username}/.bashrc") do
-    it { should exist }
-    its('content') { should match /\.cargo\/bin/ }
-    its('content') { should match /alias ll=/ }
-  end
-end
-
 control "Python venv pyinfra-latest exists" do
+  tag :system
   describe file("/home/#{username}/python3-venv/pyinfra-latest/bin/activate") do
     it { should exist }
     its('owner') { should eq username }

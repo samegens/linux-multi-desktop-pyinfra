@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <inventory-group>  (e.g. mint_vm, dell_laptop, raaf)"
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo "Usage: $0 <inventory-group> [tag]  (e.g. mint_vm, dell_laptop, raaf; optional tag e.g. tools)"
     exit 1
 fi
 
-exec "$(dirname "$0")/_run-test.py" "$1"
+exec "$(dirname "$0")/_run-test.py" "$@"
