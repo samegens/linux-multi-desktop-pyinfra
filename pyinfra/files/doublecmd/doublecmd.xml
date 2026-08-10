@@ -177,7 +177,7 @@
     <RunInTerminalCloseCmd>x-terminal-emulator</RunInTerminalCloseCmd>
     <RunInTerminalCloseParams>-e sh -c {command}</RunInTerminalCloseParams>
     <JustRunTerminal>ghostty</JustRunTerminal>
-    <JustRunTermParams/>
+    <JustRunTermParams>--working-directory=%d</JustRunTermParams>
     <OnlyOneAppInstance>False</OnlyOneAppInstance>
     <LynxLike>True</LynxLike>
     <FileSizeFormat>0</FileSizeFormat>
