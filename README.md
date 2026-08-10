@@ -44,10 +44,8 @@ This is a **lean core** rebuild, not a full 1:1 port of `fedora-desktop`. Ported
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
-Commander, Workrave, .NET SDK + PowerShell (from Microsoft's own upstream release artifacts, not
-distro packages - sidesteps the Fedora/Microsoft `dotnet-sdk-8.0` package name collision entirely,
-see `pyinfra/modules/dotnet.py`), Claude Code — all verified idempotent on both Mint (`mint_vm` test VM) and
-Fedora (`localhost`).
+Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code —
+all verified idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
 still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.

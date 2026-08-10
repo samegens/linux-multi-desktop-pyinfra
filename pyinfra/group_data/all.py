@@ -23,6 +23,8 @@ cinc_auditor_version = "7.1.7"
 
 doublecmd_version = "1.2.7"
 
+ghostty_apt_version = "1.3.1-0-ppa2"
+
 balena_etcher_version = "2.1.6"
 
 dotnet_version = "10.0.302"

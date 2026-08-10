@@ -347,6 +347,40 @@ control "doublecmd desktop entry is in place" do
   end
 end
 
+control "doublecmd F9 launches ghostty in the active directory" do
+  username = input('username')
+
+  shortcuts_content = file("/home/#{username}/.config/doublecmd/shortcuts.scf").content
+  f9_command_setting = shortcuts_content[/<Shortcut>F9<\/Shortcut>\s*<Command>(\w+)<\/Command>/, 1]
+  describe 'doublecmd F9 hotkey command' do
+    subject { f9_command_setting }
+    it { should cmp 'cm_RunTerm' }
+  end
+
+  doublecmd_xml_content = file("/home/#{username}/.config/doublecmd/doublecmd.xml").content
+  just_run_terminal_setting = doublecmd_xml_content[/<JustRunTerminal>(.*?)<\/JustRunTerminal>/, 1]
+  describe 'doublecmd JustRunTerminal command' do
+    subject { just_run_terminal_setting }
+    it { should cmp 'ghostty' }
+  end
+end
+
+# Ghostty
+
+control "ghostty is installed and working" do
+  describe command('ghostty --version') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "ghostty new windows are maximized" do
+  username = input('username')
+  describe file("/home/#{username}/.config/ghostty/config") do
+    it { should exist }
+    its('content') { should match /^maximize=true$/ }
+  end
+end
+
 # Workrave
 
 control "workrave is installed and working" do

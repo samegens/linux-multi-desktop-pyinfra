@@ -22,6 +22,7 @@ import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore
 import modules.doublecmd  # pyright: ignore
+import modules.ghostty  # pyright: ignore
 import modules.workrave  # pyright: ignore
 import modules.obsidian  # pyright: ignore
 import modules.darktable  # pyright: ignore
