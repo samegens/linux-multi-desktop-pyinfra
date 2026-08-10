@@ -29,6 +29,7 @@ GHOSTTY_CONFIG_SETTINGS: dict[str, str] = {
 
 def _install_dnf():
     dnf.repo(
+        name="Add ghostty dnf repo",
         src="ghostty",
         baseurl=(
             f"https://download.copr.fedorainfracloud.org/results/{DNF_COPR_OWNER}/{DNF_COPR_PROJECT}"
@@ -74,7 +75,7 @@ def _install_config(username: str):
     for key, value in GHOSTTY_CONFIG_SETTINGS.items():
         set_key_value(
             name=f"Set Ghostty setting {key}={value}",
-            path=f"{config_dir}/config",
+            path=f"{config_dir}/config.ghostty",
             key=key,
             value=value,
             _sudo=False,

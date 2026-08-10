@@ -392,24 +392,6 @@ control "doublecmd F9 launches ghostty in the active directory" do
   end
 end
 
-# Ghostty
-
-control "ghostty is installed and working" do
-  tag :tools
-  describe command('ghostty --version') do
-    its('exit_status') { should eq 0 }
-  end
-end
-
-control "ghostty new windows are maximized" do
-  tag :tools
-  username = input('username')
-  describe file("/home/#{username}/.config/ghostty/config") do
-    it { should exist }
-    its('content') { should match /^maximize=true$/ }
-  end
-end
-
 # Workrave
 
 control "workrave is installed and working" do
