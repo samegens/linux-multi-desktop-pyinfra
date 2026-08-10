@@ -50,16 +50,6 @@ def _install_binary(version: str) -> str:
     return binary
 
 def _install_desktop_entry(username: str):
-    for relative_dir in [".local/share/icons", ".local/share/applications"]:
-        files.directory(
-            name=f"Create ~/{relative_dir}",
-            path=f"/home/{username}/{relative_dir}",
-            user=username,
-            group=username,
-            mode="755",
-            _sudo=False,
-        )
-
     files.download(
         name="Download Double Commander icon",
         src=(

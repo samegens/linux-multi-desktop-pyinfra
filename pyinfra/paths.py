@@ -1,13 +1,14 @@
-"""System config-file path resolution - some paths differ by package manager (e.g. the
-systemwide interactive bashrc, baked into the bash package as built for a given repository
-ecosystem - see pkgmgr.py's module docstring). Add new SystemPath members here as new paths
-need distro-aware resolution; everything else in the codebase should call
-get_system_path(), never hardcode a path that's known to diverge.
-"""
+"""System path constants and resolution."""
 
 from enum import Enum
 
 from pkgmgr import PackageManager, get_package_manager
+
+# Created by modules/base.py. Used by any module that downloads a versioned package artifact
+# (.deb/.rpm/install script) to a location that survives a reboot, unlike pyinfra's own
+# managed /tmp temp files - see modules/cinc_auditor.py's _download_cinc_auditor_package()
+# docstring for why that distinction matters.
+PYINFRA_CACHE_DIR = "/var/cache/pyinfra"
 
 
 class SystemPath(Enum):

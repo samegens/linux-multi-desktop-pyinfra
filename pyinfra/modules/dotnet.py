@@ -63,6 +63,7 @@ from archives import download_and_extract
 
 import pkgmgr
 from pkgmgr import PackageManager
+from paths import PYINFRA_CACHE_DIR
 
 # fedora-desktop's old Ansible task installed these as native dnf packages - see module
 # docstring. Just the packages dnf reported directly under "Removing:" in a dry run; dnf's own
@@ -99,7 +100,7 @@ def _remove_legacy_dnf_dotnet():
 # skips it as a no-op once it finds the SDK's own runtime already there.
 DOTNET_EXTRA_RUNTIME_CHANNELS = ["7.0", "8.0", "9.0", "10.0"]
 
-DOTNET_INSTALL_SCRIPT = "/var/cache/pyinfra/dotnet-install.sh"
+DOTNET_INSTALL_SCRIPT = f"{PYINFRA_CACHE_DIR}/dotnet-install.sh"
 
 def _ensure_dotnet_install_script():
     files.download(

@@ -15,6 +15,7 @@ from pyinfra.operations import apt, dnf, files
 
 import pkgmgr
 from pkgmgr import DEB_ARCH_MAP, PackageManager
+from paths import PYINFRA_CACHE_DIR
 
 @deploy("Install Cinc Auditor")
 def deploy_cinc_auditor():
@@ -57,7 +58,7 @@ def _download_cinc_auditor_package(url: str, filename: str) -> str:
     internal download step and compare this file's version against what's installed directly -
     the same comparison, just against a file that's actually still there.
     """
-    dest = f"/var/cache/pyinfra/{filename}"
+    dest = f"{PYINFRA_CACHE_DIR}/{filename}"
     files.download(name=f"Download Cinc Auditor package ({filename})", src=url, dest=dest)
     return dest
 

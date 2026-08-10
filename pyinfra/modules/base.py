@@ -8,6 +8,7 @@ from pyinfra.facts.server import Command
 from pyinfra.operations import files, flatpak, server
 
 import pkgmgr
+from paths import PYINFRA_CACHE_DIR
 
 @deploy("Base system setup")
 def deploy_base():
@@ -30,7 +31,7 @@ def deploy_base():
             _sudo=False,
         )
 
-    files.directory(name="Create /var/cache/pyinfra", path="/var/cache/pyinfra")
+    files.directory(name=f"Create {PYINFRA_CACHE_DIR}", path=PYINFRA_CACHE_DIR)
 
     pkgmgr.update_cache(name="Update package cache")
     pkgmgr.install(name="Install base packages", packages=host.data.packages)

@@ -9,6 +9,7 @@ from pyinfra.operations import apt, dnf, files
 
 import pkgmgr
 from pkgmgr import DEB_ARCH_MAP, PackageManager
+from paths import PYINFRA_CACHE_DIR
 
 @deploy("Install balenaEtcher")
 def deploy_balena_etcher():
@@ -41,7 +42,7 @@ def _download_balena_etcher_package(url: str, filename: str) -> str:
     dnf.rpm handle the URL src themselves - see modules/cinc_auditor.py's
     _download_cinc_auditor_package for why (doesn't survive a reboot on mint_vm as a pyinfra-
     managed /tmp file, breaking idempotency)."""
-    dest = f"/var/cache/pyinfra/{filename}"
+    dest = f"{PYINFRA_CACHE_DIR}/{filename}"
     files.download(name=f"Download balenaEtcher package ({filename})", src=url, dest=dest)
     return dest
 

@@ -6,7 +6,9 @@ from pyinfra.facts.files import File
 from pyinfra.facts.server import Command
 from pyinfra.operations import files, npm, server
 
-CLAUDE_INSTALL_SCRIPT = "/var/cache/pyinfra/claude-install.sh"
+from paths import PYINFRA_CACHE_DIR
+
+CLAUDE_INSTALL_SCRIPT = f"{PYINFRA_CACHE_DIR}/claude-install.sh"
 
 def _remove_legacy_npm_install():
     npm_present = host.get_fact( # pyright: ignore[reportUnknownMemberType]
