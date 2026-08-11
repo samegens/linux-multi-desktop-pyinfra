@@ -19,19 +19,19 @@ disabled = true
 # Show username
 [username]
 show_always = true
-format = '[$user]($style) '
+format = '[$user]($style)'
 
 # Show hostname
 [hostname]
 ssh_only = false
-format = 'on [$hostname](bold yellow) '
+format = '@[$hostname](bold yellow)'
 
 # Directory settings
 [directory]
 truncation_length = 0
 truncate_to_repo = false
 style = "#4169e1"
-format = "[](bg:$style fg:black)[$path](bg:$style)[](fg:$style)[$read_only]($read_only_style) "
+format = "[](fg:$style bg:transparent)[$path](bg:$style)[](fg:$style)[$read_only]($read_only_style) "
 
 # Show current time
 [time]
