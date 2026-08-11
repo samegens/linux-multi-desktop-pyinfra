@@ -3,3 +3,4 @@
 from pkgmgr import Distro
 
 distro = Distro.MINT
+hostname = "mint-vm"

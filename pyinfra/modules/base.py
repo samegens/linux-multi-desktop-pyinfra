@@ -12,6 +12,9 @@ from paths import PYINFRA_CACHE_DIR
 
 @deploy("Base system setup")
 def deploy_base():
+    if host.data.get("hostname"): # pyright: ignore[reportUnknownMemberType]
+        server.hostname(name="Set hostname", hostname=host.data.hostname)
+
     files.put(
         name="Set locale",
         src=StringIO(pkgmgr.get_en_us_locale_content()),

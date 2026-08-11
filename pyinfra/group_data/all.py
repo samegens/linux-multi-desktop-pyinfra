@@ -10,6 +10,10 @@ git_user_email = "sebastiaan@blauwe-lucht.nl"
 # desktop environment is picked.
 desktop_environment = None
 
+# Set per-host in group_data/<host>.py to rename the machine. Left unset (None) here so base
+# skips it rather than blanking the hostname on a host that didn't ask for one.
+hostname: str | None = None
+
 # Only pkgmgr.py switches on this directly - everything else (package installs, service
 # names, config paths) switches on PackageManager instead, via pkgmgr.get_package_manager().
 # Leave unset (None) on any host until its distro is deliberately decided - get_distro()
