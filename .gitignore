@@ -1,5 +1,3 @@
-.claude
-
 # Secrets - managed via desktop-secrets + symlink (see setup-repo.sh)
 pyinfra/secrets_data.py
 
