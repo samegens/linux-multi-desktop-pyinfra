@@ -30,3 +30,4 @@ import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore
 import modules.claude_code  # pyright: ignore
 import modules.keyboard  # pyright: ignore
+import modules.fonts  # pyright: ignore

@@ -23,6 +23,7 @@ from pyinfra.operations import files, server
 
 import firewall
 from archives import download_and_extract
+from github import latest_release_tag
 
 # k3s's default pod/service network CIDRs (Flannel backend) - not distro/host-specific.
 K3S_TRUSTED_NETWORKS = ["10.42.0.0/16", "10.43.0.0/16"]
@@ -50,16 +51,6 @@ def _latest_k3s_version() -> str:
         ),
     )
     return location.rsplit("/", 1)[-1].strip() if location else ""
-
-def _latest_github_release(repo: str) -> str:
-    result = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command,
-        command=(
-            f"curl -s https://api.github.com/repos/{repo}/releases/latest "
-            "| python3 -c \"import json,sys; print(json.load(sys.stdin)['tag_name'])\""
-        ),
-    )
-    return result.strip() if result else ""
 
 @deploy("Install k3s")
 def deploy_k3s():
@@ -90,7 +81,7 @@ def deploy_k3s():
 
 @deploy("Install Helm")
 def deploy_helm():
-    version = _latest_github_release("helm/helm")
+    version = latest_release_tag("helm/helm")
     installed = host.get_fact(Command, command="helm version --short 2>/dev/null || true") # pyright: ignore[reportUnknownMemberType]
 
     if installed and version and version in installed:
@@ -114,7 +105,7 @@ def deploy_helm():
 
 @deploy("Install k9s")
 def deploy_k9s():
-    version = _latest_github_release("derailed/k9s")
+    version = latest_release_tag("derailed/k9s")
     installed = host.get_fact(Command, command="k9s version --short 2>/dev/null || true") # pyright: ignore[reportUnknownMemberType]
 
     if installed and version and version in installed:
