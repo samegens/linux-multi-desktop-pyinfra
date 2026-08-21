@@ -48,8 +48,9 @@ Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (F
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font —
 all verified idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
-Desktop-environment content (Cinnamon/KDE/Xfce) is not yet built — `pyinfra/modules/desktop/` is
-still a placeholder, dispatched on `group_data.desktop_environment` once a target is decided.
+Desktop-environment content is limited to panel-pinning so far (`pyinfra/panel_pin.py`, currently
+called from `ghostty.py`), dispatched on an autodetected `desktop_env.DesktopEnvironment`
+(KDE Plasma and Cinnamon only).
 
 Still to come, same lean-core list, one module + Inspec control at a time: Node.js,
 desktop-environment placeholder.

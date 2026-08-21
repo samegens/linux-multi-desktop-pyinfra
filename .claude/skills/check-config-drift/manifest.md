@@ -58,6 +58,19 @@ involved)
 |---|--------|--------------|--------------|-------|
 | 19 | git.py | `git config --global --get <key>` for `core.filemode`, `push.autosetupremote`, `init.defaultbranch`, `push.default` | `pyinfra/modules/git.py`'s `config` dict | `user.name`/`user.email` are identity, not tweakable settings — skip those two keys. |
 
+## Kind: panel pin (each desktop environment's own taskbar-pin storage - KDE: a comma-separated
+`launchers=` value inside the Task Manager applet's own group in
+`~/.config/plasma-org.kde.plasma.desktop-appletsrc`, group path varies per install, see
+`panel_pin.py`'s `_read_kde_taskmanager`. Cinnamon: `pinned-apps.value` inside the
+grouped-window-list applet's own per-instance xlet settings JSON at
+`~/.config/cinnamon/spices/grouped-window-list@cinnamon.org/<id>.json` - NOT `org.cinnamon
+favorite-apps`, which is a wholly unrelated "Favorites" quick-launch applet, confirmed live
+against mint_vm: pinning Firefox to the real taskbar never touched favorite-apps)
+
+| # | Module | Live key | Repo source | Notes |
+|---|--------|----------|--------------|-------|
+| 20 | panel_pin.py (called from ghostty.py) | KDE: `launchers=` in the Task Manager applet's `[Configuration][General]` group. Cinnamon: `pinned-apps.value` in the grouped-window-list applet's settings JSON | `panel_pin.pin_to_panel`'s callers, each passing one `desktop_file_id` | Only checks whether each pinned-by-this-repo entry is still present in the live list — the user reordering pins or adding their own unrelated pins isn't drift. |
+
 ## Adding a new row
 
 See CLAUDE.md's "Conventions" section — every new module gets checked at write-time for

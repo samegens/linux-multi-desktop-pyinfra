@@ -75,9 +75,16 @@ assumed — see gotchas).
 - `paths.py`: `SystemPath` enum + `get_system_path()` (e.g. `/etc/bash.bashrc`/`/etc/bashrc`).
 - All fail loudly (`ValueError`) if `host.data.distro` is unset — every host needs `distro` set in
   its `group_data/<host>.py`. `all.py`'s `distro = None` default makes that failure clean instead
-  of an opaque `AttributeError` (same pattern as `desktop_environment = None`).
+  of an opaque `AttributeError`.
 - Not named `distro.py`: pyinfra depends on the third-party `distro` PyPI package; a local
   `pyinfra/distro.py` would shadow it.
+- `desktop_env.py`: `DesktopEnvironment` enum + `get_desktop_environment()` — same one-file-owns-
+  the-dispatch pattern as `pkgmgr.py`/`distro`, but for desktop environment (`panel_pin.py`,
+  `keyboard.py`'s Cinnamon compose-key branch). Unlike `distro`, **autodetected** via a custom
+  `DesktopEnvironmentFact` (checks whether `plasmashell`/`cinnamon` is on PATH) rather than a
+  `group_data` var — no per-host setting to keep in sync, and it works whether or not a graphical
+  session is currently active (`$XDG_CURRENT_DESKTOP` isn't set over a plain SSH exec, confirmed
+  live against `mint_vm`). Fails loudly the same way if neither binary is found.
 
 ## Current status
 
@@ -113,11 +120,12 @@ immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
 - `pyinfra/all.py` — entrypoint, plain `import modules.X  # pyright: ignore` per module (each
   module self-invokes `deploy_x()` at the bottom — see gotchas for why).
 - `pyinfra/modules/*.py` — one file per feature, mirrors `fedora-desktop/ansible/tasks/*.yml`.
-- `pyinfra/pkgmgr.py`, `services.py`, `paths.py` — multi-distro abstraction (see above), plain
-  shared modules at `pyinfra/` root alongside `vault.py`, not under `modules/`.
+- `pyinfra/pkgmgr.py`, `services.py`, `paths.py`, `desktop_env.py` — multi-distro/multi-DE
+  abstraction (see above), plain shared modules at `pyinfra/` root alongside `vault.py`, not
+  under `modules/`.
 - `pyinfra/group_data/all.py` — shared vars; per-host overrides in `group_data/<host>.py`.
-- `pyinfra/modules/desktop/` — swappable per-DE module, dispatched on
-  `group_data.desktop_environment`. Still just a planned placeholder — directory doesn't exist yet.
+- `pyinfra/panel_pin.py` — pins an app's launcher to the panel/taskbar, dispatched on
+  `desktop_env.DesktopEnvironment`.
 - `inspec/mint-desktop/` — controls; `./test-local.sh` / `./test-remote.sh <group>`.
 - `setup-repo.sh` — symlinks `secrets_data.py`. `prepare.sh` — bootstraps the pyinfra venv.
 - `check.sh` — runs everything CI runs (pyright, unit tests, Inspec syntax check); source of truth

@@ -15,10 +15,12 @@ from pyinfra.facts.server import Arch
 import pkgmgr
 from pkgmgr import DEB_ARCH_MAP, PackageManager
 from keyfile import set_key_value
+from panel_pin import pin_to_panel
 from paths import PYINFRA_CACHE_DIR
 
 DNF_COPR_OWNER = "scottames"
 DNF_COPR_PROJECT = "ghostty"
+GHOSTTY_DESKTOP_FILE_ID = "com.mitchellh.ghostty.desktop"
 
 # key -> value, exactly as ghostty's own config parser expects them (whitespace around "="
 # doesn't matter to ghostty itself, but keyfile.set_key_value always writes key=value with
@@ -94,4 +96,9 @@ def deploy_ghostty():
 
     _install_config(host.data.username)
 
+@deploy("Pin Ghostty to panel")
+def pin_ghostty_to_panel():
+    pin_to_panel(GHOSTTY_DESKTOP_FILE_ID, host.data.username)
+
 deploy_ghostty()
+pin_ghostty_to_panel()

@@ -6,10 +6,6 @@ username = "sebastiaan"
 git_user_name = "Sebastiaan"
 git_user_email = "sebastiaan@blauwe-lucht.nl"
 
-# Dispatches pyinfra/modules/desktop/__init__.py. Undecided - leave unset until a target
-# desktop environment is picked.
-desktop_environment = None
-
 # Set per-host in group_data/<host>.py to rename the machine. Left unset (None) here so base
 # skips it rather than blanking the hostname on a host that didn't ask for one.
 hostname: str | None = None

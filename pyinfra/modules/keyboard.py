@@ -11,6 +11,7 @@ from pyinfra.operations import files, server
 
 import pkgmgr
 from pkgmgr import PackageManager
+from desktop_env import DesktopEnvironment, get_desktop_environment
 
 COMPOSE_OPTION: str = "compose:ralt"
 
@@ -60,14 +61,16 @@ def _set_compose_key_apt():
 # /etc/default/keyboard only seeds the X11 session's initial XKB options - Cinnamon's own
 # settings daemon (org.cinnamon.desktop.input-sources, a separate schema from GNOME's, confirmed
 # live against mint_vm) re-applies its own xkb-options from GSettings on session start,
-# overwriting it. Mint's apt targets are Cinnamon-only today, so this rides along with the apt
-# branch rather than needing its own desktop_environment dispatch.
+# overwriting it.
 CINNAMON_INPUT_SOURCES_SCHEMA = "org.cinnamon.desktop.input-sources"
 CINNAMON_XKB_OPTIONS_DCONF_PATH = "/org/cinnamon/desktop/input-sources/xkb-options"
 
 def _get_gsettings_list(schema: str, key: str) -> list[str]:
+    # _sudo=False - gsettings reads the per-user dconf session; under the global SUDO=True
+    # default this would read root's (empty) dconf instead and never see an already-set
+    # option, re-running the write every deploy.
     output = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command, command=f"gsettings get {schema} {key}"
+        Command, command=f"gsettings get {schema} {key}", _sudo=False
     )
     return re.findall(r"'([^']*)'", output) if output else []
 
@@ -100,8 +103,16 @@ def deploy_keyboard():
             _set_compose_key_dnf()
         case PackageManager.APT:
             _set_compose_key_apt()
-            _set_compose_key_cinnamon()
         case _:
             assert_never(pm)
+
+    desktop_environment = get_desktop_environment()
+    match desktop_environment:
+        case DesktopEnvironment.CINNAMON:
+            _set_compose_key_cinnamon()
+        case DesktopEnvironment.KDE_PLASMA:
+            pass
+        case _:
+            assert_never(desktop_environment)
 
 deploy_keyboard()
