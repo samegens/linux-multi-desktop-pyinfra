@@ -39,7 +39,8 @@ def deploy_bashrc():
         "ssh-liteserver": "alias ssh-liteserver='ssh -t liteserver byobu'",
         "ssh-bhosted": "alias ssh-bhosted='ssh -t bhosted'",
         "activate-ansible": "alias activate-ansible='. ~/python3-venv/ansible-latest/bin/activate && ansible --version'",
-        "k": "alias k='kubectl'"
+        "k": "alias k='kubectl'",
+        "dc": "alias dc='docker compose'"
     }
     for alias_name, line in aliases.items():
         files.line(
