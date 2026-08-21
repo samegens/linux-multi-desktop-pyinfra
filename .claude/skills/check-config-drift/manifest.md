@@ -69,7 +69,7 @@ against mint_vm: pinning Firefox to the real taskbar never touched favorite-apps
 
 | # | Module | Live key | Repo source | Notes |
 |---|--------|----------|--------------|-------|
-| 20 | panel_pin.py (called from ghostty.py) | KDE: `launchers=` in the Task Manager applet's `[Configuration][General]` group. Cinnamon: `pinned-apps.value` in the grouped-window-list applet's settings JSON | `panel_pin.pin_to_panel`'s callers, each passing one `desktop_file_id` | Only checks whether each pinned-by-this-repo entry is still present in the live list — the user reordering pins or adding their own unrelated pins isn't drift. |
+| 20 | panel_pin.py (called from ghostty.py, vscode.py, doublecmd.py, obsidian.py, keepassxc.py, betterbird.py) | KDE: `launchers=` in the Task Manager applet's `[Configuration][General]` group. Cinnamon: `pinned-apps.value` in the grouped-window-list applet's settings JSON | `panel_pin.pin_to_panel`'s callers, each passing one `desktop_file_id` | Only checks whether each pinned-by-this-repo entry is still present in the live list — the user reordering pins or adding their own unrelated pins isn't drift. |
 
 ## Adding a new row
 

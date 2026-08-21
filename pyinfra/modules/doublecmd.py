@@ -9,8 +9,10 @@ from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableTyp
 from pyinfra.operations import files
 
 from archives import download_and_extract
+from panel_pin import pin_to_panel
 
 CONFIG_FILES = ["doublecmd.xml", "localconfig.xml", "multiarc.ini", "shortcuts.scf"]
+DOUBLECMD_DESKTOP_FILE_ID = "doublecmd.desktop"
 
 def _desktop_entry_content(username: str) -> str:
     return (
@@ -101,4 +103,9 @@ def deploy_doublecmd():
     _install_desktop_entry(username)
     _install_config(username)
 
+@deploy("Pin Double Commander to panel")
+def pin_doublecmd_to_panel():
+    pin_to_panel(DOUBLECMD_DESKTOP_FILE_ID, host.data.username)
+
 deploy_doublecmd()
+pin_doublecmd_to_panel()

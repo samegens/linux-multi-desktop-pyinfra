@@ -223,6 +223,13 @@ control "vscode extensions are installed" do
   end
 end
 
+control "vscode is pinned to the panel" do
+  tag :tools
+  describe panel_pin('code.desktop', input('username')) do
+    it { should be_pinned }
+  end
+end
+
 control "dotnet is installed and working" do
   tag :tools
   describe file('/usr/local/bin/dotnet') do
@@ -372,6 +379,49 @@ control "obsidian config is in place" do
   describe file("/home/#{username}/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json") do
     it { should exist }
     its('content') { should match /Dropbox\/projects\/Obsidian\/notes/ }
+  end
+end
+
+control "obsidian is pinned to the panel" do
+  tag :tools
+  describe panel_pin('md.obsidian.Obsidian.desktop', input('username')) do
+    it { should be_pinned }
+  end
+end
+
+# KeePassXC
+
+control "keepassxc is installed and working" do
+  tag :tools
+  # keepassxc itself is a GUI app that aborts (SIGABRT) without a display when run headless -
+  # keepassxc-cli is its companion CLI tool and safe to invoke the same way balenaEtcher's
+  # control checks file presence instead of running the GUI binary.
+  describe command('keepassxc-cli --version') do
+    its('stdout') { should match /^\d+\.\d+\.\d+/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "keepassxc is pinned to the panel" do
+  tag :tools
+  describe panel_pin('org.keepassxc.KeePassXC.desktop', input('username')) do
+    it { should be_pinned }
+  end
+end
+
+# Betterbird
+
+control "betterbird flatpak is installed" do
+  tag :tools
+  describe command('flatpak info eu.betterbird.Betterbird') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "betterbird is pinned to the panel" do
+  tag :tools
+  describe panel_pin('eu.betterbird.Betterbird.desktop', input('username')) do
+    it { should be_pinned }
   end
 end
 

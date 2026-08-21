@@ -10,6 +10,10 @@ from pyinfra.context import host
 from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
 from pyinfra.operations import files
 
+from panel_pin import pin_to_panel
+
+OBSIDIAN_DESKTOP_FILE_ID = "md.obsidian.Obsidian.desktop"
+
 OBSIDIAN_CONFIG_TEMPLATE = (
     '{{"vaults":{{"f94871e3c3aa89ca":{{"path":"/home/{username}/Dropbox/projects/Obsidian/notes",'
     '"ts":1720502347936,"open":true}}}}}}'
@@ -38,4 +42,9 @@ def deploy_obsidian():
         _sudo=False,
     )
 
+@deploy("Pin Obsidian to panel")
+def pin_obsidian_to_panel():
+    pin_to_panel(OBSIDIAN_DESKTOP_FILE_ID, host.data.username)
+
 deploy_obsidian()
+pin_obsidian_to_panel()

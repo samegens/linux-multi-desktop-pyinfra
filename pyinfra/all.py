@@ -15,16 +15,21 @@ import modules.bashrc  # pyright: ignore
 import modules.starship  # pyright: ignore
 import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
-import modules.vscode  # pyright: ignore
 import modules.python_venv  # pyright: ignore
 import modules.cinc_auditor  # pyright: ignore
 import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore
-import modules.doublecmd  # pyright: ignore
-import modules.ghostty  # pyright: ignore
 import modules.workrave  # pyright: ignore
+
+# These six will be pinned to the taskbar, the order is important (to me).
 import modules.obsidian  # pyright: ignore
+import modules.betterbird  # pyright: ignore
+import modules.ghostty  # pyright: ignore
+import modules.keepassxc  # pyright: ignore
+import modules.doublecmd  # pyright: ignore
+import modules.vscode  # pyright: ignore
+
 import modules.darktable  # pyright: ignore
 import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore

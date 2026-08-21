@@ -33,6 +33,13 @@ control "doublecmd desktop entry is in place" do
   end
 end
 
+control "doublecmd is pinned to the panel" do
+  tag :doublecmd
+  describe panel_pin('doublecmd.desktop', input('username')) do
+    it { should be_pinned }
+  end
+end
+
 control "doublecmd F9 launches ghostty in the active directory" do
   tag :doublecmd
   username = input('username')

@@ -71,7 +71,10 @@ def _pin_kde(desktop_file_id: str, username: str):
             f"--key launchers '{new_value}'",
             # Task Manager only picks up config file changes on (re)start - kquitapp6 exits
             # it, plasmashell's own watchdog/session restores it. Backgrounded so the shell
-            # command returns immediately rather than waiting on the relaunched process.
+            # command returns immediately rather than waiting on the relaunched process. Only
+            # reached for @local targets (this repo's only KDE target is localhost) so
+            # DISPLAY/XAUTHORITY are already the real session's - unlike the Cinnamon case
+            # below, which is always a remote SSH target.
             "kquitapp6 plasmashell; (plasmashell > /dev/null 2>&1 &)",
         ],
         _sudo=False,
@@ -105,27 +108,54 @@ def _read_cinnamon_pinned_apps(settings_file: str) -> list[str]:
     )
     return output.splitlines() if output else []
 
+def _is_flatpak_app(desktop_file_id: str) -> bool:
+    app_id = desktop_file_id.removesuffix(".desktop")
+    result = host.get_fact( # pyright: ignore[reportUnknownMemberType]
+        Command, command=f"flatpak info {app_id} > /dev/null 2>&1 && echo yes", _sudo=False
+    )
+    return result == "yes"
+
 def _pin_cinnamon(desktop_file_id: str, username: str):
+    # grouped-window-list needs a ":flatpak" suffix on the desktop-file-id to resolve a
+    # Flatpak app's windows/icon - confirmed live against mint_vm: Cinnamon's own "Pin to
+    # panel" UI wrote "md.obsidian.Obsidian.desktop:flatpak", not the bare id; the bare form
+    # never rendered on the taskbar even though the file, the pinned-apps list, and
+    # Gio.DesktopAppInfo resolution were all otherwise correct. Native (non-Flatpak) apps use
+    # the bare id, same as KDE's launchers= below. Detected live via `flatpak info` rather
+    # than a caller-supplied flag - the caller shouldn't need to know or assert this, and
+    # checking both forms below means a manually-pinned entry (either form) is recognized
+    # as already correct regardless of which one this function would have picked.
+    flatpak_launcher = f"{desktop_file_id}:flatpak"
+
     settings_file = _find_cinnamon_taskbar_settings_file(username)
     if settings_file is None:
         host.noop(f"No grouped-window-list taskbar widget found for {username}, can't pin {desktop_file_id}")
         return
 
-    if desktop_file_id in _read_cinnamon_pinned_apps(settings_file):
+    pinned = _read_cinnamon_pinned_apps(settings_file)
+    if desktop_file_id in pinned or flatpak_launcher in pinned:
         host.noop(f"{desktop_file_id} is already pinned to the Cinnamon taskbar")
         return
 
+    launcher = flatpak_launcher if _is_flatpak_app(desktop_file_id) else desktop_file_id
+
+    # grouped-window-list only picks up this file on (re)start, but unlike KDE's plasmashell
+    # restart above, restarting cinnamon isn't attempted here: this repo's only Cinnamon
+    # target (mint_vm) is always reached over plain SSH, which has no DISPLAY/XAUTHORITY env -
+    # confirmed live that `cinnamon --replace` then either no-ops ("Window manager warning:
+    # Unsupported session type", old process never exits) or, once those vars are manually
+    # forwarded from the running session's /proc/<pid>/environ, starts a genuinely new
+    # instance that still doesn't evict the old one, leaving two competing shells fighting
+    # over the same display until one is killed by hand. Writing the file and leaving the
+    # live refresh to the next login/manual restart is the reliable option.
     server.shell( # pyright: ignore[reportUnknownMemberType]
         name=f"Pin {desktop_file_id} to the Cinnamon taskbar",
         commands=[
             "python3 -c \"import json; "
             f"path = '{settings_file}'; "
             "data = json.load(open(path)); "
-            f"data['pinned-apps']['value'].append('{desktop_file_id}'); "
+            f"data['pinned-apps']['value'].append('{launcher}'); "
             "json.dump(data, open(path, 'w'), indent=2)\"",
-            # grouped-window-list only picks up its settings file on (re)start, same as KDE's
-            # Task Manager above.
-            "(cinnamon --replace > /dev/null 2>&1 &)",
         ],
         _sudo=False,
     )

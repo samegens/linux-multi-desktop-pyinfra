@@ -13,8 +13,11 @@ from pyinfra.operations import apt, dnf, files, server
 
 import pkgmgr
 from pkgmgr import PackageManager
+from panel_pin import pin_to_panel
 
 import dbus_session
+
+VSCODE_DESKTOP_FILE_ID = "code.desktop"
 
 DNF_GPG_KEY_URL = "https://packages.microsoft.com/yumrepos/vscode/repodata/repomd.xml.key"
 DNF_GPG_KEY_PATH = "/etc/pki/rpm-gpg/microsoft-vscode.asc"
@@ -146,4 +149,9 @@ def deploy_vscode():
     _copy_config_files()
     _disable_ibus_emoji_hotkey()
 
+@deploy("Pin VS Code to panel")
+def pin_vscode_to_panel():
+    pin_to_panel(VSCODE_DESKTOP_FILE_ID, host.data.username)
+
 deploy_vscode()
+pin_vscode_to_panel()
