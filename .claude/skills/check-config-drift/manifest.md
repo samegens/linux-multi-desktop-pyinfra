@@ -19,8 +19,8 @@ Package/flatpak/VS Code extension *lists* (`group_data/all.py`'s `packages`, `fl
 | 4 | vscode.py | `~/.config/Code/User/snippets/csharp.json` | `pyinfra/files/vscode/snippets/csharp.json` | |
 | 5 | doublecmd.py | `~/.config/doublecmd/doublecmd.xml` | `pyinfra/files/doublecmd/doublecmd.xml` | |
 | 6 | doublecmd.py | `~/.config/doublecmd/multiarc.ini` | `pyinfra/files/doublecmd/multiarc.ini` | |
-| 7 | doublecmd.py | `~/.config/doublecmd/session.ini` | `pyinfra/files/doublecmd/session.ini` | Doublecmd rewrites this constantly with session/window state (open tabs, last paths, geometry). Expect noise — only flag hunks that look like a deliberate setting, not session state, and say so when presenting the diff. |
-| 8 | doublecmd.py | `~/.config/doublecmd/shortcuts.scf` | `pyinfra/files/doublecmd/shortcuts.scf` | |
+| 7 | doublecmd.py | `~/.config/doublecmd/shortcuts.scf` | `pyinfra/files/doublecmd/shortcuts.scf` | |
+| 8 | doublecmd.py | `~/.config/doublecmd/localconfig.xml` | `pyinfra/files/doublecmd/localconfig.xml` | Holds the saved hotdir list (`DirectoryHotList`) as of Double Commander 1.2.x — it used to live inside `doublecmd.xml` on 1.1.x, moved here on upgrade. `~/.config/doublecmd/session.ini` was dropped from this manifest and from `CONFIG_FILES` — it's pure window/session state (open tabs, last paths, geometry), never a deliberate setting; confirmed nothing worth tracking in it. |
 
 ## Kind: generated (module renders content from a Python template/dict — compare live file
 against what the template *would* currently produce; a fix means editing the module's source,

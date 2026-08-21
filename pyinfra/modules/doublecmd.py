@@ -10,7 +10,7 @@ from pyinfra.operations import files
 
 from archives import download_and_extract
 
-CONFIG_FILES = ["doublecmd.xml", "multiarc.ini", "session.ini", "shortcuts.scf"]
+CONFIG_FILES = ["doublecmd.xml", "localconfig.xml", "multiarc.ini", "shortcuts.scf"]
 
 def _desktop_entry_content(username: str) -> str:
     return (

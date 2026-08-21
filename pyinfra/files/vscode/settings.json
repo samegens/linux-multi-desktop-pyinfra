@@ -96,5 +96,18 @@
         "**/.gitea/workflows/*.yaml",
         "**/.forgejo/workflows/*.yml",
         "**/.forgejo/workflows/*.yaml"
-    ]
+    ],
+    "editor.fontFamily": "'JetBrainsMono NF'",
+    "terminal.integrated.fontFamily": "'JetBrainsMonoNL NF'",
+    "workbench.experimental.modernUI": false,
+    "workbench.colorCustomizations": {
+        "tab.border": "#d4d4d4",
+        "tab.activeBorder": "#005fb8",
+        "tab.activeBorderTop": "#005fb8",
+        "tab.unfocusedActiveBorder": "#d4d4d4",
+        "tab.activeBackground": "#ffffff",
+        "tab.inactiveBackground": "#ececec",
+        "tab.activeForeground": "#1e1e1e",
+        "tab.inactiveForeground": "#6e6e6e"
+    }
 }
