@@ -65,6 +65,7 @@ PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
         "fonts-powerline": "powerline-fonts",
         "smbclient": "samba-client",
         "imagemagick": "ImageMagick",
+        "dropbox": "nautilus-dropbox",
     },
 }
 

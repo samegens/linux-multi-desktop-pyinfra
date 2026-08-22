@@ -17,6 +17,7 @@ import modules.keyboard  # pyright: ignore
 import modules.fonts  # pyright: ignore
 
 import modules.fastfetch  # pyright: ignore
+import modules.dropbox  # pyright: ignore
 import modules.git  # pyright: ignore
 import modules.starship  # pyright: ignore
 import modules.go  # pyright: ignore

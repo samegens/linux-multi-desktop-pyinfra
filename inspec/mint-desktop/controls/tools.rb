@@ -460,6 +460,23 @@ control "balenaEtcher is installed" do
   end
 end
 
+# Dropbox
+
+control "dropbox is installed" do
+  tag :tools
+  describe file('/usr/bin/dropbox') do
+    it { should exist }
+    it { should be_executable }
+  end
+end
+
+control "python3-gpg is importable (needed by dropbox to verify binary signatures)" do
+  tag :tools
+  describe command('python3 -c "import gpg"') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
 # Firefox
 
 control "firefox has non-free codec support (Fedora only - Mint ships codecs by default)" do

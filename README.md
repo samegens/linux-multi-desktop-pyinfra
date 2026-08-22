@@ -46,7 +46,7 @@ git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, conf
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
-inotify watch/instance sysctl limits, Fastfetch —
+inotify watch/instance sysctl limits, Fastfetch, Dropbox —
 all verified idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content is limited to panel-pinning so far (`pyinfra/panel_pin.py`, called
