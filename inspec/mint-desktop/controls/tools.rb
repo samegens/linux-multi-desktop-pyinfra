@@ -89,13 +89,17 @@ control "starship is installed and working" do
   end
 end
 
-# TODO: uncomment once a fastfetch module is built (deferred, see README backlog)
-# control "fastfetch is installed and working" do
-#   describe file('/usr/bin/fastfetch') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "fastfetch is installed and working" do
+  tag :tools
+  describe file('/usr/bin/fastfetch') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('fastfetch --version') do
+    its('stdout') { should match /^fastfetch/ }
+    its('exit_status') { should eq 0 }
+  end
+end
 
 # TODO: uncomment once an azure-cli module is built (deferred, see README backlog)
 # control "azure cli is installed and working" do
