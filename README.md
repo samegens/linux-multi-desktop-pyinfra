@@ -45,7 +45,8 @@ Ported so far: base packages,
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
-Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font —
+Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
+inotify watch/instance sysctl limits —
 all verified idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content is limited to panel-pinning so far (`pyinfra/panel_pin.py`, called
@@ -59,7 +60,7 @@ Deliberately not yet ported (add on demand, following the existing `pyinfra/modu
 printer, VeraCrypt, TagUI, balenaEtcher, Darktable, Obsidian,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Google Fonts, Miniconda,
 gitleaks/trufflehog *install* tasks, P4Merge, Terraform/Packer, NFS/SSHFS mounts, Fastfetch,
-MS TTF fonts, Dropbox, personal `/etc/hosts` entries.
+MS TTF fonts, personal `/etc/hosts` entries.
 
 ## Secret Detection
 

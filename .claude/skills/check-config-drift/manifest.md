@@ -43,6 +43,7 @@ the surrounding file)
 |---|--------|-----------|--------------|-------|
 | 15 | darktable.py | `~/.var/app/org.darktable.Darktable/config/darktable/darktablerc` | `pyinfra/modules/darktable.py`'s `DARKTABLERC_SETTINGS` dict | Check each key's live value against the dict; also worth a quick look for other settings the user may have changed near those keys, but don't treat every other line in the file as a candidate — the module's own docstring explains why (session/window state noise). |
 | 16 | ghostty.py | `~/.config/ghostty/config.ghostty` | `pyinfra/modules/ghostty.py`'s `GHOSTTY_CONFIG_SETTINGS` dict | Same pattern. Ghostty's config file may have many more lines the user added by hand (theme, font, keybinds) — those are candidates to promote into `GHOSTTY_CONFIG_SETTINGS`, not just the pinned key. |
+| 17 | sysctl.py | `/etc/sysctl.conf` | `pyinfra/modules/sysctl.py`'s `SYSCTL_SETTINGS` dict | Check each key's live value via `sysctl -n <key>` (not just the file — a live value only takes effect after `sysctl -p`/reboot). |
 
 ## Kind: dconf (GSettings/dconf key, read via `dconf read <path>` or `gsettings get`, no file
 involved)

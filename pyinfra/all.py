@@ -9,13 +9,17 @@ module files directly as separate CLI args instead of this file - that's the nat
 # pyright: ignore suppresses Pylance's unused-import warning - these are intentional
 # side-effect imports (each module deploys itself on import).
 import modules.base  # pyright: ignore
-import modules.git  # pyright: ignore
+import modules.sysctl  # pyright: ignore
 import modules.ssh  # pyright: ignore
 import modules.bashrc  # pyright: ignore
+import modules.python_venv  # pyright: ignore
+import modules.keyboard  # pyright: ignore
+import modules.fonts  # pyright: ignore
+
+import modules.git  # pyright: ignore
 import modules.starship  # pyright: ignore
 import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
-import modules.python_venv  # pyright: ignore
 import modules.cinc_auditor  # pyright: ignore
 import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
@@ -34,5 +38,3 @@ import modules.darktable  # pyright: ignore
 import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore
 import modules.claude_code  # pyright: ignore
-import modules.keyboard  # pyright: ignore
-import modules.fonts  # pyright: ignore

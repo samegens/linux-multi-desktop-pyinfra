@@ -1,6 +1,6 @@
 """SSH key + service setup.
 
-Add new keys as they're actually needed: add the public key file under files/ssh/<name>.pub,
+Add new keys: add the public key file under files/ssh/<name>.pub,
 add a SSH_<NAME>_PRIVATE_KEY constant to secrets_data.py (see desktop-secrets/encrypt.py) - hyphens
 in <name> become underscores in the constant name - then list <name> in ssh_key_names
 (group_data/all.py).
@@ -88,7 +88,7 @@ Host thuis
     LocalForward 8096 localhost:8096
     ServerAliveInterval 60
 
-# Entry for new machine that needs to be configured using the Ubuntu desktop Ansible configuration.
+# Entry for new machine that needs to be configured using pyinfra.
 Host new-machine
     HostName 192.168.88.181
     PreferredAuthentications password

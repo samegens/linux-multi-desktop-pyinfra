@@ -69,6 +69,20 @@ end
 #   end
 # end
 
+# Kernel parameters
+
+{
+  'fs.inotify.max_user_watches' => 524288,
+  'fs.inotify.max_user_instances' => 512,
+}.each do |param, expected|
+  control "#{param} is set to #{expected}" do
+    tag :system
+    describe kernel_parameter(param) do
+      its('value') { should eq expected }
+    end
+  end
+end
+
 # Locale
 
 control "locale is set to en_US.UTF-8" do
