@@ -1,7 +1,8 @@
 """Package-manager dispatch (apt/dnf) and the Distro -> PackageManager mapping. This is the
 only file that should ever switch on Distro directly - everything else (here, in
 services.py, in paths.py) switches on PackageManager instead, so adding a new apt- or
-dnf-based distro is a one-line addition to DISTRO_PACKAGE_MANAGERS and nothing else.
+dnf-based distro is a one-line addition to DISTRO_PACKAGE_MANAGERS and OS_RELEASE_ID_TO_DISTRO
+and nothing else.
 
 PackageManager here means "repository/packaging ecosystem" (Debian's apt archives vs
 Fedora/RHEL's dnf/rpm archives), not literally "which CLI binary runs install" - package
@@ -9,6 +10,11 @@ names, systemd unit names, and packaged config-file paths (see services.py, path
 all baked into the specific package as built for a given archive, so any distro pulling from
 the same archive family shares the same answer. That's why PackageManager is the right
 dispatch key for all of them, not just installs.
+
+Distro is autodetected via DistroFact (/etc/os-release's ID field), same pattern as
+desktop_env.py's DesktopEnvironmentFact - no group_data var to keep in sync, and it works
+whether or not the target distro was anticipated ahead of time (as long as its ID is in
+OS_RELEASE_ID_TO_DISTRO). Fails loudly (ValueError) if the ID isn't recognized.
 
 Not named distro.py: pyinfra itself depends on the third-party `distro` PyPI package, and a
 local pyinfra/distro.py would shadow it for anything run from this directory - the same class
@@ -18,6 +24,9 @@ of pitfall documented in CLAUDE.md for why vault.py isn't named secrets.py.
 from enum import Enum
 from typing import assert_never
 
+from typing_extensions import override
+
+from pyinfra.api.facts import FactBase
 from pyinfra.context import host
 from pyinfra.facts.server import Command
 from pyinfra.operations import apt, dnf, server
@@ -35,6 +44,16 @@ DISTRO_PACKAGE_MANAGERS: dict[Distro, PackageManager] = {
     Distro.MINT: PackageManager.APT,
     Distro.FEDORA: PackageManager.DNF,
     Distro.UBUNTU: PackageManager.APT,
+}
+
+# /etc/os-release's ID field -> Distro, for autodetection. A distro sharing an existing
+# package manager (like Distro.UBUNTU) is a one-line addition here, same as
+# DISTRO_PACKAGE_MANAGERS above - verify the actual ID with `grep ^ID= /etc/os-release` on the
+# real host before adding, don't guess.
+OS_RELEASE_ID_TO_DISTRO: dict[str, Distro] = {
+    "linuxmint": Distro.MINT,
+    "fedora": Distro.FEDORA,
+    "ubuntu": Distro.UBUNTU,
 }
 
 # Only packages whose *name* differs (or doesn't exist) under a given package manager. Keyed
@@ -106,14 +125,33 @@ def get_ubuntu_release() -> str:
         )
     return UBUNTU_CODENAME_TO_RELEASE[codename]
 
+def resolve_distro_from_os_release(os_release_content: str) -> Distro | None:
+    for line in os_release_content.splitlines():
+        if line.startswith("ID="):
+            distro_id = line.split("=", 1)[1].strip().strip('"')
+            return OS_RELEASE_ID_TO_DISTRO.get(distro_id)
+    return None
+
+class DistroFact(FactBase[Distro | None]):
+    """The host's distro, autodetected from /etc/os-release's ID field, or None if it doesn't
+    match a known entry in OS_RELEASE_ID_TO_DISTRO."""
+
+    @override
+    def command(self) -> str:
+        return "cat /etc/os-release"
+
+    @override
+    def process(self, output: list[str]) -> Distro | None:
+        return resolve_distro_from_os_release("\n".join(output))
+
 def get_distro() -> Distro:
-    configured_distro = host.data.distro
-    if configured_distro is None:
+    distro = host.get_fact(DistroFact) # pyright: ignore[reportUnknownMemberType]
+    if distro is None:
         raise ValueError(
-            "host.data.distro is unset - set it in pyinfra/group_data/<host>.py "
-            "before deploying to this host"
+            f"{host.name}: /etc/os-release's ID wasn't recognized - add it to "
+            "OS_RELEASE_ID_TO_DISTRO in pkgmgr.py"
         )
-    return configured_distro
+    return distro
 
 def get_package_manager() -> PackageManager:
     return DISTRO_PACKAGE_MANAGERS[get_distro()]

@@ -44,8 +44,8 @@ line and tee-ing output to a timestamped log under
 **Per-module dev loop** (one module at a time):
 
 1. Write/port `pyinfra/modules/x.py`. Route any apt/dnf-specific fact through
-   `pkgmgr.py`/`services.py`/`paths.py` — `modules/*.py` itself must never branch on
-   `host.data.distro`.
+   `pkgmgr.py`/`services.py`/`paths.py` — `modules/*.py` itself must never branch on `Distro`
+   directly.
 2. Preview: `pyinfra inventory.py modules/x.py --limit <group>` **without** `-y` shows a real
    "Detected changes" table then prompts — the actual `--check` equivalent. (`-y` disables change
    detection entirely per its own `--help` text; `--dry` alone shows nothing useful.)
@@ -73,18 +73,18 @@ assumed — see gotchas).
   working Ansible before adding — never guess), `ensure_en_us_locale()`, `get_en_us_locale_content()`.
 - `services.py`: `Service` enum + `get_service_name()` (e.g. `ssh`/`sshd`).
 - `paths.py`: `SystemPath` enum + `get_system_path()` (e.g. `/etc/bash.bashrc`/`/etc/bashrc`).
-- All fail loudly (`ValueError`) if `host.data.distro` is unset — every host needs `distro` set in
-  its `group_data/<host>.py`. `all.py`'s `distro = None` default makes that failure clean instead
-  of an opaque `AttributeError`.
+- `Distro` is **autodetected** via `DistroFact` (`/etc/os-release`'s `ID` field, matched against
+  `OS_RELEASE_ID_TO_DISTRO`) — no per-host `group_data` var to keep in sync. A distro sharing an
+  existing package manager is a one-line addition to both `DISTRO_PACKAGE_MANAGERS` and
+  `OS_RELEASE_ID_TO_DISTRO`. Fails loudly (`ValueError`) if the live `ID` isn't recognized.
 - Not named `distro.py`: pyinfra depends on the third-party `distro` PyPI package; a local
   `pyinfra/distro.py` would shadow it.
 - `desktop_env.py`: `DesktopEnvironment` enum + `get_desktop_environment()` — same one-file-owns-
-  the-dispatch pattern as `pkgmgr.py`/`distro`, but for desktop environment (`panel_pin.py`,
-  `keyboard.py`'s Cinnamon compose-key branch). Unlike `distro`, **autodetected** via a custom
-  `DesktopEnvironmentFact` (checks whether `plasmashell`/`cinnamon` is on PATH) rather than a
-  `group_data` var — no per-host setting to keep in sync, and it works whether or not a graphical
-  session is currently active (`$XDG_CURRENT_DESKTOP` isn't set over a plain SSH exec, confirmed
-  live against `mint_vm`). Fails loudly the same way if neither binary is found.
+  the-dispatch, autodetected-via-custom-`FactBase` pattern as `pkgmgr.py`/`Distro`, but for desktop
+  environment (`panel_pin.py`, `keyboard.py`'s Cinnamon compose-key branch). Detection checks
+  whether `plasmashell`/`cinnamon` is on PATH — works whether or not a graphical session is
+  currently active (`$XDG_CURRENT_DESKTOP` isn't set over a plain SSH exec, confirmed live against
+  `mint_vm`). Fails loudly the same way if neither binary is found.
 
 ## Current status
 

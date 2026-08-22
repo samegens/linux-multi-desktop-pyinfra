@@ -4,7 +4,7 @@ import unittest
 from unittest import mock
 
 import pkgmgr
-from pkgmgr import PackageManager, resolve_package_names
+from pkgmgr import Distro, PackageManager, resolve_distro_from_os_release, resolve_package_names
 
 
 class TestResolvePackageNames(unittest.TestCase):
@@ -56,6 +56,58 @@ class TestResolvePackageNames(unittest.TestCase):
         patcher = mock.patch.object(pkgmgr, "PACKAGE_NAME_OVERRIDES", table)
         patcher.start()
         self.addCleanup(patcher.stop)
+
+
+class TestResolveDistroFromOsRelease(unittest.TestCase):
+    def test_recognizes_linux_mint(self):
+        # Arrange
+        os_release = 'NAME="Linux Mint"\nID=linuxmint\nID_LIKE="ubuntu debian"\n'
+
+        # Act
+        distro = resolve_distro_from_os_release(os_release)
+
+        # Assert
+        self.assertEqual(distro, Distro.MINT)
+
+    def test_recognizes_fedora(self):
+        # Arrange
+        os_release = 'NAME=Fedora\nID=fedora\nVERSION_ID=43\n'
+
+        # Act
+        distro = resolve_distro_from_os_release(os_release)
+
+        # Assert
+        self.assertEqual(distro, Distro.FEDORA)
+
+    def test_recognizes_ubuntu(self):
+        # Arrange
+        os_release = 'NAME="Ubuntu"\nID=ubuntu\nVERSION_ID="24.04"\n'
+
+        # Act
+        distro = resolve_distro_from_os_release(os_release)
+
+        # Assert
+        self.assertEqual(distro, Distro.UBUNTU)
+
+    def test_returns_none_for_unrecognized_id(self):
+        # Arrange
+        os_release = 'NAME="Arch Linux"\nID=arch\n'
+
+        # Act
+        distro = resolve_distro_from_os_release(os_release)
+
+        # Assert
+        self.assertIsNone(distro)
+
+    def test_returns_none_when_id_field_is_missing(self):
+        # Arrange
+        os_release = 'NAME="Some OS"\nVERSION_ID=1\n'
+
+        # Act
+        distro = resolve_distro_from_os_release(os_release)
+
+        # Assert
+        self.assertIsNone(distro)
 
 
 if __name__ == "__main__":

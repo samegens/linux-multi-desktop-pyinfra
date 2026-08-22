@@ -1,7 +1,5 @@
 """Shared vars for every host."""
 
-from pkgmgr import Distro
-
 username = "sebastiaan"
 git_user_name = "Sebastiaan"
 git_user_email = "sebastiaan@blauwe-lucht.nl"
@@ -9,12 +7,6 @@ git_user_email = "sebastiaan@blauwe-lucht.nl"
 # Set per-host in group_data/<host>.py to rename the machine. Left unset (None) here so base
 # skips it rather than blanking the hostname on a host that didn't ask for one.
 hostname: str | None = None
-
-# Only pkgmgr.py switches on this directly - everything else (package installs, service
-# names, config paths) switches on PackageManager instead, via pkgmgr.get_package_manager().
-# Leave unset (None) on any host until its distro is deliberately decided - get_distro()
-# fails loudly instead of guessing.
-distro: Distro | None = None
 
 starship_version = "v1.23.0"
 go_version = "1.26.3"

@@ -5,10 +5,9 @@ that behave differently per desktop environment (panel/taskbar layout, composito
 switching desktop environments, or two distros sharing one, shouldn't require touching those
 modules.
 
-Autodetected via DesktopEnvironmentFact rather than a group_data var - unlike distro (which
-pyinfra/vault.py's SSH login needs before a single command has run) the desktop environment is
-cheaply and reliably readable off the live host, so there's nothing for a human to keep in
-sync. Detection checks for each DE's own shell session binary (plasmashell/cinnamon) being on
+Autodetected via DesktopEnvironmentFact rather than a group_data var - same pattern
+pkgmgr.py's DistroFact uses for Distro - so there's nothing for a human to keep in sync.
+Detection checks for each DE's own shell session binary (plasmashell/cinnamon) being on
 PATH - true whether or not a graphical session is currently active, unlike $XDG_CURRENT_DESKTOP
 which is only set inside one (confirmed empty over a plain SSH exec against mint_vm).
 """
