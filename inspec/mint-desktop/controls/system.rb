@@ -65,6 +65,23 @@ control "homeserver-public NFS share is in fstab" do
   end
 end
 
+control "homeserver-data SSHFS share is mounted and accessible" do
+  tag :system
+  describe mount('/mnt/homeserver-data') do
+    it { should be_mounted }
+  end
+  describe command('ls /mnt/homeserver-data') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "homeserver-data SSHFS share is in fstab" do
+  tag :system
+  describe file('/etc/fstab') do
+    its('content') { should match %r{^sam@homeserver:/data\s+/mnt/homeserver-data\s+fuse\.sshfs\s} }
+  end
+end
+
 # TODO: uncomment once a vm.max_map_count / OpenSearch module is built (deferred)
 # control "vm.max_map_count is set to 262144 for OpenSearch" do
 #   describe kernel_parameter('vm.max_map_count') do

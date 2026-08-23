@@ -67,6 +67,7 @@ PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
         "imagemagick": "ImageMagick",
         "dropbox": "nautilus-dropbox",
         "nfs-common": "nfs-utils",
+        "sshfs": "fuse-sshfs",
     },
 }
 
