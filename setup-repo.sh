@@ -1,6 +1,7 @@
 #!/bin/bash
 # Repository setup script
-# Symlinks pyinfra/secrets_data.py from the sibling desktop-secrets directory.
+# Symlinks pyinfra/secrets_data.py from the sibling desktop-secrets directory, and configures
+# git to run the .githooks/ secret-detection pre-commit hook.
 
 set -e
 
@@ -32,6 +33,11 @@ echo "Creating symlinks to secrets..."
 
 create_symlink "$SECRETS_DIR/secrets_data.py" \
                "$REPO_DIR/pyinfra/secrets_data.py"
+
+echo ""
+echo "Configuring git to use .githooks directory..."
+git -C "$REPO_DIR" config core.hooksPath .githooks
+echo "  ✓ core.hooksPath set to .githooks"
 
 echo ""
 echo "Repository setup complete!"

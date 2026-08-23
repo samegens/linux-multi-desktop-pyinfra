@@ -1,0 +1,12 @@
+#!/bin/bash
+# Post-add hook to detect secrets after git add
+
+HOOKS_DIR="$(dirname "$0")"
+
+# Run secret detection
+if ! "$HOOKS_DIR/check-secrets"; then
+    echo ""
+    echo "WARNING: Files were added but contain secrets!"
+    echo "You can unstage them with: git reset HEAD <file>"
+    exit 1
+fi

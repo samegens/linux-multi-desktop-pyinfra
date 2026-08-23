@@ -16,7 +16,11 @@ bytes` decrypts using `$VAULT_PASSWORD` env var → `~/Dropbox/ansible/.vault_pa
 `fedora-desktop`), fails loudly if neither is set. Not named `secrets.py` (would shadow stdlib).
 `inventory.py`'s `_ssh_and_sudo_password = vault.reveal(...)` is reused for `mint_vm`/`dell_laptop`/
 `raaf`'s SSH login and `localhost`'s local sudo (same real password). `.gitleaks.toml`/`.secrets.baseline` +
-`secrets-detection.yml` catch leaks — don't bypass them.
+`secrets-detection.yml` catch leaks — don't bypass them. `setup-repo.sh` also sets
+`core.hooksPath` to `.githooks/`, so `git commit` runs the same gitleaks/TruffleHog/
+detect-secrets checks locally (`.githooks/pre-commit` → `.githooks/check-secrets`) before
+`secrets-detection.yml` ever sees a push — mirrors `../ubuntu-desktop`'s setup. Never bypass
+with `git commit --no-verify` to get around a real finding.
 
 ## Run modes
 
@@ -127,7 +131,9 @@ immediately after Mint each time, don't leave a module Mint-only: `nodejs`,
 - `pyinfra/panel_pin.py` — pins an app's launcher to the panel/taskbar, dispatched on
   `desktop_env.DesktopEnvironment`.
 - `inspec/mint-desktop/` — controls; `./test-local.sh` / `./test-remote.sh <group>`.
-- `setup-repo.sh` — symlinks `secrets_data.py`. `prepare.sh` — bootstraps the pyinfra venv.
+- `setup-repo.sh` — symlinks `secrets_data.py`, sets `core.hooksPath` to `.githooks/`.
+  `prepare.sh` — bootstraps the pyinfra venv (incl. `detect-secrets`, used by the hooks).
+  `.githooks/` — local pre-commit secret detection, see "Secrets model" above.
 - `check.sh` — runs everything CI runs (pyright, unit tests, Inspec syntax check); source of truth
   for `.github/workflows/ci.yml`.
 

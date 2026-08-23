@@ -21,6 +21,8 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 - `./check.sh` runs everything CI runs (pyright, unit tests, Inspec profile check) — meant to be run
   locally before pushing, not just in CI
 - GitHub CI and secrets-detection pipelines
+- [git commit hooks](.githooks) (enabled by `setup-repo.sh`) run the same gitleaks/TruffleHog/
+  detect-secrets checks locally, before a secret ever leaves your machine
 
 ## Setup
 
@@ -28,6 +30,7 @@ pyinfra deploy that automates my Linux desktop setup and configuration, targetin
 2. Run [`./prepare.sh`](prepare.sh) to bootstrap the `pyinfra-latest` virtualenv
 3. Create the `desktop-secrets` directory next to this repo (see `pyinfra/vault.py` for the expected
    format) and run [`./setup-repo.sh`](setup-repo.sh) to symlink `pyinfra/secrets_data.py` into it
+   and enable the [git commit hooks](.githooks)
 4. Set your vault password: `$VAULT_PASSWORD` env var, or `~/Dropbox/ansible/.vault_pass`
 5. Run the deploy:
 
@@ -70,6 +73,8 @@ This repository uses multiple tools to prevent secret leaks:
 - **TruffleHog**: Entropy-based detection
 - **detect-secrets**: Context-aware detection
 
-The [secrets detection workflow](.github/workflows/secrets-detection.yml) automatically scans for
-secrets on push. In addition, secret *values* themselves are `privy`-encrypted before they ever reach
+The [pre-commit hook](.githooks/pre-commit) runs all three locally before a commit is even created;
+the [secrets detection workflow](.github/workflows/secrets-detection.yml) runs the same checks again
+on push as a backstop (also nightly, to catch newly-published detection rules independent of code
+changes). In addition, secret *values* themselves are `privy`-encrypted before they ever reach
 this repo (see [`pyinfra/vault.py`](pyinfra/vault.py)).

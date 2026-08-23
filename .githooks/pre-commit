@@ -1,0 +1,10 @@
+#!/bin/bash
+# Pre-commit hook to detect secrets
+
+HOOKS_DIR="$(dirname "$0")"
+
+# Run secret detection
+if ! "$HOOKS_DIR/check-secrets"; then
+    echo "COMMIT REJECTED!"
+    exit 1
+fi
