@@ -48,12 +48,22 @@ end
   end
 end
 
-# TODO: uncomment once an NFS mounts module is built (deferred, see README backlog)
-# control "homeserver-public NFS share is mounted and accessible" do
-#   describe mount('/mnt/homeserver-public') do
-#     it { should be_mounted }
-#   end
-# end
+control "homeserver-public NFS share is mounted and accessible" do
+  tag :system
+  describe mount('/mnt/homeserver-public') do
+    it { should be_mounted }
+  end
+  describe command('ls /mnt/homeserver-public') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "homeserver-public NFS share is in fstab" do
+  tag :system
+  describe file('/etc/fstab') do
+    its('content') { should match %r{^cubi:/data/public\s+/mnt/homeserver-public\s+nfs\s} }
+  end
+end
 
 # TODO: uncomment once a vm.max_map_count / OpenSearch module is built (deferred)
 # control "vm.max_map_count is set to 262144 for OpenSearch" do

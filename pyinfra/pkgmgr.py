@@ -66,6 +66,7 @@ PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
         "smbclient": "samba-client",
         "imagemagick": "ImageMagick",
         "dropbox": "nautilus-dropbox",
+        "nfs-common": "nfs-utils",
     },
 }
 

@@ -15,6 +15,7 @@ import modules.bashrc  # pyright: ignore
 import modules.python_venv  # pyright: ignore
 import modules.keyboard  # pyright: ignore
 import modules.fonts  # pyright: ignore
+import modules.nfs_mounts  # pyright: ignore
 
 import modules.fastfetch  # pyright: ignore
 import modules.dropbox  # pyright: ignore
