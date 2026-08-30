@@ -49,7 +49,7 @@ git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, conf
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
-inotify watch/instance sysctl limits, Fastfetch, Dropbox, NFS/SSHFS mounts —
+inotify watch/instance sysctl limits, Fastfetch, Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog —
 all verified idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content is limited to panel-pinning so far (`pyinfra/panel_pin.py`, called
@@ -62,7 +62,7 @@ desktop-environment placeholder.
 Not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
 printer, VeraCrypt, TagUI,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Google Fonts, Miniconda,
-gitleaks/trufflehog *install* tasks, P4Merge, Terraform/Packer,
+P4Merge, Terraform/Packer,
 MS TTF fonts, personal `/etc/hosts` entries.
 
 ## Secret Detection

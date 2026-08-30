@@ -19,7 +19,7 @@ from pyinfra.operations import files, pip
 import pkgmgr
 
 VENVS: dict[str, list[str]] = {
-    "pyinfra-latest": ["pyinfra", "privy"],
+    "pyinfra-latest": ["pyinfra", "privy", "detect-secrets"],
     "ansible-latest": ["ansible", "ansible-lint", "librouteros", "detect-secrets", "passlib"],
     "blauwe-lucht-rpa": ["rpa", "gspread", "oauth2client", "reportlab", "pypdf"],
     # Since homedisplay is running an old Raspbian, it needs an old version of Ansible.

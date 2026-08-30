@@ -123,21 +123,36 @@ end
 
 # Security scanning tools
 
-# TODO: uncomment once gitleaks/trufflehog install modules are built (deferred)
-# control "gitleaks is installed and working" do
-#   describe file('/usr/local/bin/gitleaks') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "gitleaks is installed and working" do
+  tag :tools
+  describe file('/usr/local/bin/gitleaks') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('gitleaks version') do
+    its('stdout') { should match /[0-9]/ }
+    its('exit_status') { should eq 0 }
+  end
+end
 
-# TODO: uncomment once gitleaks/trufflehog install modules are built (deferred)
-# control "trufflehog is installed and working" do
-#   describe file('/usr/local/bin/trufflehog') do
-#     it { should exist }
-#     it { should be_executable }
-#   end
-# end
+control "trufflehog is installed and working" do
+  tag :tools
+  describe file('/usr/local/bin/trufflehog') do
+    it { should exist }
+    it { should be_executable }
+  end
+  describe command('trufflehog --version') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "detect-secrets is installed in the pyinfra-latest venv" do
+  tag :tools
+  username = input('username')
+  describe command("/home/#{username}/python3-venv/pyinfra-latest/bin/detect-secrets-hook --version") do
+    its('exit_status') { should eq 0 }
+  end
+end
 
 # Kubernetes tools
 
