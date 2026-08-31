@@ -6,6 +6,8 @@ are accessed dynamically via getattr() in modules/ssh.py, so they need no stub e
 """
 
 SSH_PASSWORD: str
+SSH_FITPC_PORT: str
+SSH_FITPC_FQDN: str
 SSH_BACKUP_SERVER_HOSTNAME: str
 SSH_BACKUP_SERVER_PORT: str
 SSH_PUBLIC_VPS_HOSTNAME: str

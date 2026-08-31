@@ -27,7 +27,9 @@ SSH_CONFIG_TEMPLATE = """Host fitlet
     IdentityFile ~/.ssh/fitlet
 
 Host fitpc
+    HostName {fitpc_fqdn}
     IdentityFile ~/.ssh/fitpc
+    Port {fitpc_port}
 
 Host backup_server
     HostName {backup_server_hostname}
@@ -138,6 +140,8 @@ def install_user_keys(username: str):
 
 def install_ssh_config(username: str):
     config = SSH_CONFIG_TEMPLATE.format(
+        fitpc_port=vault.reveal(secrets_data.SSH_FITPC_PORT).decode(),
+        fitpc_fqdn=vault.reveal(secrets_data.SSH_FITPC_FQDN).decode(),
         backup_server_hostname=vault.reveal(secrets_data.SSH_BACKUP_SERVER_HOSTNAME).decode(),
         backup_server_port=vault.reveal(secrets_data.SSH_BACKUP_SERVER_PORT).decode(),
         public_vps_hostname=vault.reveal(secrets_data.SSH_PUBLIC_VPS_HOSTNAME).decode(),
