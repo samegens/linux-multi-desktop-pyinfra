@@ -37,8 +37,9 @@ line and tee-ing output to a timestamped log under
 
 ## Verification targets
 
-- **`mint_vm`** — disposable Mint test VM, `192.168.149.134` (IP may change — ask the user if
-  unreachable). Credentials: `secrets_data.SSH_PASSWORD`.
+- **`mint_vm`** — disposable Mint test VM, `192.168.88.188` (IP may change — check
+  `pyinfra/inventory.py`'s `mint_vm` entry, or ask the user, if unreachable). Credentials:
+  `secrets_data.SSH_PASSWORD`.
 - **`dell_laptop`** — real physical laptop, `192.168.88.90`. Not a verification target.
 - **`localhost`** — this dev machine (Fedora). Real, non-disposable — every run has real effects.
   Goal: eventually replace the user's Ansible-based `../fedora-desktop` with this repo here.
