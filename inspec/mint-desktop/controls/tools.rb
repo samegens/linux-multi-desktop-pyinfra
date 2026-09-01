@@ -444,6 +444,28 @@ control "betterbird is pinned to the panel" do
   end
 end
 
+control "betterbird forces ISO 8601 date formatting" do
+  tag :tools
+  username = input('username')
+  thunderbird_dir = "/home/#{username}/.var/app/eu.betterbird.Betterbird/.thunderbird"
+  profile_dirs = command(
+    "find #{thunderbird_dir} -mindepth 1 -maxdepth 1 -type d " \
+    "-exec test -e '{}/prefs.js' \\; -print 2>/dev/null"
+  ).stdout.split("\n")
+
+  only_if("a Betterbird profile exists") { !profile_dirs.empty? }
+
+  profile_dirs.each do |profile_dir|
+    describe file("#{profile_dir}/user.js") do
+      it { should exist }
+      its('content') { should match /intl\.date_time\.pattern_override\.date_short.*yyyy-MM-dd/ }
+      its('content') { should match /intl\.date_time\.pattern_override\.date_medium.*yyyy-MM-dd/ }
+      its('content') { should match /intl\.date_time\.pattern_override\.date_long.*yyyy-MM-dd/ }
+      its('content') { should match /intl\.date_time\.pattern_override\.date_full.*yyyy-MM-dd/ }
+    end
+  end
+end
+
 # darktable
 
 control "darktable flatpak is installed" do
