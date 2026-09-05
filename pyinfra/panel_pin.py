@@ -111,7 +111,12 @@ def _read_cinnamon_pinned_apps(settings_file: str) -> list[str]:
 def _is_flatpak_app(desktop_file_id: str) -> bool:
     app_id = desktop_file_id.removesuffix(".desktop")
     result = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command, command=f"flatpak info {app_id} > /dev/null 2>&1 && echo yes", _sudo=False
+        Command,
+        # `|| true` keeps this a zero-exit command even when flatpak isn't installed at all
+        # (fresh Mint: exit 127) - a non-zero exit makes pyinfra's Command fact hard-fail
+        # ("could not load fact") instead of just returning empty output.
+        command=f"flatpak info {app_id} > /dev/null 2>&1 && echo yes || true",
+        _sudo=False,
     )
     return result == "yes"
 
