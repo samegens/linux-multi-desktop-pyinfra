@@ -53,6 +53,7 @@ involved)
 |---|--------|----------|--------------|-------|
 | 17 | workrave.py | `/org/workrave/<key>` for each key in `DCONF_SETTINGS` | `pyinfra/modules/workrave.py`'s `DCONF_SETTINGS` dict | Read with `dconf read /org/workrave/<key>`. |
 | 18 | keyboard.py | Compose-key XKB option (Cinnamon: `gsettings get org.cinnamon.desktop.input-sources xkb-options`; dnf: `localectl status`'s `X11 Options` line) | `pyinfra/modules/keyboard.py`'s `COMPOSE_OPTION` constant | Binary present/absent check, not really "tweakable" beyond on/off — low priority. |
+| 22 | lock_screen.py | Cinnamon only: `gsettings get org.cinnamon.desktop.keybindings looking-glass-keybinding` (should not contain `<Super>l`) and `gsettings get org.cinnamon.desktop.keybindings.media-keys screensaver` (should contain `<Super>l`) | `pyinfra/modules/lock_screen.py`'s `SUPER_L` constant | KDE Plasma already binds Meta+L to "Lock Session" by default — nothing this repo manages there, so no drift to check on Fedora/`localhost`. |
 
 ## Kind: git-config (global git config values)
 

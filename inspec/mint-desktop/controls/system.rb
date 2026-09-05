@@ -132,6 +132,26 @@ control "right Alt is configured as compose key" do
   end
 end
 
+control "Super+L locks the screen instead of toggling Looking Glass" do
+  tag :system
+  if os.debian?
+    # Cinnamon ships Super+L bound to its Looking Glass debugger by default - see
+    # pyinfra/modules/lock_screen.py's docstring.
+    describe command('gsettings get org.cinnamon.desktop.keybindings looking-glass-keybinding') do
+      its('stdout') { should_not match /<Super>l/i }
+    end
+    describe command('gsettings get org.cinnamon.desktop.keybindings.media-keys screensaver') do
+      its('stdout') { should match /<Super>l/i }
+    end
+  else
+    # KDE Plasma already binds Meta+L to "Lock Session" out of the box - confirmed live
+    # against localhost, nothing for this repo to configure there.
+    describe command("grep '^Lock Session=' /home/#{username}/.config/kglobalshortcutsrc") do
+      its('stdout') { should match /Meta\+L/i }
+    end
+  end
+end
+
 # Config files
 
 control "go PATH script is in place" do

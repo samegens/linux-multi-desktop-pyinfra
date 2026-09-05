@@ -9,7 +9,9 @@ from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableTyp
 from pyinfra.facts.server import Command
 from pyinfra.operations import files, server
 
+import gsettings
 import pkgmgr
+from dbus_session import get_write_command_prefix
 from pkgmgr import PackageManager
 from desktop_env import DesktopEnvironment, get_desktop_environment
 
@@ -65,32 +67,20 @@ def _set_compose_key_apt():
 CINNAMON_INPUT_SOURCES_SCHEMA = "org.cinnamon.desktop.input-sources"
 CINNAMON_XKB_OPTIONS_DCONF_PATH = "/org/cinnamon/desktop/input-sources/xkb-options"
 
-def _get_gsettings_list(schema: str, key: str) -> list[str]:
-    # _sudo=False - gsettings reads the per-user dconf session; under the global SUDO=True
-    # default this would read root's (empty) dconf instead and never see an already-set
-    # option, re-running the write every deploy.
-    output = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command, command=f"gsettings get {schema} {key}", _sudo=False
-    )
-    return re.findall(r"'([^']*)'", output) if output else []
-
-def _set_compose_key_cinnamon():
-    options = _get_gsettings_list(CINNAMON_INPUT_SOURCES_SCHEMA, "xkb-options")
+def _set_compose_key_cinnamon(username: str):
+    options = gsettings.get_list(CINNAMON_INPUT_SOURCES_SCHEMA, "xkb-options")
 
     if COMPOSE_OPTION in options:
         host.noop("Right Alt is already the compose key (Cinnamon)")
         return
 
-    new_value = "[" + ", ".join(f"'{option}'" for option in [*options, COMPOSE_OPTION]) + "]"
+    new_value = gsettings.format_list([*options, COMPOSE_OPTION])
+    prefix = get_write_command_prefix(username)
 
-    # gsettings/dconf writes go through a per-user dconf-service reached over the D-Bus session
-    # bus - over a plain SSH exec there's no session bus to autolaunch, so a bare `gsettings set`
-    # or `dconf write` silently no-ops (exit 0, value never persists; confirmed live against
-    # mint_vm). `dbus-run-session` gives the write its own private bus so it actually lands.
     server.shell(
         name="Set right Alt as compose key in Cinnamon settings",
         commands=[
-            f'dbus-run-session -- dconf write {CINNAMON_XKB_OPTIONS_DCONF_PATH} "{new_value}"'
+            f'{prefix} dconf write {CINNAMON_XKB_OPTIONS_DCONF_PATH} "{new_value}"'
         ],
         _sudo=False,
     )
@@ -109,7 +99,7 @@ def deploy_keyboard():
     desktop_environment = get_desktop_environment()
     match desktop_environment:
         case DesktopEnvironment.CINNAMON:
-            _set_compose_key_cinnamon()
+            _set_compose_key_cinnamon(host.data.username)
         case DesktopEnvironment.KDE_PLASMA:
             pass
         case _:

@@ -53,9 +53,10 @@ Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limi
 Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog — all verified idempotent on both Mint (`mint_vm`
 test VM) and Fedora (`localhost`).
 
-Desktop-environment content is limited to panel-pinning so far (`pyinfra/panel_pin.py`, called
-from `ghostty.py`, `vscode.py`, `doublecmd.py`, `obsidian.py`, `keepassxc.py`, `betterbird.py`),
-dispatched on an autodetected `desktop_env.DesktopEnvironment` (KDE Plasma and Cinnamon only).
+Desktop-environment content covers panel-pinning (`pyinfra/panel_pin.py`, called from
+`ghostty.py`, `vscode.py`, `doublecmd.py`, `obsidian.py`, `keepassxc.py`, `betterbird.py`) and
+binding Super+L to lock the screen (`pyinfra/modules/lock_screen.py`), dispatched on an
+autodetected `desktop_env.DesktopEnvironment` (KDE Plasma and Cinnamon only).
 
 Still to come, same lean-core list, one module + Inspec control at a time: Node.js,
 desktop-environment placeholder.

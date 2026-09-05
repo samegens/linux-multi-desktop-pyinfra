@@ -14,6 +14,7 @@ import modules.ssh  # pyright: ignore
 import modules.bashrc  # pyright: ignore
 import modules.python_venv  # pyright: ignore
 import modules.keyboard  # pyright: ignore
+import modules.lock_screen  # pyright: ignore
 import modules.fonts  # pyright: ignore
 import modules.nfs_mounts  # pyright: ignore
 import modules.sshfs_mounts  # pyright: ignore
