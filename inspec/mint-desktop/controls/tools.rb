@@ -403,7 +403,7 @@ end
 
 control "obsidian is pinned to the panel" do
   tag :tools
-  describe panel_pin('md.obsidian.Obsidian.desktop', input('username')) do
+  describe panel_pin('md.obsidian.Obsidian.desktop', input('username'), true) do
     it { should be_pinned }
   end
 end
@@ -439,7 +439,7 @@ end
 
 control "betterbird is pinned to the panel" do
   tag :tools
-  describe panel_pin('eu.betterbird.Betterbird.desktop', input('username')) do
+  describe panel_pin('eu.betterbird.Betterbird.desktop', input('username'), true) do
     it { should be_pinned }
   end
 end

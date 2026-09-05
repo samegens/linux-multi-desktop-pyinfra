@@ -109,16 +109,14 @@ def _read_cinnamon_pinned_apps(settings_file: str) -> list[str]:
     return output.splitlines() if output else []
 
 def _is_flatpak_app(desktop_file_id: str) -> bool:
+    # Checked against host.data.flatpaks (the same list base.py installs from) rather than
+    # shelling out to `flatpak info` - pyinfra builds the whole operation graph in a single
+    # pass, so any host.get_fact() here runs against pre-deploy remote state, before base.py's
+    # flatpak.packages() op has actually installed anything. Confirmed live against
+    # dell_laptop: on a fresh install, that live check always reported "not installed yet"
+    # and Obsidian/BetterBird got pinned in bare form - see the ":flatpak" comment below.
     app_id = desktop_file_id.removesuffix(".desktop")
-    result = host.get_fact( # pyright: ignore[reportUnknownMemberType]
-        Command,
-        # `|| true` keeps this a zero-exit command even when flatpak isn't installed at all
-        # (fresh Mint: exit 127) - a non-zero exit makes pyinfra's Command fact hard-fail
-        # ("could not load fact") instead of just returning empty output.
-        command=f"flatpak info {app_id} > /dev/null 2>&1 && echo yes || true",
-        _sudo=False,
-    )
-    return result == "yes"
+    return app_id in host.data.flatpaks
 
 def _pin_cinnamon(desktop_file_id: str, username: str):
     # grouped-window-list needs a ":flatpak" suffix on the desktop-file-id to resolve a
@@ -126,11 +124,10 @@ def _pin_cinnamon(desktop_file_id: str, username: str):
     # panel" UI wrote "md.obsidian.Obsidian.desktop:flatpak", not the bare id; the bare form
     # never rendered on the taskbar even though the file, the pinned-apps list, and
     # Gio.DesktopAppInfo resolution were all otherwise correct. Native (non-Flatpak) apps use
-    # the bare id, same as KDE's launchers= below. Detected live via `flatpak info` rather
-    # than a caller-supplied flag - the caller shouldn't need to know or assert this, and
-    # checking both forms below means a manually-pinned entry (either form) is recognized
-    # as already correct regardless of which one this function would have picked.
-    flatpak_launcher = f"{desktop_file_id}:flatpak"
+    # the bare id, same as KDE's launchers= below.
+    is_flatpak = _is_flatpak_app(desktop_file_id)
+    launcher = f"{desktop_file_id}:flatpak" if is_flatpak else desktop_file_id
+    stale_launcher = desktop_file_id if is_flatpak else f"{desktop_file_id}:flatpak"
 
     settings_file = _find_cinnamon_taskbar_settings_file(username)
     if settings_file is None:
@@ -138,11 +135,32 @@ def _pin_cinnamon(desktop_file_id: str, username: str):
         return
 
     pinned = _read_cinnamon_pinned_apps(settings_file)
-    if desktop_file_id in pinned or flatpak_launcher in pinned:
+    if launcher in pinned:
         host.noop(f"{desktop_file_id} is already pinned to the Cinnamon taskbar")
         return
 
-    launcher = flatpak_launcher if _is_flatpak_app(desktop_file_id) else desktop_file_id
+    # A previous run may have pinned the wrong form (e.g. bare id for a Flatpak app, written
+    # before it was actually installed) - replace it in place rather than appending a
+    # duplicate entry alongside it.
+    if stale_launcher in pinned:
+        script = (
+            "import json; "
+            f"path = '{settings_file}'; "
+            "data = json.load(open(path)); "
+            "apps = data['pinned-apps']['value']; "
+            f"apps[apps.index('{stale_launcher}')] = '{launcher}'; "
+            "json.dump(data, open(path, 'w'), indent=2)"
+        )
+        op_name = f"Fix {desktop_file_id}'s pinned Cinnamon taskbar entry"
+    else:
+        script = (
+            "import json; "
+            f"path = '{settings_file}'; "
+            "data = json.load(open(path)); "
+            f"data['pinned-apps']['value'].append('{launcher}'); "
+            "json.dump(data, open(path, 'w'), indent=2)"
+        )
+        op_name = f"Pin {desktop_file_id} to the Cinnamon taskbar"
 
     # grouped-window-list only picks up this file on (re)start, but unlike KDE's plasmashell
     # restart above, restarting cinnamon isn't attempted here: this repo's only Cinnamon
@@ -154,14 +172,8 @@ def _pin_cinnamon(desktop_file_id: str, username: str):
     # over the same display until one is killed by hand. Writing the file and leaving the
     # live refresh to the next login/manual restart is the reliable option.
     server.shell( # pyright: ignore[reportUnknownMemberType]
-        name=f"Pin {desktop_file_id} to the Cinnamon taskbar",
-        commands=[
-            "python3 -c \"import json; "
-            f"path = '{settings_file}'; "
-            "data = json.load(open(path)); "
-            f"data['pinned-apps']['value'].append('{launcher}'); "
-            "json.dump(data, open(path, 'w'), indent=2)\"",
-        ],
+        name=op_name,
+        commands=[f'python3 -c "{script}"'],
         _sudo=False,
     )
 
