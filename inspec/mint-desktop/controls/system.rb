@@ -185,6 +185,7 @@ end
 ssh_keys = [
   'cubi', 'fitpc', 'fitlet', 'fitlet-tst', 'fitlet-acc', 'liteserver', 'liteserver-tst',
   'github_samegens', 'github_blauwe-lucht', 'gitlab', 'github_adopteerregenwoud', 'bhosted',
+  'desktop',
 ]
 ssh_keys.each do |key_name|
   control "SSH private key #{key_name} is installed with correct permissions" do
@@ -217,6 +218,19 @@ control "homeserver key symlinks point to cubi" do
   end
 end
 
+control "desktop public key is authorized for inbound SSH" do
+  tag :system
+  # Public key, not secret - matches pyinfra/files/ssh/desktop.pub. Hardcoded rather than read
+  # from that file: inspec's file() resource reads the *target's* filesystem, not the profile's
+  # own, and there's no existing convention here for reading a local repo file from a control.
+  desktop_pub_key = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMr1zGL2K6JjxlIwmQ2T0WisDIDa5zY1nrTXdCib8380 sebastiaan@desktop-mesh'
+  describe file("/home/#{username}/.ssh/authorized_keys") do
+    it { should exist }
+    its('mode') { should cmp '0600' }
+    its('content') { should include desktop_pub_key }
+  end
+end
+
 # Root's own keys under /root/.ssh (mode 0700) aren't checked here - the test user can't stat
 # inside /root without sudo, and this repo doesn't grant the test user broader sudo access just
 # for that. Verified manually instead: `sudo ls -la /root/.ssh` on mint_vm after a real deploy.
@@ -243,6 +257,12 @@ ssh_checks = [
   'liteserver',
 # broken, fix later  'backup_server',
   'thuis',
+  # LAN-only, unlike the entries above - only passes when run from inside the home network,
+  # and only once all three of framework16/dell_laptop/raaf have actually been deployed
+  # (mutual trust - each needs the others' desktop key already authorized).
+  'fluitzwaan',
+  'dell_laptop',
+  'framework16',
 ]
 ssh_checks.each do |host_alias|
   control "ssh works for #{host_alias}" do

@@ -94,4 +94,5 @@ ssh_key_names = [
     "gitlab",
     "github_adopteerregenwoud",
     "bhosted",
+    "desktop",
 ]

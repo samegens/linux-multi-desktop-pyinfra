@@ -8,6 +8,16 @@ in <name> become underscores in the constant name - then list <name> in ssh_key_
 SSH_CONFIG_TEMPLATE's Host aliases for internet-reachable personal servers (backup_server,
 public_vps, website_server, public_home_server) are deliberately generic - their real
 HostName/User/Port live in secrets_data.py, not this file.
+
+The "desktop" key is deliberately shared across every one of this repo's own desktop/laptop
+machines (framework16, dell_laptop, raaf) for mutual passwordless SSH between them, unlike
+every other key here which is scoped to one external destination. That's a deliberate exception,
+not an oversight: these three machines already share one vault password via Dropbox,
+so a compromise of any one already exposes every secret in
+secrets_data.py regardless. It's
+used both ways: install_user_keys() below deploys it like any other outbound key, and
+install_authorized_keys() additionally authorizes its public half for INBOUND login - the only
+key here that needs that, since every other key only ever connects out.
 """
 
 from io import BytesIO
@@ -53,6 +63,21 @@ Host bhosted
     User {website_server_user}
     IdentityFile ~/.ssh/bhosted
     Port {website_server_port}
+
+# Desktop/laptop machines - mutual passwordless SSH via the shared "desktop" key (see this
+# module's docstring for why sharing one key across just these three is a deliberate exception).
+# Static LAN IPs, like every other Host block here - check pyinfra/inventory.py if one changes.
+Host fluitzwaan
+    HostName 192.168.88.103
+    IdentityFile ~/.ssh/desktop
+
+Host dwerglijster
+    HostName 192.168.88.90
+    IdentityFile ~/.ssh/desktop
+
+Host raaf
+    HostName 192.168.88.155
+    IdentityFile ~/.ssh/desktop
 
 # GitHub Account samegens
 Host github.com
@@ -166,6 +191,34 @@ def install_ssh_config(username: str):
         _sudo=False,
     )
 
+AUTHORIZED_PUBLIC_KEY_NAMES = ["desktop"]
+
+def install_authorized_keys(username: str):
+    """Authorizes the public half of each key in AUTHORIZED_PUBLIC_KEY_NAMES for inbound login -
+    every other key in this file only ever connects out, so this is the one place that manages
+    authorized_keys at all."""
+    ssh_dir = f"/home/{username}/.ssh"
+    authorized_keys_path = f"{ssh_dir}/authorized_keys"
+    files.file(
+        name="Create ~/.ssh/authorized_keys",
+        path=authorized_keys_path,
+        user=username,
+        group=username,
+        mode="600",
+        _sudo=False,
+    )
+    for key_name in AUTHORIZED_PUBLIC_KEY_NAMES:
+        with open(f"files/ssh/{key_name}.pub") as f:
+            public_key = f.read().strip()
+        files.line(
+            name=f"Authorize {key_name} public key for inbound SSH",
+            path=authorized_keys_path,
+            line=public_key,
+            escape_regex_characters=True,
+            extended_regex=True,
+            _sudo=False,
+        )
+
 def install_root_keys():
     files.directory(
         name="Create /root/.ssh",
@@ -198,6 +251,7 @@ def deploy_ssh():
 
     install_user_keys(username)
     install_ssh_config(username)
+    install_authorized_keys(username)
     install_root_keys()
 
     server.service(
