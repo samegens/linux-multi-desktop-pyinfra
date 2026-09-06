@@ -18,6 +18,7 @@ import modules.lock_screen  # pyright: ignore
 import modules.fonts  # pyright: ignore
 import modules.nfs_mounts  # pyright: ignore
 import modules.sshfs_mounts  # pyright: ignore
+import modules.printer  # pyright: ignore
 
 import modules.fastfetch  # pyright: ignore
 import modules.dropbox  # pyright: ignore
@@ -32,6 +33,10 @@ import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore
 import modules.workrave  # pyright: ignore
+import modules.darktable  # pyright: ignore
+import modules.balena_etcher  # pyright: ignore
+import modules.dotnet  # pyright: ignore
+import modules.claude_code  # pyright: ignore
 
 # These six will be pinned to the taskbar, the order is important (to me).
 import modules.obsidian  # pyright: ignore
@@ -40,8 +45,3 @@ import modules.ghostty  # pyright: ignore
 import modules.keepassxc  # pyright: ignore
 import modules.doublecmd  # pyright: ignore
 import modules.vscode  # pyright: ignore
-
-import modules.darktable  # pyright: ignore
-import modules.balena_etcher  # pyright: ignore
-import modules.dotnet  # pyright: ignore
-import modules.claude_code  # pyright: ignore

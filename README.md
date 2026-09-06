@@ -50,8 +50,9 @@ venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
 Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limits, Fastfetch,
-Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog — all verified idempotent on both Mint (`mint_vm`
-test VM) and Fedora (`localhost`).
+Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog, printer/scanner (CUPS + IPP Everywhere
+driverless printing) — all verified idempotent on both Mint (`mint_vm` test VM) and
+Fedora (`localhost`).
 
 Desktop-environment content covers panel-pinning (`pyinfra/panel_pin.py`, called from
 `ghostty.py`, `vscode.py`, `doublecmd.py`, `obsidian.py`, `keepassxc.py`, `betterbird.py`) and
@@ -62,7 +63,7 @@ Still to come, same lean-core list, one module + Inspec control at a time: Node.
 desktop-environment placeholder.
 
 Not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
-printer, VeraCrypt, TagUI,
+VeraCrypt, TagUI,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Miniconda,
 P4Merge, Terraform/Packer, personal `/etc/hosts` entries.
 

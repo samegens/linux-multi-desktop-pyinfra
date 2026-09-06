@@ -74,6 +74,14 @@ against mint_vm: pinning Firefox to the real taskbar never touched favorite-apps
 |---|--------|----------|--------------|-------|
 | 20 | panel_pin.py (called from ghostty.py, vscode.py, doublecmd.py, obsidian.py, keepassxc.py, betterbird.py) | KDE: `launchers=` in the Task Manager applet's `[Configuration][General]` group. Cinnamon: `pinned-apps.value` in the grouped-window-list applet's settings JSON | `panel_pin.pin_to_panel`'s callers, each passing one `desktop_file_id` | Only checks whether each pinned-by-this-repo entry is still present in the live list — the user reordering pins or adding their own unrelated pins isn't drift. |
 
+## Kind: CUPS printer queue (read via `lpstat -v <name>` for the device URI, `lpstat -d` for
+the default destination - reads CUPS's own stored queue config, doesn't need the physical
+printer powered on)
+
+| # | Module | Live command | Repo source | Notes |
+|---|--------|--------------|--------------|-------|
+| 23 | printer.py | `lpstat -v <name>` per entry in `PRINTERS`; `lpstat -d` for the default | `pyinfra/modules/printer.py`'s `PRINTERS` list, `DEFAULT_PRINTER` constant, and each entry's `ppd` file under `pyinfra/files/cups/` | Only checks the device URI/location/info this repo set - the user adding an unrelated printer through the desktop's own "Add Printer" UI isn't drift. The PPD itself is only re-captured by hand (`lpadmin -m everywhere` while the device is reachable, then copy `/etc/cups/ppd/<name>.ppd` back into the repo) if the printer's driverless capabilities actually change - the deploy itself never needs the printer powered on, since it registers the queue from the repo's stored PPD via `lpadmin -P`. |
+
 ## Adding a new row
 
 See CLAUDE.md's "Conventions" section — every new module gets checked at write-time for

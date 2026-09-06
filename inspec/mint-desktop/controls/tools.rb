@@ -531,6 +531,47 @@ control "firefox has non-free codec support (Fedora only - Mint ships codecs by 
   end
 end
 
+# Printer/scanner
+
+control "CUPS is installed and running" do
+  tag :tools
+  describe command('lpstat -r') do
+    its('stdout') { should match /scheduler is running/ }
+  end
+  describe service('cups') do
+    it { should be_enabled }
+    it { should be_running }
+  end
+end
+
+control "scanning support is installed" do
+  tag :tools
+  if os.debian?
+    describe command('dpkg -s sane-utils') do
+      its('exit_status') { should eq 0 }
+    end
+  else
+    describe command('rpm -q sane-backends') do
+      its('exit_status') { should eq 0 }
+    end
+  end
+  describe file('/usr/bin/simple-scan') do
+    it { should exist }
+  end
+end
+
+control "printer queue is configured" do
+  tag :tools
+  # Reads CUPS's own stored queue config, not the live device - doesn't require the physical
+  # printer to be powered on.
+  describe command('lpstat -v HP_LaserJet_MFP_M232-M237') do
+    its('stdout') { should match %r{ipps://NPIA62AA9\.local:631/ipp/print} }
+  end
+  describe command('lpstat -d') do
+    its('stdout') { should match /HP_LaserJet_MFP_M232-M237/ }
+  end
+end
+
 # bin/activate existing proves the venv itself
 # was created, and `pip show` on one representative package per venv proves installs landed in
 # that venv (not the system Python).

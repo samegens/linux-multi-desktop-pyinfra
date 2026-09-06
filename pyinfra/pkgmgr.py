@@ -68,6 +68,7 @@ PACKAGE_NAME_OVERRIDES: dict[PackageManager, dict[str, str]] = {
         "dropbox": "nautilus-dropbox",
         "nfs-common": "nfs-utils",
         "sshfs": "fuse-sshfs",
+        "sane-utils": "sane-backends",
     },
 }
 
