@@ -51,8 +51,8 @@ Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (F
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
 Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limits, Fastfetch,
 Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog, printer/scanner (CUPS + IPP Everywhere
-driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo) — all verified
-idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
+driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo), TagUI — all verified idempotent on both Mint
+(`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content covers panel-pinning (`pyinfra/panel_pin.py`, called from
 `ghostty.py`, `vscode.py`, `doublecmd.py`, `obsidian.py`, `keepassxc.py`, `betterbird.py`) and
@@ -63,7 +63,6 @@ Still to come, same lean-core list, one module + Inspec control at a time: Node.
 desktop-environment placeholder.
 
 Not yet ported (add on demand, following the existing `pyinfra/modules/*.py` pattern):
-TagUI,
 VirtualBox/Vagrant, NVIDIA, GRUB tweaks, hibernate, SELinux, Miniconda,
 P4Merge, Terraform/Packer, personal `/etc/hosts` entries.
 

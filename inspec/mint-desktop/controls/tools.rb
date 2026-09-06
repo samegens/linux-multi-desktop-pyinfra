@@ -582,6 +582,51 @@ control "printer queue is configured" do
   end
 end
 
+# TagUI
+
+control "google-chrome is installed" do
+  tag :tools
+  describe command('google-chrome-stable --version') do
+    its('stdout') { should match /^Google Chrome \d+\.\d+\.\d+\.\d+/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "tagui is installed" do
+  tag :tools
+  username = input('username')
+  # tagui itself has no --version/non-interactive flag to probe safely - check the symlink
+  # and its target instead, same approach as balenaEtcher's file-presence-only control.
+  describe file('/usr/local/bin/tagui') do
+    it { should exist }
+    it { should be_symlink }
+  end
+  describe file("/home/#{username}/tagui/src/tagui") do
+    it { should exist }
+    it { should be_executable }
+  end
+end
+
+control "php is installed (required by TagUI)" do
+  tag :tools
+  describe command('php --version') do
+    its('stdout') { should match /^PHP \d+\.\d+\.\d+/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "blauwe-lucht-rpa Google service account key is in place" do
+  tag :tools
+  username = input('username')
+  describe file("/home/#{username}/blauwe-lucht-rpa-f89be6fb53f3.json") do
+    it { should exist }
+    its('mode') { should cmp '0600' }
+  end
+  describe command("python3 -c \"import json; json.load(open('/home/#{username}/blauwe-lucht-rpa-f89be6fb53f3.json'))\"") do
+    its('exit_status') { should eq 0 }
+  end
+end
+
 # bin/activate existing proves the venv itself
 # was created, and `pip show` on one representative package per venv proves installs landed in
 # that venv (not the system Python).

@@ -1,6 +1,6 @@
-"""Custom pyinfra operation for downloading + extracting a .tar.gz/.tar.xz archive as a single
-atomic step. Not distro-specific (no PackageManager/Distro dispatch here) - a generic helper for
-any module that installs a binary from a GitHub-release-style tarball.
+"""Custom pyinfra operation for downloading + extracting a .tar.gz/.tar.xz/.zip archive as a
+single atomic step. Not distro-specific (no PackageManager/Distro dispatch here) - a generic
+helper for any module that installs a binary (or, for .zip, an arbitrary tree) from a GitHub-release-style archive.
 """
 
 from typing import Generator
@@ -12,65 +12,55 @@ from pyinfra.facts.files import File
 from pyinfra.facts.server import Command
 from pyinfra.operations import files
 
-TAR_EXTRACT_FLAGS = {
-    ".tgz": "-xzf",
-    ".tar.gz": "-xzf",
-    ".tar.xz": "-xJf",
+# Each extension's extract command up to (but not including) the archive path itself - the
+# archive path and destination flag/path are appended by _extract_command() below, since tar's
+# "-C dest" and unzip's "-d dest" put the destination flag in different places relative to the
+# archive argument.
+EXTRACT_COMMANDS = {
+    ".tgz": ["tar", "-xzf"],
+    ".tar.gz": ["tar", "-xzf"],
+    ".tar.xz": ["tar", "-xJf"],
+    ".zip": ["unzip", "-oq"],
 }
 
-def _get_tar_extract_flags(url: str) -> str:
-    for suffix, flags in TAR_EXTRACT_FLAGS.items():
+def _extract_command(url: str, archive: str, dest: str) -> StringCommand:
+    for suffix, command in EXTRACT_COMMANDS.items():
         if url.endswith(suffix):
-            return flags
-    raise ValueError(f"Unsupported archive extension in url {url!r} - add it to TAR_EXTRACT_FLAGS")
+            dest_flag = "-d" if command[0] == "unzip" else "-C"
+            return StringCommand(*command, QuoteString(archive), dest_flag, QuoteString(dest))
+    raise ValueError(f"Unsupported archive extension in url {url!r} - add it to EXTRACT_COMMANDS")
 
-def _download_and_extract_tarball(url: str, dest: str) -> Generator[StringCommand, None, None]:
-    """Shared tail end of both download_and_extract() and
-    download_and_extract_latest_release() below - downloads `url` to a temp file and extracts
-    it into `dest` (created if needed), unconditionally. Composed via files.download's own
-    `_inner()` for the same reason download_and_extract's docstring explains: chaining a plain
-    files.unarchive right after a files.download in the same run sees the download as merely
-    *queued*, not yet executed, and fails its own pre-check.
-    """
-    tar_flags = _get_tar_extract_flags(url)
+def _download_and_extract_archive(
+    url: str, dest: str, user: str | None = None, group: str | None = None
+) -> Generator[StringCommand, None, None]:
+    """Shared tail end of download_and_extract()/download_and_extract_latest_release() -
+    downloads `url` to a temp file and extracts into `dest` (created if needed). `user`/`group`
+    chown the tree afterwards, for a per-user install."""
     archive = host.get_temp_filename(url)
     yield from files.download._inner(src=url, dest=archive) # pyright: ignore[reportPrivateUsage, reportUnknownMemberType]
     yield StringCommand("mkdir", "-p", QuoteString(dest))
-    yield StringCommand("tar", tar_flags, QuoteString(archive), "-C", QuoteString(dest))
+    yield _extract_command(url, archive, dest)
+    if user or group:
+        yield StringCommand("chown", "-R", f"{user or ''}:{group or ''}", QuoteString(dest))
     yield StringCommand("rm", "-f", QuoteString(archive))
 
 @operation()
-def download_and_extract(url: str, dest: str, creates: str) -> Generator[StringCommand, None, None]:
-    """Download a tarball from `url` and extract
-    its full contents into `dest` (created if needed), as a single atomic operation, skipping
-    entirely if file specified by `creates` already exists.
+def download_and_extract(
+    url: str, dest: str, creates: str, user: str | None = None, group: str | None = None
+) -> Generator[StringCommand, None, None]:
+    """Download `url` and extract into `dest` (created if needed) as one atomic operation,
+    skipping if `creates` already exists. Avoids files.unarchive's preview-mode break when
+    chained after files.download (confirmed live: broke Helm/k9s, then TagUI).
 
-    `creates` must be a specific expected file, not just `dest` itself - checking `dest` alone
-    breaks if it's a directory that already exists for unrelated reasons (e.g. /usr/share),
-    which would false-positive-skip forever. Checked against *pre-existing* state (safe in
-    preview/no -y mode), same idea as files.unarchive's own `creates=`.
-
-    Not files.download + files.unarchive as two separate operations: files.unarchive checks its
-    source archive exists via host.get_fact(File, ...) at operation-definition time, which fails
-    when chained directly after a files.download in the same run - that download has only been
-    *queued* (not yet executed) at that point during a preview run. Confirmed live: this broke
-    Helm/k9s's install on a fresh `--limit localhost` preview. Composed from files.download's own
-    well-tested logic via `_inner()` - the same technique pyinfra's own apt.deb/dnf.rpm use to
-    combine "download from URL" with a following step - plus raw tar commands via
-    StringCommand/QuoteString (pyinfra's own primitives), since unarchive has no equivalent
-    "download inline, don't pre-check" mode.
-
-    The step that installs the extracted binary somewhere on PATH must use files.link, not
-    files.copy - files.link only checks the fact of its own `path`, never `target`'s existence,
-    so it's safe to chain right after this operation even in preview mode. files.copy checks its
-    `src` exists the same way unarchive does, and would reintroduce the exact problem this
-    operation exists to avoid.
+    `creates` must be a specific *regular file*, not a directory. Install the extracted binary onto
+    PATH via files.link, not files.copy - files.copy would reintroduce the same preview-mode
+    problem this operation exists to avoid.
     """
     if host.get_fact(File, path=creates): # pyright: ignore[reportUnknownMemberType]
         host.noop(f"{creates} already exists")
         return
 
-    yield from _download_and_extract_tarball(url, dest)
+    yield from _download_and_extract_archive(url, dest, user=user, group=group)
 
 @operation()
 def download_and_extract_latest_release(
@@ -113,4 +103,4 @@ def download_and_extract_latest_release(
         host.noop(f"already at the latest version ({latest_version})")
         return
 
-    yield from _download_and_extract_tarball(tarball_url_template.format(version=latest_version), dest)
+    yield from _download_and_extract_archive(tarball_url_template.format(version=latest_version), dest)

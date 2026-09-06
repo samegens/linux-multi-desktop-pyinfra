@@ -22,6 +22,8 @@ balena_etcher_version = "2.1.6"
 dotnet_version = "10.0.302"
 powershell_version = "7.6.4"
 
+tagui_version = "6.110.0"
+
 vscode_extensions = [
     "redhat.ansible",
     "redhat.vscode-yaml",

@@ -158,7 +158,10 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
   or the presence-check silently breaks and the line re-appends every run.
 - **`Command` fact returns `None`, not `""`,** on zero output lines — guard with `if result and
   ...`, not just `if result...`.
-- **`files.unarchive` needs an explicit `creates=`** for idempotency — not automatic.
+- **`files.unarchive` needs an explicit `creates=`** for idempotency — not automatic. For
+  download+extract in one go, prefer `pyinfra/archives.py`'s `download_and_extract`/
+  `download_and_extract_latest_release` - a plain `files.download` into `files.unarchive` breaks
+  preview mode instead (confirmed live: Helm/k9s, then TagUI).
 - **`files.put` only compares content against regular files, not symlinks** (e.g. Mint's
   `/etc/default/locale` → `../locale.conf`) — write the real underlying file instead.
   `/etc/locale.conf` is Fedora's native (non-symlinked) file too, so only the *content* needs to
