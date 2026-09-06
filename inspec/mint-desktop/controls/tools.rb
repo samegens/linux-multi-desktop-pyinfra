@@ -12,6 +12,16 @@ control "git is installed and working" do
   end
 end
 
+control "VeraCrypt is installed and working" do
+  tag :tools
+  # `-t` (text mode) - the bare GUI binary tries to init a display and hangs with no X session,
+  # confirmed live against localhost.
+  describe command('veracrypt -t --version') do
+    its('stdout') { should match /^VeraCrypt \d+\.\d+\.\d+/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
 control "docker is installed and working" do
   tag :tools
   describe file('/usr/bin/docker') do

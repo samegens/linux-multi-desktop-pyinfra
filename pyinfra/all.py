@@ -29,6 +29,7 @@ import modules.starship  # pyright: ignore
 import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
 import modules.cinc_auditor  # pyright: ignore
+import modules.veracrypt  # pyright: ignore
 import modules.docker  # pyright: ignore
 import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore

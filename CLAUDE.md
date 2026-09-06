@@ -196,6 +196,19 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
   `secrets_data` doesn't exist in a fresh checkout). Re-exports need redundant aliasing (`from X
   import y as y`) or pyright treats them as private. Pylance's unused-import warning needs `#
   pyright: ignore`, not `# noqa` (this repo doesn't run ruff).
+- **`dnf.rpm()`'s idempotency check only recognizes an exact version match - a *different*
+  installed version (not just "absent") is wrongly treated as "not installed" and gets a fresh
+  `rpm -i`, which then fails with file conflicts against the already-installed files.** Confirmed
+  live on `localhost`, which had VeraCrypt 1.26.24 left over from the old `fedora-desktop`
+  Ansible repo - `dnf.rpm()` tried `rpm -i` for 1.26.29 and errored solid on every shared file
+  (apt's `apt.deb()` doesn't have this problem - it always shells `dpkg -i`, which upgrades in
+  place regardless of what's already installed). `modules/veracrypt.py` sidesteps this
+  entirely rather than working around it: it only ever installs when VeraCrypt isn't present at
+  all (`command -v veracrypt`), never upgrades an already-installed copy, so `dnf.rpm()` only
+  ever sees the "absent" case it handles correctly. Any other module calling `dnf.rpm()` where
+  an upgrade-in-place is actually needed would still hit this and need its own workaround (e.g.
+  hand-rolled version check + `rpm -U --replacepkgs`) - `cinc_auditor.py` hasn't hit it in
+  practice only because nothing else has ever installed a stale cinc-auditor rpm first.
 
 ## Conventions
 

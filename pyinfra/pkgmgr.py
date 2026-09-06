@@ -129,6 +129,18 @@ def get_ubuntu_release() -> str:
         )
     return UBUNTU_CODENAME_TO_RELEASE[codename]
 
+def get_fedora_version() -> str:
+    """The host's Fedora release number (e.g. "44") - needed by modules downloading a
+    Fedora-version-pinned package directly (no dnf repo), e.g. VeraCrypt's GitHub release
+    assets."""
+    line = host.get_fact( # pyright: ignore[reportUnknownMemberType]
+        Command, command="grep -h '^VERSION_ID=' /etc/os-release"
+    )
+    version = line.split("=", 1)[1].strip().strip('"') if line else None
+    if not version:
+        raise ValueError("Could not resolve a Fedora version from /etc/os-release's VERSION_ID")
+    return version
+
 def resolve_distro_from_os_release(os_release_content: str) -> Distro | None:
     for line in os_release_content.splitlines():
         if line.startswith("ID="):
