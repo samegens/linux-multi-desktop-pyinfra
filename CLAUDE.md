@@ -226,7 +226,10 @@ catch breakage from unpinned/updated tooling independent of code changes) — RE
 - When testing the result of a deploy, modify and run the Cinc Auditor scripts.
 - Only comment why something is done, keep it succinct, only document what is actually necessary, don't explain yourself.
 - When running multiple commands in sequence, before each give a short explanation why you're going to run it.
-- When writing unit tests and using mock, put all mock setup in the Arrange section.
+- Write unit tests using the Arrange-Act-Assert pattern, with a `# Arrange`/`# Act`/`# Assert`
+  comment marking each section (omit a section's comment only when that section is empty, e.g. a
+  test with no setup beyond fixtures already in `setUp`). When using mock, all mock setup belongs
+  in the Arrange section.
 - When a module writes config the user could plausibly hand-tweak on `localhost` afterwards
   (a dotfile, an app config file, a pinned `key=value` setting, a dconf key, a git-config value —
   anything that isn't purely secret-derived or a one-time install path), add a row for it to

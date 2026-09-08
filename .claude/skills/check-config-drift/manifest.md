@@ -46,6 +46,14 @@ the surrounding file)
 | 17 | sysctl.py | `/etc/sysctl.conf` | `pyinfra/modules/sysctl.py`'s `SYSCTL_SETTINGS` dict | Check each key's live value via `sysctl -n <key>` (not just the file — a live value only takes effect after `sysctl -p`/reboot). |
 | 21 | betterbird.py | `~/.var/app/eu.betterbird.Betterbird/.thunderbird/<profile>/user.js` (profile dir name is a random salt, not fixed — find it via `find ~/.var/app/eu.betterbird.Betterbird/.thunderbird -mindepth 1 -maxdepth 1 -type d -exec test -e '{}/prefs.js' \; -print`) | `pyinfra/modules/betterbird.py`'s `DATE_FORMAT_PREFS` dict | Only the 4 `intl.date_time.pattern_override.date_*` keys are pinned; Betterbird itself owns the rest of `prefs.js`, which this repo never touches. No profile exists until Betterbird's first launch — nothing to check on a fresh host. |
 
+## Kind: xmlparam (module folds only specific `FCText` leaf values into an otherwise
+upstream-owned nested `FCParamGroup` XML file, via `xmlfile.set_element_text` — only check
+those exact leaves, never the surrounding file)
+
+| # | Module | Live path | Repo source | Notes |
+|---|--------|-----------|--------------|-------|
+| 24 | freecad.py | `~/.var/app/org.freecad.FreeCAD/config/FreeCAD/user.cfg` | `pyinfra/modules/freecad.py`'s `FCPARAM_SETTINGS` list | Check each entry's live `FCText` value against the list — the module's own docstring explains why the rest of the file (~99% window/color/session state) isn't tracked. `xmlfile.py` is a generic, reusable "set an XML element's text, creating any missing ancestor elements (including the document root)" helper — it knows nothing about FreeCAD; `freecad.py` reads the current file's content (or `""` if it doesn't exist yet, since no file ships until FreeCAD's first launch) and folds each setting into it before writing the result back via `files.put`. Because the write always goes through a full parse-and-reserialize, the *first* real write reformats the whole file cosmetically (attribute spacing, XML declaration quoting) even though only the 3 pinned leaves' values actually change — expected and harmless, matches how FreeCAD itself reformats the file on its own next write. |
+
 ## Kind: dconf (GSettings/dconf key, read via `dconf read <path>` or `gsettings get`, no file
 involved)
 

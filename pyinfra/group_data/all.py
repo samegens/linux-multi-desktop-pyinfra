@@ -78,6 +78,7 @@ flatpaks = [
     "com.jgraph.drawio.desktop",
     "ch.protonmail.protonmail-bridge",
     "eu.betterbird.Betterbird",
+    "com.prusa3d.PrusaSlicer",
 ]
 
 # See pyinfra/modules/ssh.py for how to add an entry.

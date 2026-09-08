@@ -497,6 +497,35 @@ control "darktable settings are pinned" do
   end
 end
 
+# FreeCAD
+
+control "freecad flatpak is installed" do
+  tag :tools
+  describe command('flatpak info org.freecad.FreeCAD') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "freecad settings are pinned" do
+  tag :tools
+  username = input('username')
+  describe file("/home/#{username}/.var/app/org.freecad.FreeCAD/config/FreeCAD/user.cfg") do
+    it { should exist }
+    its('content') { should match %r{<FCText Name="AutoloadModule">PartDesignWorkbench</FCText>} }
+    its('content') { should match %r{<FCText Name="FileExportFilter">3D Manufacturing Format \(\*\.3mf\)</FCText>} }
+    its('content') { should match %r{<FCText Name="NavigationStyle">Gui::OpenSCADNavigationStyle</FCText>} }
+  end
+end
+
+# PrusaSlicer
+
+control "prusaslicer flatpak is installed" do
+  tag :tools
+  describe command('flatpak info com.prusa3d.PrusaSlicer') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
 # balenaEtcher
 
 control "balenaEtcher is installed" do

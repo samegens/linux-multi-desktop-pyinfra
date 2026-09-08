@@ -35,6 +35,7 @@ import modules.k3s  # pyright: ignore
 import modules.firefox  # pyright: ignore
 import modules.workrave  # pyright: ignore
 import modules.darktable  # pyright: ignore
+import modules.freecad  # pyright: ignore
 import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore
 import modules.claude_code  # pyright: ignore
