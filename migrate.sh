@@ -76,11 +76,11 @@ check_app_versions() {
     echo "    Betterbird: source=${bb_src:-?} dest=${bb_dst:-?} | Firefox: source=${ff_src:-?} dest=${ff_dst:-?}"
 
     if [ -n "$bb_src" ] && [ -n "$bb_dst" ] && version_lt "$bb_dst" "$bb_src"; then
-        echo "ERROR: dell_laptop's Betterbird ($bb_dst) is older than this machine's ($bb_src) - update it first." >&2
+        echo "ERROR: target's Betterbird ($bb_dst) is older than this machine's ($bb_src) - update it first." >&2
         exit 1
     fi
     if [ -n "$ff_src" ] && [ -n "$ff_dst" ] && version_lt "$ff_dst" "$ff_src"; then
-        echo "ERROR: dell_laptop's Firefox ($ff_dst) is older than this machine's ($ff_src) - update it first." >&2
+        echo "ERROR: target's Firefox ($ff_dst) is older than this machine's ($ff_src) - update it first." >&2
         exit 1
     fi
 }
@@ -156,8 +156,9 @@ discover_betterbird_profile() {
 
 # The profile that actually launches is named by profiles.ini's [InstallXXXX] Default= line -
 # not any [ProfileN] Default=1 marker, which can point at an unrelated/older profile (confirmed
-# live: this machine's profiles.ini has both, pointing at different profiles).
-firefox_default_profile_name() {
+# live: this machine's profiles.ini has both, pointing at different profiles). Both Firefox's and
+# Betterbird's profiles.ini share this same format, so this works for either.
+mozilla_default_profile_name() {
     awk '/^\[Install/{f=1} f && /^Default=/{print; exit}' "$1" | cut -d= -f2
 }
 
@@ -212,12 +213,14 @@ main() {
         warn_if_apps_running
     fi
 
-    local bb_profile bb_name ff_profile ff_dest_profile
+    local bb_profile bb_name bb_dest_profile ff_profile ff_dest_profile
     bb_profile=$(discover_betterbird_profile)
-    ff_profile=$(firefox_default_profile_name "/home/$SRC_USER/.config/mozilla/firefox/profiles.ini")
-    ff_dest_profile=$(ssh_dest "cat /home/$DEST_USER/.config/mozilla/firefox/profiles.ini" | firefox_default_profile_name /dev/stdin)
+    bb_dest_profile=$(ssh_dest "cat /home/$DEST_USER/.var/app/eu.betterbird.Betterbird/.thunderbird/profiles.ini 2>/dev/null" | mozilla_default_profile_name /dev/stdin)
+    ff_profile=$(mozilla_default_profile_name "/home/$SRC_USER/.config/mozilla/firefox/profiles.ini")
+    ff_dest_profile=$(ssh_dest "cat /home/$DEST_USER/.config/mozilla/firefox/profiles.ini" | mozilla_default_profile_name /dev/stdin)
 
     want betterbird && [ -z "$bb_profile" ] && { echo "ERROR: no real Betterbird profile found locally (no Mail dir)." >&2; exit 1; }
+    want betterbird && [ -z "$bb_dest_profile" ] && { echo "ERROR: could not discover dell_laptop's Betterbird default profile - launch Betterbird there once first." >&2; exit 1; }
     want firefox && [ -z "$ff_profile" ] && { echo "ERROR: could not discover local Firefox default-release profile." >&2; exit 1; }
     want firefox && [ -z "$ff_dest_profile" ] && { echo "ERROR: could not discover dell_laptop's Firefox default-release profile - launch Firefox there once first." >&2; exit 1; }
 
@@ -236,7 +239,7 @@ main() {
         [prusaslicer-physical-printer]="/home/$SRC_USER/.var/app/com.prusa3d.PrusaSlicer/config/PrusaSlicer/physical_printer"
     )
     declare -A DEST=(
-        [betterbird]="/home/$DEST_USER/.var/app/eu.betterbird.Betterbird/.thunderbird/$bb_name"
+        [betterbird]="/home/$DEST_USER/.var/app/eu.betterbird.Betterbird/.thunderbird/$bb_dest_profile"
         [firefox]="/home/$DEST_USER/.config/mozilla/firefox/$ff_dest_profile"
         [darktable]="/home/$DEST_USER/.var/app/org.darktable.Darktable/config/darktable"
         [fotos]="/home/$DEST_USER/fotos"
