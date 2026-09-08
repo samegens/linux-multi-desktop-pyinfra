@@ -40,6 +40,7 @@ import modules.balena_etcher  # pyright: ignore
 import modules.dotnet  # pyright: ignore
 import modules.claude_code  # pyright: ignore
 import modules.tagui  # pyright: ignore
+import modules.protonmail_bridge  # pyright: ignore
 
 # These six will be pinned to the taskbar, the order is important (to me).
 import modules.obsidian  # pyright: ignore

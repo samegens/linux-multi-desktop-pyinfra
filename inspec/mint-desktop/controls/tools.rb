@@ -476,6 +476,24 @@ control "betterbird forces ISO 8601 date formatting" do
   end
 end
 
+# Proton Mail Bridge
+
+control "protonmail-bridge flatpak is installed" do
+  tag :tools
+  describe command('flatpak info ch.protonmail.protonmail-bridge') do
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "protonmail-bridge autostart entry is in place" do
+  tag :tools
+  username = input('username')
+  describe file("/home/#{username}/.config/autostart/ch.protonmail.protonmail-bridge.desktop") do
+    it { should exist }
+    its('content') { should match /Exec=.*flatpak run.*ch\.protonmail\.protonmail-bridge/ }
+  end
+end
+
 # darktable
 
 control "darktable flatpak is installed" do

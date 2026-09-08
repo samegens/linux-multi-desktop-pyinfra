@@ -51,7 +51,8 @@ Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (F
 Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
 Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limits, Fastfetch,
 Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog, printer/scanner (CUPS + IPP Everywhere
-driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo), TagUI, FreeCAD, PrusaSlicer — all verified
+driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo), TagUI, FreeCAD, PrusaSlicer, Proton Mail
+Bridge — all verified
 idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content covers panel-pinning (`pyinfra/panel_pin.py`, called from
