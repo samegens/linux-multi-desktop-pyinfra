@@ -9,6 +9,7 @@ module files directly as separate CLI args instead of this file - that's the nat
 # pyright: ignore suppresses Pylance's unused-import warning - these are intentional
 # side-effect imports (each module deploys itself on import).
 import modules.base  # pyright: ignore
+import modules.hosts  # pyright: ignore
 import modules.sysctl  # pyright: ignore
 import modules.ssh  # pyright: ignore
 import modules.bashrc  # pyright: ignore
@@ -23,6 +24,7 @@ import modules.printer  # pyright: ignore
 import modules.fastfetch  # pyright: ignore
 import modules.dropbox  # pyright: ignore
 import modules.git  # pyright: ignore
+import modules.jj  # pyright: ignore
 import modules.gitleaks  # pyright: ignore
 import modules.trufflehog  # pyright: ignore
 import modules.starship  # pyright: ignore

@@ -89,12 +89,17 @@ end
 #   end
 # end
 
-# TODO: uncomment once personal /etc/hosts entries are ported (deferred, see README backlog)
-# control "hosts file contains required entries" do
-#   describe file('/etc/hosts') do
-#     its('content') { should match /liteserver/ }
-#   end
-# end
+# Custom /etc/hosts entries
+
+control "hosts file contains custom entries block" do
+  tag :system
+  describe file('/etc/hosts') do
+    its('content') { should match /# BEGIN PYINFRA MANAGED BLOCK - HOSTS/ }
+    its('content') { should match /liteserver/ }
+    its('content') { should match /kuard\.local/ }
+    its('content') { should match /# END PYINFRA MANAGED BLOCK - HOSTS/ }
+  end
+end
 
 # Kernel parameters
 

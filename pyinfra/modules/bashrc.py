@@ -26,6 +26,15 @@ def deploy_bashrc():
         _sudo=False,
     )
 
+    files.line(
+        name="Set default EDITOR",
+        path=bashrc,
+        line="export EDITOR=vim",
+        escape_regex_characters=True,
+        extended_regex=True,
+        _sudo=False,
+    )
+
     aliases = {
         "ll": "alias ll='ls -alF'",
         "pandoc": "alias pandoc='docker run --rm -v \"$(pwd):/data\" -u $(id -u):$(id -g) pandoc/latex'",

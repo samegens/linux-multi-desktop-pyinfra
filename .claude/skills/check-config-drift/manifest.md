@@ -28,12 +28,13 @@ not a `files/` file)
 
 | # | Module | Live path | Repo source | Notes |
 |---|--------|-----------|--------------|-------|
-| 9 | bashrc.py | `~/.bashrc` | `pyinfra/modules/bashrc.py`'s `aliases` dict + the Cargo `PATH` line | Only check whether each dict entry's line is still present in the live file, and whether the live file has *new* alias-shaped lines (`alias x=...` or simple shell functions) not in the dict — full-file diff would be noisy since `.bashrc` also carries distro/desktop-added boilerplate this repo doesn't own. |
+| 9 | bashrc.py | `~/.bashrc` | `pyinfra/modules/bashrc.py`'s `aliases` dict + the Cargo `PATH` line + the `EDITOR` line | Only check whether each dict entry's line is still present in the live file, and whether the live file has *new* alias-shaped lines (`alias x=...` or simple shell functions) not in the dict — full-file diff would be noisy since `.bashrc` also carries distro/desktop-added boilerplate this repo doesn't own. |
 | 10 | bashrc.py | `~/.inputrc` | `pyinfra/modules/bashrc.py`'s `StringIO(...)` content | Whole-file diff is fine here — this repo owns the entire file. |
 | 11 | go.py | `/etc/profile.d/go.sh` | `pyinfra/modules/go.py`'s `StringIO(...)` content | Low churn expected. |
 | 12 | obsidian.py | `~/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json` | `pyinfra/modules/obsidian.py`'s `OBSIDIAN_CONFIG_TEMPLATE` | Real Obsidian config grows extra keys (recent files, plugin state) the template doesn't set — only check whether the `vaults` entry (path) still matches; ignore everything else in the JSON. |
 | 13 | workrave.py | `~/.config/autostart/workrave.desktop` | `pyinfra/modules/workrave.py`'s `AUTOSTART_DESKTOP_ENTRY` | Low churn expected. |
 | 14 | starship.py | System bashrc's `# {mark} PYINFRA MANAGED BLOCK - STARSHIP` block (path via `paths.get_system_path(SystemPath.SYSTEM_BASHRC)`) | `pyinfra/modules/starship.py`'s `files.block(content=...)` | Low churn expected. |
+| 25 | hosts.py | `/etc/hosts`'s `# {mark} PYINFRA MANAGED BLOCK - HOSTS` block | `pyinfra/group_data/all.py`'s `hosts_entries` list | The block is appended after the distro-managed loopback lines, which this repo never touches - only diff the content between the BEGIN/END markers. |
 
 ## Kind: keyvalue (module pins only specific `key=value` lines inside an otherwise
 upstream-owned config file, via `keyfile.set_key_value` — only check those exact keys, never

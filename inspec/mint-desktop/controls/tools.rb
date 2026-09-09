@@ -12,6 +12,32 @@ control "git is installed and working" do
   end
 end
 
+control "jj is installed and working" do
+  tag :tools
+  describe file('/usr/local/bin/jj') do
+    it { should exist }
+    it { should be_executable }
+    it { should be_symlink }
+    its('link_path') { should match %r{^/opt/jj-} }
+  end
+  describe command('jj --version') do
+    its('stdout') { should match /^jj \d+\.\d+\.\d+/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
+control "jj identity is configured" do
+  tag :tools
+  describe command("jj config get user.name") do
+    its('stdout') { should match /Sebastiaan/ }
+    its('exit_status') { should eq 0 }
+  end
+  describe command("jj config get user.email") do
+    its('stdout') { should match /sebastiaan@blauwe-lucht\.nl/ }
+    its('exit_status') { should eq 0 }
+  end
+end
+
 control "VeraCrypt is installed and working" do
   tag :tools
   # `-t` (text mode) - the bare GUI binary tries to init a display and hangs with no X session,

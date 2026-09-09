@@ -81,6 +81,35 @@ flatpaks = [
     "com.prusa3d.PrusaSlicer",
 ]
 
+hosts_entries = [
+    "# Test/staging environments",
+    "192.168.34.10  thuis-tst.blauwe-lucht.nl",
+    "192.168.34.10  samtris-tst.blauwe-lucht.nl",
+    "192.168.34.10  oogdesmeesters-tst.blauwe-lucht.nl",
+    "192.168.34.10  fitlet-tst",
+    "192.168.34.10  walangtext-tst.blauwe-lucht.nl",
+    "192.168.34.10  miro-card-shuffle-dev-tst.blauwe-lucht.nl",
+    "192.168.34.20  walangtext-tst.blauwelucht.nl",
+    "192.168.34.20  samtris-tst.blauwelucht.nl",
+    "192.168.34.20  oogdesmeesters-tst.blauwelucht.nl",
+    "192.168.34.20  liteserver-tst",
+    "",
+    "# Remote hosts",
+    "5.2.74.226     liteserver",
+    "20.229.92.206  fitlet-acc",
+    "",
+    "# Local dev loopback aliases",
+    "127.0.0.1 kuard.local",
+    "127.0.0.1 rabbitmq.local",
+    "127.0.0.1 dev.kuard.local",
+    "127.0.0.1 demo.kuard.local",
+    "127.0.0.1 kuard.dev.local",
+    "127.0.0.1 kuard.prod.local",
+    "127.0.0.1 game-collection.local",
+    "127.0.0.1 samtris.local",
+    "127.0.0.1 custom.local",
+]
+
 # See pyinfra/modules/ssh.py for how to add an entry.
 ssh_key_names = [
     "cubi",
