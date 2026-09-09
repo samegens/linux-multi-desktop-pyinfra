@@ -3,7 +3,7 @@
 Also configures jj's own user.name/user.email (reusing the same group_data identity as
 git.py) every run regardless of whether the binary itself was just installed, since jj
 otherwise silently commits under an empty identity. Also sets ui.default-command so a
-bare `jj` invocation doesn't just print a hint and exit.
+bare `jj` invocation doesn't print a hint.
 """
 
 import shlex
