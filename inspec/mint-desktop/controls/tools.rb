@@ -36,6 +36,10 @@ control "jj identity is configured" do
     its('stdout') { should match /sebastiaan@blauwe-lucht\.nl/ }
     its('exit_status') { should eq 0 }
   end
+  describe command("jj config get ui.default-command") do
+    its('stdout') { should match /^log/ }
+    its('exit_status') { should eq 0 }
+  end
 end
 
 control "VeraCrypt is installed and working" do

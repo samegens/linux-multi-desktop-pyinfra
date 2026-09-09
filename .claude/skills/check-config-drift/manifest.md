@@ -69,6 +69,7 @@ involved)
 | # | Module | Live command | Repo source | Notes |
 |---|--------|--------------|--------------|-------|
 | 19 | git.py | `git config --global --get <key>` for `core.filemode`, `push.autosetupremote`, `init.defaultbranch`, `push.default` | `pyinfra/modules/git.py`'s `config` dict | `user.name`/`user.email` are identity, not tweakable settings — skip those two keys. |
+| 26 | jj.py | `jj config get <key>` for `ui.default-command` | `pyinfra/modules/jj.py`'s `_configure_jj_settings`'s `config` dict | `user.name`/`user.email` are identity, not tweakable settings — skip those two keys, same as git.py above. |
 
 ## Kind: panel pin (each desktop environment's own taskbar-pin storage - KDE: a comma-separated
 `launchers=` value inside the Task Manager applet's own group in

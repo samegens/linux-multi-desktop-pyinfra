@@ -2,7 +2,8 @@
 
 Also configures jj's own user.name/user.email (reusing the same group_data identity as
 git.py) every run regardless of whether the binary itself was just installed, since jj
-otherwise silently commits under an empty identity.
+otherwise silently commits under an empty identity. Also sets ui.default-command so a
+bare `jj` invocation doesn't just print a hint and exit.
 """
 
 import shlex
@@ -44,10 +45,12 @@ def _install_jj_binary():
         target=binary,
     )
 
-def _configure_jj_identity(username: str):
+def _configure_jj_settings(username: str):
     config = {
         "user.name": host.data.git_user_name,
         "user.email": host.data.git_user_email,
+        # avoid the "Hint: use `jj -h`..." nag on a bare `jj` invocation.
+        "ui.default-command": "log",
     }
     for key, value in config.items():
         # jj config get exits 1 with nothing useful on stdout when the key isn't set yet - the
@@ -71,6 +74,6 @@ def _configure_jj_identity(username: str):
 @deploy("Install Jujutsu")
 def deploy_jj():
     _install_jj_binary()
-    _configure_jj_identity(host.data.username)
+    _configure_jj_settings(host.data.username)
 
 deploy_jj()
