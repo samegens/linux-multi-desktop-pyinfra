@@ -46,7 +46,7 @@ def _install_jj_binary():
     )
 
 def _configure_jj_settings(username: str):
-    config = {
+    config: dict[str, str] = {
         "user.name": host.data.git_user_name,
         "user.email": host.data.git_user_email,
         # avoid the "Hint: use `jj -h`..." nag on a bare `jj` invocation.
