@@ -17,3 +17,14 @@ repeated twice - unrelated to any in-progress work at the time, just surfaced al
   Code" operation showed "Success" (not "No Change") on every one of several consecutive `-y`
   runs against `mint_vm`. Not yet root-caused - needs investigation into why its idempotency
   check never reports the binary as already present/current.
+
+- **Report the `files.block` SELinux context bug upstream** - found while writing
+  `pyinfra/modules/hosts.py` (2026-09-08): `files.block()` silently drops a file's SELinux
+  context (replaces it with the temp dir's default, e.g. `net_conf_t` -> `user_tmp_t` for
+  `/etc/hosts`), confirmed live via `systemd-resolved` AVC denials on `localhost`; `hosts.py`
+  now works around it with a Fedora-only `restorecon` follow-up. Root cause, minimal repro, and
+  a proposed fix are written up in
+  `/home/sebastiaan/git/pyinfra-files.block-selinux-context-bug` (a separate repo, not a sibling
+  of this one) - still needs to actually be filed as a GitHub issue against `pyinfra-dev/pyinfra`
+  (confirmed via search: no existing issue covers this; #1119 is related but distinct - same
+  code path, different symptom).
