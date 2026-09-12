@@ -28,6 +28,7 @@ import modules.jj  # pyright: ignore
 import modules.gitleaks  # pyright: ignore
 import modules.trufflehog  # pyright: ignore
 import modules.starship  # pyright: ignore
+import modules.vim  # pyright: ignore
 import modules.go  # pyright: ignore
 import modules.rust  # pyright: ignore
 import modules.cinc_auditor  # pyright: ignore

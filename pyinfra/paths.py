@@ -13,11 +13,19 @@ PYINFRA_CACHE_DIR = "/var/cache/pyinfra"
 
 class SystemPath(Enum):
     SYSTEM_BASHRC = "system_bashrc"
+    VIMRC_LOCAL = "vimrc_local"
 
 
 SYSTEM_PATHS: dict[PackageManager, dict[SystemPath, str]] = {
-    PackageManager.APT: {SystemPath.SYSTEM_BASHRC: "/etc/bash.bashrc"},
-    PackageManager.DNF: {SystemPath.SYSTEM_BASHRC: "/etc/bashrc"},
+    PackageManager.APT: {
+        SystemPath.SYSTEM_BASHRC: "/etc/bash.bashrc",
+        # Debian's /etc/vim/vimrc sources this conditionally - confirmed live against mint_vm.
+        SystemPath.VIMRC_LOCAL: "/etc/vim/vimrc.local",
+    },
+    PackageManager.DNF: {
+        SystemPath.SYSTEM_BASHRC: "/etc/bashrc",
+        SystemPath.VIMRC_LOCAL: "/etc/vimrc.local",
+    },
 }
 
 

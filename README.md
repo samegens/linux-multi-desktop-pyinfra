@@ -52,7 +52,7 @@ Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono 
 Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limits, Fastfetch,
 Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog, printer/scanner (CUPS + IPP Everywhere
 driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo), TagUI, FreeCAD, PrusaSlicer, Proton Mail
-Bridge, personal `/etc/hosts` entries, Jujutsu — all verified
+Bridge, personal `/etc/hosts` entries, Jujutsu, Vim (global `vimrc.local`) — all verified
 idempotent on both Mint (`mint_vm` test VM) and Fedora (`localhost`).
 
 Desktop-environment content covers panel-pinning (`pyinfra/panel_pin.py`, called from

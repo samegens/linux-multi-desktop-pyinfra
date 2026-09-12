@@ -129,6 +129,15 @@ control "starship is installed and working" do
   end
 end
 
+control "global vimrc.local is in place" do
+  tag :tools
+  vimrc_local = os.debian? ? '/etc/vim/vimrc.local' : '/etc/vimrc.local'
+  describe file(vimrc_local) do
+    it { should exist }
+    its('content') { should match /set ruler/ }
+  end
+end
+
 control "fastfetch is installed and working" do
   tag :tools
   describe file('/usr/bin/fastfetch') do
