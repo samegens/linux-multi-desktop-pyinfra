@@ -3,7 +3,9 @@
 Also configures jj's own user.name/user.email (reusing the same group_data identity as
 git.py) every run regardless of whether the binary itself was just installed, since jj
 otherwise silently commits under an empty identity. Also sets ui.default-command so a
-bare `jj` invocation doesn't print a hint.
+bare `jj` invocation doesn't print a hint, and ui.diff-editor explicitly to jj's own
+":builtin" hunk-selector TUI (its default anyway - just makes it explicit) so `jj diff`/
+`jj split` etc. don't print a hint about the implicit default either.
 """
 
 import shlex
@@ -51,6 +53,13 @@ def _configure_jj_settings(username: str):
         "user.email": host.data.git_user_email,
         # avoid the "Hint: use `jj -h`..." nag on a bare `jj` invocation.
         "ui.default-command": "log",
+        # avoid the "Hint: Using default editor ':builtin'..." nag on `jj diff`/`jj split` etc.
+        # ":builtin" is already jj's default hunk-selector TUI - this just makes the choice
+        # explicit so the hint (which nags about relying on the implicit default) stops
+        # firing, per the hint's own suggested fix. Deliberately not a real text editor like
+        # vim: ui.diff-editor is for interactive hunk selection, not text editing, and vim
+        # has no native "select these hunks" mode - jj's builtin TUI already does this well.
+        "ui.diff-editor": ":builtin",
     }
     for key, value in config.items():
         # jj config get exits 1 with nothing useful on stdout when the key isn't set yet - the
