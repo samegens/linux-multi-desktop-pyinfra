@@ -170,6 +170,15 @@ control "claude is installed and working" do
   end
 end
 
+control "cl.sh wrapper script is in place" do
+  tag :tools
+  describe file("/home/#{input('username')}/.local/bin/cl.sh") do
+    it { should exist }
+    it { should be_executable }
+    its('content') { should match /exec claude/ }
+  end
+end
+
 # Security scanning tools
 
 control "gitleaks is installed and working" do

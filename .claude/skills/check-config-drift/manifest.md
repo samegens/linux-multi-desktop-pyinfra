@@ -21,6 +21,7 @@ Package/flatpak/VS Code extension *lists* (`group_data/all.py`'s `packages`, `fl
 | 6 | doublecmd.py | `~/.config/doublecmd/multiarc.ini` | `pyinfra/files/doublecmd/multiarc.ini` | |
 | 7 | doublecmd.py | `~/.config/doublecmd/shortcuts.scf` | `pyinfra/files/doublecmd/shortcuts.scf` | |
 | 8 | doublecmd.py | `~/.config/doublecmd/localconfig.xml` | `pyinfra/files/doublecmd/localconfig.xml` | Holds the saved hotdir list (`DirectoryHotList`) as of Double Commander 1.2.x — it used to live inside `doublecmd.xml` on 1.1.x, moved here on upgrade. `~/.config/doublecmd/session.ini` was dropped from this manifest and from `CONFIG_FILES` — it's pure window/session state (open tabs, last paths, geometry), never a deliberate setting; confirmed nothing worth tracking in it. |
+| 27 | local_bin_scripts.py | `~/.local/bin/cl.sh` | `pyinfra/files/local_bin/cl.sh` | Check each entry in `local_bin_scripts.py`'s `SCRIPTS` list, not just this one — the file is a plain 1:1 copy per entry. |
 
 ## Kind: generated (module renders content from a Python template/dict — compare live file
 against what the template *would* currently produce; a fix means editing the module's source,

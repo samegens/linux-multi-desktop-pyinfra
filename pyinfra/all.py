@@ -52,3 +52,5 @@ import modules.ghostty  # pyright: ignore
 import modules.keepassxc  # pyright: ignore
 import modules.doublecmd  # pyright: ignore
 import modules.vscode  # pyright: ignore
+
+import modules.local_bin_scripts  # pyright: ignore
