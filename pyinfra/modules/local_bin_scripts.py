@@ -8,6 +8,7 @@ from pyinfra.operations import files
 
 SCRIPTS = [
     "cl.sh",
+    "analyze-network.sh"
 ]
 
 @deploy("Personal ~/.local/bin scripts")
