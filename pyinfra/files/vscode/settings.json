@@ -85,6 +85,7 @@
     "workbench.startupEditor": "none",
     "ansible.lightspeed.enabled": false,
     "git.autofetch": true,
+    "git.autorefresh": false,
     "clipboard-manager.snippet.enabled": false,
     "workbench.secondarySideBar.defaultVisibility": "hidden",
     "terminal.integrated.initialHint": false,
