@@ -2,7 +2,7 @@
 
 from pyinfra.context import host
 from pyinfra.api.deploy import deploy # pyright: ignore[reportUnknownVariableType]
-from pyinfra.facts.files import File
+from pyinfra.facts.files import File, Link
 from pyinfra.facts.server import Command
 from pyinfra.operations import files, npm, server
 
@@ -28,7 +28,7 @@ def _remove_legacy_npm_install():
 def _install_claude_code(username: str):
     binary = f"/home/{username}/.local/bin/claude"
 
-    if host.get_fact(File, path=binary): # pyright: ignore[reportUnknownMemberType]
+    if host.get_fact(File, path=binary) or host.get_fact(Link, path=binary): # pyright: ignore[reportUnknownMemberType]
         host.noop("Claude Code is already installed")
         return
 
@@ -44,9 +44,33 @@ def _install_claude_code(username: str):
         _sudo=False,
     )
 
+def _copy_config_files(username: str):
+    config_dir = f"/home/{username}/.claude"
+
+    files.directory(
+        name="Create ~/.claude",
+        path=config_dir,
+        user=username,
+        group=username,
+        mode="755",
+        _sudo=False,
+    )
+
+    for filename in ["settings.json", "CLAUDE.md"]:
+        files.put(
+            name=f"Copy Claude Code {filename}",
+            src=f"files/claude/{filename}",
+            dest=f"{config_dir}/{filename}",
+            user=username,
+            group=username,
+            mode="644",
+            _sudo=False,
+        )
+
 @deploy("Install Claude Code")
 def deploy_claude_code():
     _remove_legacy_npm_install()
     _install_claude_code(host.data.username)
+    _copy_config_files(host.data.username)
 
 deploy_claude_code()

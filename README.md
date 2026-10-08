@@ -48,7 +48,7 @@ Ported so far: base packages,
 git, SSH, bashrc/dotfiles, starship, Go, Rust, VS Code (editor, extensions, config files), Python
 venvs (`~/python3-venv/*`, incl. this repo's own `pyinfra-latest`), Cinc Auditor, Docker (Engine +
 Compose plugin, from Docker's own apt/dnf repo), k3s, Firefox non-free codecs (Fedora only), Double
-Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code, JetBrainsMono Nerd Font,
+Commander, Ghostty, Workrave, .NET SDK + PowerShell, Claude Code (incl. `~/.claude/settings.json` + `CLAUDE.md`), JetBrainsMono Nerd Font,
 Google Fonts, Microsoft core/ClearType fonts, inotify watch/instance sysctl limits, Fastfetch,
 Dropbox, NFS/SSHFS mounts, Gitleaks, TruffleHog, printer/scanner (CUPS + IPP Everywhere
 driverless printing), VeraCrypt (GitHub release rpm/deb, no apt/dnf repo), TagUI, FreeCAD, PrusaSlicer, Proton Mail

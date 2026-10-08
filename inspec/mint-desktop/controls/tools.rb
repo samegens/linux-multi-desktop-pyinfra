@@ -170,6 +170,17 @@ control "claude is installed and working" do
   end
 end
 
+control "claude config files are in place" do
+  tag :tools
+  describe json("/home/#{input('username')}/.claude/settings.json") do
+    its('permissions') { should_not be_nil }
+  end
+  describe file("/home/#{input('username')}/.claude/CLAUDE.md") do
+    it { should exist }
+    its('size') { should be > 0 }
+  end
+end
+
 control "cl.sh wrapper script is in place" do
   tag :tools
   describe file("/home/#{input('username')}/.local/bin/cl.sh") do
