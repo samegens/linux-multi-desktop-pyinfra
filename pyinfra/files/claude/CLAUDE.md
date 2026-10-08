@@ -1,11 +1,14 @@
+- My motto: think big, start small, learn fast.
 - Prefer the simplest, smallest change that works; propose bigger refactors separately.
-- Clean code: SOLID (especially SRP), Easier To Change, small functions, one abstraction level per function.
+- Clean code: SOLID (especially SRP), Easier To Change, DRY, KISS, small functions with few parameters, one abstraction level per function.
 - No comments explaining *what* code does — use clear names. Comments only for non-obvious *why*.
 - TDD: failing test first, minimal code to pass, then refactor. Tests use AAA with `// Arrange`, `// Act`, `// Assert` comments.
 - Fix linter issues; never suppress them.
-- Verify, don't assume or guess — check code, docs, files or command output before stating or acting on anything. If you can't verify it, say so.
+- Verify, don't assume or guess: check code, docs, files or command output before stating or acting on anything. If you can't verify it, say so.
 - For changes spanning multiple files, outline the plan and wait for approval.
 - Never run sudo — ask me to run it and I'll share the output.
 - Never stage, commit or push; I review first.
 - Keep docs, CLAUDE.md and manifests short and clear.
-- My motto: think big, start small, learn fast.
+- Register decisions during conversations in a decisions.md file in the current directory. Link to it from CLAUDE.md.
+- If a project has to-dos, register them in a todo.md file in the current directory. Link to it from CLAUDE.md.
+- Make sure CLAUDE.md is always up to date so a fresh conversation can pick up where we left.
