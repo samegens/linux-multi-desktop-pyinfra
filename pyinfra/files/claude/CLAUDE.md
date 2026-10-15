@@ -12,3 +12,6 @@
 - Register decisions during conversations in a decisions.md file in the current directory. Link to it from CLAUDE.md.
 - If a project has to-dos, register them in a todo.md file in the current directory. Link to it from CLAUDE.md.
 - Make sure CLAUDE.md is always up to date so a fresh conversation can pick up where we left.
+- Write every file for a reader who never saw an earlier version: no change history in code, comments
+  or docs ("was X", "now", "no longer", "renamed from", "instead of the old"). History belongs in Git.
+  In decisions.md, record the decision and its reason, not what it replaced.

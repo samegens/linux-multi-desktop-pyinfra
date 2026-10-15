@@ -1,4 +1,12 @@
 {
+  "permissions": {
+    "deny": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(sudo:*)"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "/home/sebastiaan/.claude/statusline-command.sh"
@@ -6,6 +14,7 @@
   "effortLevel": "medium",
   "tui": "fullscreen",
   "theme": "auto",
+  "preferredNotifChannel": "notifications_disabled",
   "agentPushNotifEnabled": true,
   "autoMode": {
     "environment": [
@@ -33,14 +42,6 @@
       "**Primary use of Claude Code**: software development",
       "**Trusted repo**: Local git repositories under /home/sebastiaan/git and /home/sebastiaan/Dropbox whose remote is in Source control, or that have no remote. Repos there with other remotes (e.g. clones of third-party projects) are not trusted.",
       "**Org-specific CLIs**: None configured"
-    ]
-  },
-  "permissions": {
-    "deny": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(sudo:*)"
     ]
   }
 }
