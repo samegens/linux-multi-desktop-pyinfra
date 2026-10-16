@@ -49,6 +49,7 @@ def deploy_bashrc():
         "ssh-bhosted": "alias ssh-bhosted='ssh -t bhosted'",
         "activate-ansible": "alias activate-ansible='. ~/python3-venv/ansible-latest/bin/activate && ansible --version'",
         "k": "alias k='kubectl'",
+        "d": "alias d='docker'",
         "dc": "alias dc='docker compose'"
     }
     for alias_name, line in aliases.items():
